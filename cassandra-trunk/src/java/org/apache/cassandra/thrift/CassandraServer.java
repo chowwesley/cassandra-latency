@@ -673,20 +673,18 @@ public class CassandraServer implements Cassandra.Iface
         List<Row> rows;
         try
         {
-            IPartitioner<?> p = StorageService.getPartitioner();
+            IPartitioner p = StorageService.getPartitioner();
             AbstractBounds<RowPosition> bounds;
             if (range.start_key == null)
             {
-                Token.TokenFactory<?> tokenFactory = p.getTokenFactory();
+                Token.TokenFactory tokenFactory = p.getTokenFactory();
                 Token left = tokenFactory.fromString(range.start_token);
                 Token right = tokenFactory.fromString(range.end_token);
                 bounds = Range.makeRowRange(left, right, p);
             }
             else
             {
-                RowPosition end = range.end_key == null ? p.getTokenFactory().fromString(range.end_token).maxKeyBound(p)
-                                                    : RowPosition.forKey(range.end_key, p);
-                bounds = new Bounds<RowPosition>(RowPosition.forKey(range.start_key, p), end);
+                bounds = new Bounds<RowPosition>(RowPosition.forKey(range.start_key, p), RowPosition.forKey(range.end_key, p));
             }
             schedule(DatabaseDescriptor.getRpcTimeout());
             try
@@ -864,7 +862,7 @@ public class CassandraServer implements Cassandra.Iface
     {
         return StorageService.instance.describeRing(keyspace);
     }
-
+    
     public Map<String, String> describe_token_map() throws InvalidRequestException
     {
         return StorageService.instance.getTokenToEndpointMap();
