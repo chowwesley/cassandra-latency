@@ -37,11 +37,13 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.mortbay.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.concurrent.Stage;
 import org.apache.cassandra.concurrent.StageManager;
+import org.apache.cassandra.config.Config;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.db.*;
@@ -66,7 +68,9 @@ public class StorageProxy implements StorageProxyMBean
     public static final String MBEAN_NAME = "org.apache.cassandra.db:type=StorageProxy";
     private static final Logger logger = LoggerFactory.getLogger(StorageProxy.class);
     private static final boolean OPTIMIZE_LOCAL_REQUESTS = true; // set to false to test messagingservice path on single node
-
+    
+    public static Config conf;
+    
     // mbean stuff
     private static final LatencyTracker readStats = new LatencyTracker();
     private static final LatencyTracker rangeStats = new LatencyTracker();
@@ -640,12 +644,15 @@ public class StorageProxy implements StorageProxyMBean
     {
         List<Row> rows = new ArrayList<Row>(initialCommands.size());
         List<ReadCommand> commandsToRetry = Collections.emptyList();
-
+        logger.debug("--- rows: " + rows);
+        logger.debug("--- commandsToRetry: " + commandsToRetry);
         do
         {
             List<ReadCommand> commands = commandsToRetry.isEmpty() ? initialCommands : commandsToRetry;
+            logger.debug("--- commands: " + commands);
             ReadCallback<Row>[] readCallbacks = new ReadCallback[commands.size()];
-
+            logger.debug("--- readCallbacks: " + readCallbacks);
+            
             if (!commandsToRetry.isEmpty())
                 logger.debug("Retrying {} commands", commandsToRetry.size());
 
@@ -654,27 +661,54 @@ public class StorageProxy implements StorageProxyMBean
             {
                 ReadCommand command = commands.get(i);
                 assert !command.isDigestQuery();
+                logger.debug("--- read command: " + command);
                 logger.debug("Command/ConsistencyLevel is {}/{}", command, consistency_level);
 
                 List<InetAddress> endpoints = StorageService.instance.getLiveNaturalEndpoints(command.table,
                                                                                               command.key);
                 DatabaseDescriptor.getEndpointSnitch().sortByProximity(FBUtilities.getBroadcastAddress(), endpoints);
+                logger.debug("--- live natural endpoints: " + endpoints);
 
                 RowDigestResolver resolver = new RowDigestResolver(command.table, command.key);
-                ReadCallback<Row> handler = getReadCallback(resolver, command, consistency_level, endpoints);
+                logger.debug("--- resolver: " + resolver);
+                logger.debug("--- table, key: " + command.table + "," + command.key);
+                ReadCallback<Row> handler;
+                if (conf.fast_retry)
+                {
+                	logger.debug("--- using fast retry");
+                	handler = getFastRetryReadCallback(resolver, command, consistency_level, endpoints);
+                } 
+                else 
+                {
+                    handler = getReadCallback(resolver, command, consistency_level, endpoints);   	
+                }
+                logger.debug("--- handler: " + handler);
+                logger.debug("--- resolver, command, consistency_level, endpoints: " + 
+                		resolver + ", " + 
+                		command + ", " +
+                		consistency_level + ", " +
+                		endpoints);
                 handler.assureSufficientLiveNodes();
                 assert !handler.endpoints.isEmpty();
                 readCallbacks[i] = handler;
 
                 // The data-request message is sent to dataPoint, the node that will actually get the data for us
                 InetAddress dataPoint = handler.endpoints.get(0);
+                logger.debug("--- datapoint: " + dataPoint);
+                logger.debug("--- broadcast address: " + FBUtilities.getBroadcastAddress());
+                logger.debug("--- handler endpoints: " + handler.endpoints);
                 if (dataPoint.equals(FBUtilities.getBroadcastAddress()) && OPTIMIZE_LOCAL_REQUESTS)
                 {
                     logger.debug("reading data locally");
+                    //should not be using fast retry here, endpoint not set
                     StageManager.getStage(Stage.READ).execute(new LocalReadRunnable(command, handler));
-                }
-                else
+                } 
+                else 
                 {
+                	if (conf.fast_retry)
+                	{
+                		((FastRetryReadCallback) handler).setEndpoint(dataPoint);
+                	}
                     logger.debug("reading data from {}", dataPoint);
                     MessagingService.instance().sendRR(command, dataPoint, handler);
                 }
@@ -796,7 +830,8 @@ public class StorageProxy implements StorageProxyMBean
                 }
             }
         } while (!commandsToRetry.isEmpty());
-
+        
+        logger.debug("--- return value: " + rows);
         return rows;
     }
 
@@ -833,6 +868,16 @@ public class StorageProxy implements StorageProxyMBean
             return new DatacenterReadCallback(resolver, consistencyLevel, command, endpoints);
         }
         return new ReadCallback(resolver, consistencyLevel, command, endpoints);
+    }
+    
+    static <T> ReadCallback<T> getFastRetryReadCallback(IResponseResolver<T> resolver, IReadCommand command, ConsistencyLevel consistencyLevel, List<InetAddress> endpoints)
+    {
+        if (consistencyLevel == ConsistencyLevel.LOCAL_QUORUM || consistencyLevel == ConsistencyLevel.EACH_QUORUM)
+        {
+        	return new FastRetryDatacenterReadCallback(resolver, consistencyLevel, command, endpoints);
+
+        }
+        return new FastRetryReadCallback(resolver, consistencyLevel, command, endpoints);
     }
 
     public static List<Row> getRangeSlice(RangeSliceCommand command, ConsistencyLevel consistency_level)

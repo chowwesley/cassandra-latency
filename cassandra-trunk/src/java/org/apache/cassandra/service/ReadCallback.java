@@ -58,10 +58,10 @@ public class ReadCallback<T> implements IAsyncCallback
 
     public final IResponseResolver<T> resolver;
     protected final SimpleCondition condition = new SimpleCondition();
-    private final long startTime;
+    protected final long startTime;
     protected final int blockfor;
     final List<InetAddress> endpoints;
-    private final IReadCommand command;
+    protected final IReadCommand command;
     protected final AtomicInteger received = new AtomicInteger(0);
 
     /**

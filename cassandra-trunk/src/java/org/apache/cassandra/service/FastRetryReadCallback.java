@@ -36,11 +36,14 @@ import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.service.StorageProxy.LocalReadRunnable;
 import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.apache.cassandra.utils.FBUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class FastRetryReadCallback<T> extends ReadCallback<T>
 {
-	
+
+    protected static final Logger logger = LoggerFactory.getLogger( FastRetryReadCallback.class );
 	private InetAddress retryEndpoint;
 
     public FastRetryReadCallback(IResponseResolver resolver, ConsistencyLevel consistencyLevel, IReadCommand command, List<InetAddress> endpoints)

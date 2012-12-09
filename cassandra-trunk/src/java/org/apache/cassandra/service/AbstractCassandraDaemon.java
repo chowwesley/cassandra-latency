@@ -63,6 +63,7 @@ public abstract class AbstractCassandraDaemon implements CassandraDaemon
      */
     public static void initLog4j()
     {
+    	
         if (System.getProperty("log4j.defaultInitOverride","false").equalsIgnoreCase("true"))
         {
             String config = System.getProperty("log4j.configuration", "log4j-server.properties");
@@ -77,12 +78,13 @@ public abstract class AbstractCassandraDaemon implements CassandraDaemon
                 // then try loading from the classpath.
                 configLocation = AbstractCassandraDaemon.class.getClassLoader().getResource(config);
             }
-
+            
             if (configLocation == null)
                 throw new RuntimeException("Couldn't figure out log4j configuration: "+config);
-
+            
             // Now convert URL to a filename
             String configFileName = null;
+            
             try
             {
                 // first try URL.getFile() which works for opaque URLs (file:foo) and paths without spaces
@@ -99,7 +101,9 @@ public abstract class AbstractCassandraDaemon implements CassandraDaemon
 
             PropertyConfigurator.configureAndWatch(configFileName, 10000);
             org.apache.log4j.Logger.getLogger(AbstractCassandraDaemon.class).info("Logging initialized");
+            
         }
+        
     }
 
     private static Logger logger = LoggerFactory.getLogger(AbstractCassandraDaemon.class);

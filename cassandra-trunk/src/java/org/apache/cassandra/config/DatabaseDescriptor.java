@@ -718,6 +718,11 @@ public class DatabaseDescriptor
     {
         conf.rpc_timeout_in_ms = timeOutInMillis;
     }
+    
+    public static long getFastRetryTimeout()
+    {
+    	return conf.fast_retry_timeout_in_ms;
+    }
 
     public static int getPhiConvictThreshold()
     {

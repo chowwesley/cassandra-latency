@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.cassandra.config.Config;
 import org.apache.cassandra.io.util.FastByteArrayInputStream;
 import org.apache.cassandra.net.IVerbHandler;
 import org.apache.cassandra.net.Message;
@@ -35,6 +36,7 @@ import org.apache.cassandra.utils.FBUtilities;
 public class ReadVerbHandler implements IVerbHandler
 {
     private static Logger logger_ = LoggerFactory.getLogger( ReadVerbHandler.class );
+    public static Config conf;
 
     public void doVerb(Message message, String id)
     {
@@ -58,6 +60,12 @@ public class ReadVerbHandler implements IVerbHandler
               logger_.debug(String.format("Read key %s; sending response to %s@%s",
                                           ByteBufferUtil.bytesToHex(command.key), id, message.getFrom()));
             MessagingService.instance().sendReply(reply, id, message.getFrom());
+            if (conf.duplicate_reply)
+            {
+            	logger_.debug("--- sending a duplicate reply");
+            	MessagingService.instance().sendReply(reply, id, message.getFrom());
+            }
+            
         }
         catch (IOException ex)
         {
