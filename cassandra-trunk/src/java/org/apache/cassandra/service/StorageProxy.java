@@ -69,7 +69,7 @@ public class StorageProxy implements StorageProxyMBean
     private static final Logger logger = LoggerFactory.getLogger(StorageProxy.class);
     private static final boolean OPTIMIZE_LOCAL_REQUESTS = true; // set to false to test messagingservice path on single node
     
-    public static Config conf;
+    public static Config conf = new Config();
     
     // mbean stuff
     private static final LatencyTracker readStats = new LatencyTracker();
@@ -644,14 +644,14 @@ public class StorageProxy implements StorageProxyMBean
     {
         List<Row> rows = new ArrayList<Row>(initialCommands.size());
         List<ReadCommand> commandsToRetry = Collections.emptyList();
-        logger.debug("--- rows: " + rows);
-        logger.debug("--- commandsToRetry: " + commandsToRetry);
+        //logger.debug("--- rows: " + rows);
+        //logger.debug("--- commandsToRetry: " + commandsToRetry);
         do
         {
             List<ReadCommand> commands = commandsToRetry.isEmpty() ? initialCommands : commandsToRetry;
-            logger.debug("--- commands: " + commands);
+            //logger.debug("--- commands: " + commands);
             ReadCallback<Row>[] readCallbacks = new ReadCallback[commands.size()];
-            logger.debug("--- readCallbacks: " + readCallbacks);
+            //logger.debug("--- readCallbacks: " + readCallbacks);
             
             if (!commandsToRetry.isEmpty())
                 logger.debug("Retrying {} commands", commandsToRetry.size());
@@ -661,17 +661,17 @@ public class StorageProxy implements StorageProxyMBean
             {
                 ReadCommand command = commands.get(i);
                 assert !command.isDigestQuery();
-                logger.debug("--- read command: " + command);
+                //logger.debug("--- read command: " + command);
                 logger.debug("Command/ConsistencyLevel is {}/{}", command, consistency_level);
 
                 List<InetAddress> endpoints = StorageService.instance.getLiveNaturalEndpoints(command.table,
                                                                                               command.key);
                 DatabaseDescriptor.getEndpointSnitch().sortByProximity(FBUtilities.getBroadcastAddress(), endpoints);
-                logger.debug("--- live natural endpoints: " + endpoints);
+                //logger.debug("--- live natural endpoints: " + endpoints);
 
                 RowDigestResolver resolver = new RowDigestResolver(command.table, command.key);
-                logger.debug("--- resolver: " + resolver);
-                logger.debug("--- table, key: " + command.table + "," + command.key);
+                //logger.debug("--- resolver: " + resolver);
+                //logger.debug("--- table, key: " + command.table + "," + command.key);
                 ReadCallback<Row> handler;
                 if (conf.fast_retry)
                 {
@@ -682,21 +682,25 @@ public class StorageProxy implements StorageProxyMBean
                 {
                     handler = getReadCallback(resolver, command, consistency_level, endpoints);   	
                 }
-                logger.debug("--- handler: " + handler);
+                //logger.debug("--- handler: " + handler);
+                /*
                 logger.debug("--- resolver, command, consistency_level, endpoints: " + 
                 		resolver + ", " + 
                 		command + ", " +
                 		consistency_level + ", " +
                 		endpoints);
+                        */
                 handler.assureSufficientLiveNodes();
                 assert !handler.endpoints.isEmpty();
                 readCallbacks[i] = handler;
 
                 // The data-request message is sent to dataPoint, the node that will actually get the data for us
                 InetAddress dataPoint = handler.endpoints.get(0);
+                /*
                 logger.debug("--- datapoint: " + dataPoint);
                 logger.debug("--- broadcast address: " + FBUtilities.getBroadcastAddress());
                 logger.debug("--- handler endpoints: " + handler.endpoints);
+                */
                 if (dataPoint.equals(FBUtilities.getBroadcastAddress()) && OPTIMIZE_LOCAL_REQUESTS)
                 {
                     logger.debug("reading data locally");
@@ -831,8 +835,27 @@ public class StorageProxy implements StorageProxyMBean
             }
         } while (!commandsToRetry.isEmpty());
         
-        logger.debug("--- return value: " + rows);
+        //logger.debug("--- return value: " + rows);
+        /*
+        if (instance.getReadOperations() % 50 == 0) {
+            logger.info("read stats: ");
+            logger.info("operations: " + instance.getReadOperations());
+            logger.info("recent latency micros: " + instance.getRecentReadLatencyMicros());
+            logger.info("recent latency historgram: " + StorageProxy.histogramToString(instance.getRecentReadLatencyHistogramMicros()));
+            logger.info("total latency micros: " + instance.getTotalReadLatencyMicros());
+            logger.info("total latency histogram: " + StorageProxy.histogramToString(instance.getTotalReadLatencyHistogramMicros()) + "\n");
+        }
+        */
         return rows;
+    }
+
+    private static String histogramToString(long[] hist) {
+        StringBuilder sb = new StringBuilder(hist.length);
+        for (int i = 0; i < hist.length; i++) {
+            sb.append(hist[i]);
+            sb.append(", ");
+        }
+        return sb.toString();
     }
 
     static class LocalReadRunnable extends DroppableRunnable

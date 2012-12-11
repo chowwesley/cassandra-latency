@@ -8,6 +8,14 @@ from argparse import ArgumentParser
 import readline
 
 nodes = {}
+clusterIP = {85: '169.229.49.285',
+              86: '169.229.49.186',
+              87: '169.229.49.187',
+              88: '169.229.49.188',
+              89: '169.229.49.189',
+              90: '169.229.49.190',
+              91: '169.229.49.191',
+              92: '169.229.49.192'}
 
 def execute(cmd):
     return commands.getstatusoutput(cmd)
@@ -22,12 +30,12 @@ def escape(path):
 def init_nodes():
     execute('rm -rf ' + CASS_NODES)
 
-    seeds = ','.join( ['127.0.0.' + str(i+1) for i in range(NUM_START, NUM_NODES+1) ] )
+    seeds = ','.join( ["c%d.millennium.berkeley.edu" % i for i in range(85, 93) ] )
     print 'Seeds:', seeds
 
-    for i in range(0, NUM_NODES+1):
-        token = 2**127 / NUM_NODES * (i-1) if i != 0 else 1
-        listenAddr = '127.0.0.' + str(i+1)
+    for i in range(85, 85+NUM_NODES):
+        token = 2**127 / NUM_NODES*(i-84)
+        listenAddr = clusterIP[i]
         jmxPort = str(7199 + i - 1)
 
         nodeFolder = 'node' + str(i)
@@ -48,6 +56,7 @@ def init_nodes():
                          'NODE_IP': listenAddr,
                          'SEED_LIST': seeds,
                          'JMX_PORT': jmxPort,
+                         'CACHE': "/ramfs/cassandra/%d" % i
                         }
 
         # Copy the default config files over.
@@ -62,26 +71,22 @@ def init_nodes():
                 sed(absNodeFolder + '/' + f, '#' + var + '#', str(subst))
 
 def create_keyspace():
-    execute('sh %s/bin/cassandra-cli -h 127.0.0.2 -f %s/testing/create_keyspace.sql' % (CASSANDRA_HOME, CASSANDRA_HOME))
+    pass
+    #execute('sh %s/bin/cassandra-cli -f %s/testing/create_keyspace.sql' % (CASSANDRA_HOME, CASSANDRA_HOME))
 
 def start_nodes():
-    for i in range(NUM_START, NUM_NODES+1):
+    for i in range(85, 85+NUM_NODES):
         start_node(i)
 
 def start_node(i):
     nodeFolder = 'node' + str(i)
     absNodeFolder = CASS_NODES + '/' + nodeFolder
     execute('mkdir %s' % absNodeFolder)
-    logFile = open('%s/log.txt' % absNodeFolder, 'w')
-    errFile = open('%s/err.txt' % absNodeFolder, 'w')
-    proc = subprocess.Popen('bash %s/start_cass.sh' % absNodeFolder, shell=True, stdout=logFile, stderr=errFile)
-    nodes[i] = proc
-    print 'Started %s as pid=%s' % (nodeFolder, proc.pid)
-    logFile.close()
-    errFile.close()
+    execute("ssh ntan@c%d.millennium.berkeley.edu 'bash %s/start_cass.sh 1> %s/log.txt 2> %s/err.txt &'" % (i, absNodeFolder, absNodeFolder, absNodeFolder))
+    print 'Started %s' % nodeFolder
 
 def check_nodes():
-    for i in range(NUM_START, NUM_NODES+1):
+    for i in range(85, 85+NUM_NODES):
         nodeFolder = 'node' + str(i)
         absNodeFolder = CASS_NODES + '/' + nodeFolder
         errFile = open('%s/err.txt' % absNodeFolder, 'r')
@@ -113,22 +118,23 @@ def wait():
 
 
 parser = ArgumentParser(description='Starts some Cass servers!')
-parser.add_argument('-n', help='Number of nodes. Default 3.', default=3)
-parser.add_argument('-w', help='How long to wait for nodes to come alive. Default 20s.', default=20)
-parser.add_argument('-coord', help='Start up the coordinator node (node0)', action='store_const', const=True)
-parser.add_argument('-noinit', help='Do not re-initialize nodes', action='store_const', const=True)
-parser.add_argument('-nostart', help='Do not start the nodes', action='store_const', const=True)
-parser.add_argument('-nokilljava', help='Do not kill java (to stop previous nodes)', action='store_const', const=True)
-parser.add_argument('-ignoreerrors', help='Ignore server start errors', action='store_const', const=True)
+parser.add_argument('--n', help='Number of nodes. Default 3.', default=3)
+parser.add_argument('--w', help='How long to wait for nodes to come alive. Default 20s.', default=20)
+parser.add_argument('--coord', help='Start up the coordinator node (node0)', action='store_const', const=True)
+parser.add_argument('--noinit', help='Do not re-initialize nodes', action='store_const', const=True)
+parser.add_argument('--nostart', help='Do not start the nodes', action='store_const', const=True)
+parser.add_argument('--nokilljava', help='Do not kill java (to stop previous nodes)', action='store_const', const=True)
+parser.add_argument('--ignoreerrors', help='Ignore server start errors', action='store_const', const=True)
 args = parser.parse_args()
 
-NUM_START = 1 if not args.coord else 0
-NUM_NODES = int(args.n)
+NUM_START = 85
+NUM_NODES = 8
 
 print 'Happy days!'
 if not args.nokilljava:
-    execute('killall java')
-
+    for i in range(85, 85+NUM_NODES):
+        execute("ssh ntan@c%d.millennium.berkeley.edu 'killall java'" % i)
+    
 if not args.noinit:
     init_nodes()
     print 'Configuration of %s nodes%s complete, starting shortly...' % (NUM_NODES, ' (+ 1 coordinator)' if args.coord else '')
@@ -194,7 +200,6 @@ if not args.nostart:
         elif cmds[0] == 'k' or cmds[0] == 'kill':
             try:
                 node = extractNodeFromCmd(cmds)
-                assert 1 <= node <= NUM_NODES  # Why would you want to kill the coordinator?
                 
                 (status, output) = execute('ps -C java ww')
                 procs = output.splitlines()
@@ -221,7 +226,6 @@ if not args.nostart:
         elif cmds[0] == 's' or cmds[0] == 'start':
             try:
                 node = extractNodeFromCmd(cmds)
-                assert 0 <= node <= NUM_NODES
                 if node not in nodes or nodes[node] == None:
                     start_node(node)
                 else:

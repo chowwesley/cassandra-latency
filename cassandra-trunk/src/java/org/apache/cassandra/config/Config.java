@@ -49,10 +49,10 @@ public class Config
     public String initial_token;
 
     public Long rpc_timeout_in_ms = new Long(2000);
-    public Long fast_retry_timeout_in_ms = new Long(10);
+    public Long fast_retry_timeout_in_ms = new Long(20);
     
-    public boolean fast_retry = true;
-    public boolean duplicate_reply = true;
+    public boolean fast_retry = false;
+    public boolean duplicate_reply = false;
 
     public Integer streaming_socket_timeout_in_ms = new Integer(0);
 

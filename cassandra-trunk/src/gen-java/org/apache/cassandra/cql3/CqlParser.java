@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g 2012-10-19 20:50:36
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g 2012-12-09 01:29:56
 
     package org.apache.cassandra.cql3;
 
@@ -163,7 +163,7 @@ public class CqlParser extends Parser {
         
 
     public String[] getTokenNames() { return CqlParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g"; }
+    public String getGrammarFileName() { return "/home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g"; }
 
 
         private List<String> recognitionErrors = new ArrayList<String>();
@@ -202,7 +202,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "query"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:122:1: query returns [ParsedStatement stmnt] : st= cqlStatement ( ';' )* EOF ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:122:1: query returns [ParsedStatement stmnt] : st= cqlStatement ( ';' )* EOF ;
     public final ParsedStatement query() throws RecognitionException {
         ParsedStatement stmnt = null;
 
@@ -210,15 +210,15 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:5: (st= cqlStatement ( ';' )* EOF )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:7: st= cqlStatement ( ';' )* EOF
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:5: (st= cqlStatement ( ';' )* EOF )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:7: st= cqlStatement ( ';' )* EOF
             {
             pushFollow(FOLLOW_cqlStatement_in_query72);
             st=cqlStatement();
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:23: ( ';' )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:23: ( ';' )*
             loop1:
             do {
                 int alt1=2;
@@ -231,7 +231,7 @@ public class CqlParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:24: ';'
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:125:24: ';'
             	    {
             	    match(input,112,FOLLOW_112_in_query75); 
 
@@ -261,7 +261,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cqlStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:128:1: cqlStatement returns [ParsedStatement stmt] : (st1= selectStatement | st2= insertStatement | st3= updateStatement | st4= batchStatement | st5= deleteStatement | st6= useStatement | st7= truncateStatement | st8= createKeyspaceStatement | st9= createColumnFamilyStatement | st10= createIndexStatement | st11= dropKeyspaceStatement | st12= dropColumnFamilyStatement | st13= dropIndexStatement | st14= alterTableStatement | st15= grantStatement | st16= revokeStatement | st17= listGrantsStatement | st18= alterKeyspaceStatement );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:128:1: cqlStatement returns [ParsedStatement stmt] : (st1= selectStatement | st2= insertStatement | st3= updateStatement | st4= batchStatement | st5= deleteStatement | st6= useStatement | st7= truncateStatement | st8= createKeyspaceStatement | st9= createColumnFamilyStatement | st10= createIndexStatement | st11= dropKeyspaceStatement | st12= dropColumnFamilyStatement | st13= dropIndexStatement | st14= alterTableStatement | st15= grantStatement | st16= revokeStatement | st17= listGrantsStatement | st18= alterKeyspaceStatement );
     public final ParsedStatement cqlStatement() throws RecognitionException {
         ParsedStatement stmt = null;
 
@@ -303,12 +303,12 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:130:5: (st1= selectStatement | st2= insertStatement | st3= updateStatement | st4= batchStatement | st5= deleteStatement | st6= useStatement | st7= truncateStatement | st8= createKeyspaceStatement | st9= createColumnFamilyStatement | st10= createIndexStatement | st11= dropKeyspaceStatement | st12= dropColumnFamilyStatement | st13= dropIndexStatement | st14= alterTableStatement | st15= grantStatement | st16= revokeStatement | st17= listGrantsStatement | st18= alterKeyspaceStatement )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:130:5: (st1= selectStatement | st2= insertStatement | st3= updateStatement | st4= batchStatement | st5= deleteStatement | st6= useStatement | st7= truncateStatement | st8= createKeyspaceStatement | st9= createColumnFamilyStatement | st10= createIndexStatement | st11= dropKeyspaceStatement | st12= dropColumnFamilyStatement | st13= dropIndexStatement | st14= alterTableStatement | st15= grantStatement | st16= revokeStatement | st17= listGrantsStatement | st18= alterKeyspaceStatement )
             int alt2=18;
             alt2 = dfa2.predict(input);
             switch (alt2) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:130:7: st1= selectStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:130:7: st1= selectStatement
                     {
                     pushFollow(FOLLOW_selectStatement_in_cqlStatement113);
                     st1=selectStatement();
@@ -320,7 +320,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:131:7: st2= insertStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:131:7: st2= insertStatement
                     {
                     pushFollow(FOLLOW_insertStatement_in_cqlStatement138);
                     st2=insertStatement();
@@ -332,7 +332,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:132:7: st3= updateStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:132:7: st3= updateStatement
                     {
                     pushFollow(FOLLOW_updateStatement_in_cqlStatement163);
                     st3=updateStatement();
@@ -344,7 +344,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:133:7: st4= batchStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:133:7: st4= batchStatement
                     {
                     pushFollow(FOLLOW_batchStatement_in_cqlStatement188);
                     st4=batchStatement();
@@ -356,7 +356,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:134:7: st5= deleteStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:134:7: st5= deleteStatement
                     {
                     pushFollow(FOLLOW_deleteStatement_in_cqlStatement214);
                     st5=deleteStatement();
@@ -368,7 +368,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:135:7: st6= useStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:135:7: st6= useStatement
                     {
                     pushFollow(FOLLOW_useStatement_in_cqlStatement239);
                     st6=useStatement();
@@ -380,7 +380,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:136:7: st7= truncateStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:136:7: st7= truncateStatement
                     {
                     pushFollow(FOLLOW_truncateStatement_in_cqlStatement267);
                     st7=truncateStatement();
@@ -392,7 +392,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:137:7: st8= createKeyspaceStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:137:7: st8= createKeyspaceStatement
                     {
                     pushFollow(FOLLOW_createKeyspaceStatement_in_cqlStatement290);
                     st8=createKeyspaceStatement();
@@ -404,7 +404,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:138:7: st9= createColumnFamilyStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:138:7: st9= createColumnFamilyStatement
                     {
                     pushFollow(FOLLOW_createColumnFamilyStatement_in_cqlStatement307);
                     st9=createColumnFamilyStatement();
@@ -416,7 +416,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 10 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:139:7: st10= createIndexStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:139:7: st10= createIndexStatement
                     {
                     pushFollow(FOLLOW_createIndexStatement_in_cqlStatement319);
                     st10=createIndexStatement();
@@ -428,7 +428,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 11 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:140:7: st11= dropKeyspaceStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:140:7: st11= dropKeyspaceStatement
                     {
                     pushFollow(FOLLOW_dropKeyspaceStatement_in_cqlStatement338);
                     st11=dropKeyspaceStatement();
@@ -440,7 +440,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 12 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:141:7: st12= dropColumnFamilyStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:141:7: st12= dropColumnFamilyStatement
                     {
                     pushFollow(FOLLOW_dropColumnFamilyStatement_in_cqlStatement356);
                     st12=dropColumnFamilyStatement();
@@ -452,7 +452,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 13 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:142:7: st13= dropIndexStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:142:7: st13= dropIndexStatement
                     {
                     pushFollow(FOLLOW_dropIndexStatement_in_cqlStatement370);
                     st13=dropIndexStatement();
@@ -464,7 +464,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 14 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:143:7: st14= alterTableStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:143:7: st14= alterTableStatement
                     {
                     pushFollow(FOLLOW_alterTableStatement_in_cqlStatement391);
                     st14=alterTableStatement();
@@ -476,7 +476,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 15 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:144:7: st15= grantStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:144:7: st15= grantStatement
                     {
                     pushFollow(FOLLOW_grantStatement_in_cqlStatement411);
                     st15=grantStatement();
@@ -488,7 +488,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 16 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:145:7: st16= revokeStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:145:7: st16= revokeStatement
                     {
                     pushFollow(FOLLOW_revokeStatement_in_cqlStatement436);
                     st16=revokeStatement();
@@ -500,7 +500,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 17 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:146:7: st17= listGrantsStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:146:7: st17= listGrantsStatement
                     {
                     pushFollow(FOLLOW_listGrantsStatement_in_cqlStatement460);
                     st17=listGrantsStatement();
@@ -512,7 +512,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 18 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:147:7: st18= alterKeyspaceStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:147:7: st18= alterKeyspaceStatement
                     {
                     pushFollow(FOLLOW_alterKeyspaceStatement_in_cqlStatement480);
                     st18=alterKeyspaceStatement();
@@ -539,7 +539,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "useStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:153:1: useStatement returns [UseStatement stmt] : K_USE ks= keyspaceName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:153:1: useStatement returns [UseStatement stmt] : K_USE ks= keyspaceName ;
     public final UseStatement useStatement() throws RecognitionException {
         UseStatement stmt = null;
 
@@ -547,8 +547,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:154:5: ( K_USE ks= keyspaceName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:154:7: K_USE ks= keyspaceName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:154:5: ( K_USE ks= keyspaceName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:154:7: K_USE ks= keyspaceName
             {
             match(input,K_USE,FOLLOW_K_USE_in_useStatement510); 
             pushFollow(FOLLOW_keyspaceName_in_useStatement514);
@@ -573,7 +573,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "selectStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:157:1: selectStatement returns [SelectStatement.RawStatement expr] : K_SELECT (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) ) K_FROM cf= columnFamilyName ( K_USING K_CONSISTENCY K_LEVEL )? ( K_WHERE wclause= whereClause )? ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )? ( K_LIMIT rows= INTEGER )? ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:157:1: selectStatement returns [SelectStatement.RawStatement expr] : K_SELECT (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) ) K_FROM cf= columnFamilyName ( K_USING K_CONSISTENCY K_LEVEL )? ( K_WHERE wclause= whereClause )? ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )? ( K_LIMIT rows= INTEGER )? ;
     public final SelectStatement.RawStatement selectStatement() throws RecognitionException {
         SelectStatement.RawStatement expr = null;
 
@@ -593,11 +593,11 @@ public class CqlParser extends Parser {
                 Map<ColumnIdentifier, Boolean> orderings = new LinkedHashMap<ColumnIdentifier, Boolean>();
             
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:5: ( K_SELECT (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) ) K_FROM cf= columnFamilyName ( K_USING K_CONSISTENCY K_LEVEL )? ( K_WHERE wclause= whereClause )? ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )? ( K_LIMIT rows= INTEGER )? )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:7: K_SELECT (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) ) K_FROM cf= columnFamilyName ( K_USING K_CONSISTENCY K_LEVEL )? ( K_WHERE wclause= whereClause )? ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )? ( K_LIMIT rows= INTEGER )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:5: ( K_SELECT (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) ) K_FROM cf= columnFamilyName ( K_USING K_CONSISTENCY K_LEVEL )? ( K_WHERE wclause= whereClause )? ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )? ( K_LIMIT rows= INTEGER )? )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:7: K_SELECT (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) ) K_FROM cf= columnFamilyName ( K_USING K_CONSISTENCY K_LEVEL )? ( K_WHERE wclause= whereClause )? ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )? ( K_LIMIT rows= INTEGER )?
             {
             match(input,K_SELECT,FOLLOW_K_SELECT_in_selectStatement548); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:16: (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:16: (sclause= selectClause | ( K_COUNT '(' sclause= selectCountClause ')' ) )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -628,7 +628,7 @@ public class CqlParser extends Parser {
             }
             switch (alt3) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:18: sclause= selectClause
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:18: sclause= selectClause
                     {
                     pushFollow(FOLLOW_selectClause_in_selectStatement554);
                     sclause=selectClause();
@@ -639,10 +639,10 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:41: ( K_COUNT '(' sclause= selectCountClause ')' )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:41: ( K_COUNT '(' sclause= selectCountClause ')' )
                     {
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:41: ( K_COUNT '(' sclause= selectCountClause ')' )
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:42: K_COUNT '(' sclause= selectCountClause ')'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:41: ( K_COUNT '(' sclause= selectCountClause ')' )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:171:42: K_COUNT '(' sclause= selectCountClause ')'
                     {
                     match(input,K_COUNT,FOLLOW_K_COUNT_in_selectStatement559); 
                     match(input,113,FOLLOW_113_in_selectStatement561); 
@@ -668,7 +668,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:173:7: ( K_USING K_CONSISTENCY K_LEVEL )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:173:7: ( K_USING K_CONSISTENCY K_LEVEL )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -677,7 +677,7 @@ public class CqlParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:173:9: K_USING K_CONSISTENCY K_LEVEL
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:173:9: K_USING K_CONSISTENCY K_LEVEL
                     {
                     match(input,K_USING,FOLLOW_K_USING_in_selectStatement594); 
                     match(input,K_CONSISTENCY,FOLLOW_K_CONSISTENCY_in_selectStatement596); 
@@ -689,7 +689,7 @@ public class CqlParser extends Parser {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:174:7: ( K_WHERE wclause= whereClause )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:174:7: ( K_WHERE wclause= whereClause )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -698,7 +698,7 @@ public class CqlParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:174:9: K_WHERE wclause= whereClause
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:174:9: K_WHERE wclause= whereClause
                     {
                     match(input,K_WHERE,FOLLOW_K_WHERE_in_selectStatement613); 
                     pushFollow(FOLLOW_whereClause_in_selectStatement617);
@@ -712,7 +712,7 @@ public class CqlParser extends Parser {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:7: ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:7: ( K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )* )?
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -721,7 +721,7 @@ public class CqlParser extends Parser {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:9: K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:9: K_ORDER K_BY orderByClause[orderings] ( ',' orderByClause[orderings] )*
                     {
                     match(input,K_ORDER,FOLLOW_K_ORDER_in_selectStatement630); 
                     match(input,K_BY,FOLLOW_K_BY_in_selectStatement632); 
@@ -730,7 +730,7 @@ public class CqlParser extends Parser {
 
                     state._fsp--;
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:47: ( ',' orderByClause[orderings] )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:47: ( ',' orderByClause[orderings] )*
                     loop6:
                     do {
                         int alt6=2;
@@ -743,7 +743,7 @@ public class CqlParser extends Parser {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:49: ',' orderByClause[orderings]
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:175:49: ',' orderByClause[orderings]
                     	    {
                     	    match(input,115,FOLLOW_115_in_selectStatement639); 
                     	    pushFollow(FOLLOW_orderByClause_in_selectStatement641);
@@ -766,7 +766,7 @@ public class CqlParser extends Parser {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:176:7: ( K_LIMIT rows= INTEGER )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:176:7: ( K_LIMIT rows= INTEGER )?
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -775,7 +775,7 @@ public class CqlParser extends Parser {
             }
             switch (alt8) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:176:9: K_LIMIT rows= INTEGER
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:176:9: K_LIMIT rows= INTEGER
                     {
                     match(input,K_LIMIT,FOLLOW_K_LIMIT_in_selectStatement658); 
                     rows=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_selectStatement662); 
@@ -809,7 +809,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "selectClause"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:186:1: selectClause returns [List<Selector> expr] : (t1= selector ( ',' tN= selector )* | '\\*' );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:186:1: selectClause returns [List<Selector> expr] : (t1= selector ( ',' tN= selector )* | '\\*' );
     public final List<Selector> selectClause() throws RecognitionException {
         List<Selector> expr = null;
 
@@ -819,7 +819,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:5: (t1= selector ( ',' tN= selector )* | '\\*' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:5: (t1= selector ( ',' tN= selector )* | '\\*' )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -837,7 +837,7 @@ public class CqlParser extends Parser {
             }
             switch (alt10) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:7: t1= selector ( ',' tN= selector )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:7: t1= selector ( ',' tN= selector )*
                     {
                     pushFollow(FOLLOW_selector_in_selectClause698);
                     t1=selector();
@@ -845,7 +845,7 @@ public class CqlParser extends Parser {
                     state._fsp--;
 
                      expr = new ArrayList<Selector>(); expr.add(t1); 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:73: ( ',' tN= selector )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:73: ( ',' tN= selector )*
                     loop9:
                     do {
                         int alt9=2;
@@ -858,7 +858,7 @@ public class CqlParser extends Parser {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:74: ',' tN= selector
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:187:74: ',' tN= selector
                     	    {
                     	    match(input,115,FOLLOW_115_in_selectClause703); 
                     	    pushFollow(FOLLOW_selector_in_selectClause707);
@@ -880,7 +880,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:188:7: '\\*'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:188:7: '\\*'
                     {
                     match(input,116,FOLLOW_116_in_selectClause719); 
                      expr = Collections.<Selector>emptyList();
@@ -902,7 +902,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "selector"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:191:1: selector returns [Selector s] : (c= cident | K_WRITETIME '(' c= cident ')' | K_TTL '(' c= cident ')' );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:191:1: selector returns [Selector s] : (c= cident | K_WRITETIME '(' c= cident ')' | K_TTL '(' c= cident ')' );
     public final Selector selector() throws RecognitionException {
         Selector s = null;
 
@@ -910,7 +910,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:192:5: (c= cident | K_WRITETIME '(' c= cident ')' | K_TTL '(' c= cident ')' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:192:5: (c= cident | K_WRITETIME '(' c= cident ')' | K_TTL '(' c= cident ')' )
             int alt11=3;
             switch ( input.LA(1) ) {
             case K_COUNT:
@@ -988,7 +988,7 @@ public class CqlParser extends Parser {
 
             switch (alt11) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:192:7: c= cident
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:192:7: c= cident
                     {
                     pushFollow(FOLLOW_cident_in_selector744);
                     c=cident();
@@ -1000,7 +1000,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:193:7: K_WRITETIME '(' c= cident ')'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:193:7: K_WRITETIME '(' c= cident ')'
                     {
                     match(input,K_WRITETIME,FOLLOW_K_WRITETIME_in_selector766); 
                     match(input,113,FOLLOW_113_in_selector768); 
@@ -1015,7 +1015,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:194:7: K_TTL '(' c= cident ')'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:194:7: K_TTL '(' c= cident ')'
                     {
                     match(input,K_TTL,FOLLOW_K_TTL_in_selector784); 
                     match(input,113,FOLLOW_113_in_selector786); 
@@ -1044,7 +1044,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "selectCountClause"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:197:1: selectCountClause returns [List<Selector> expr] : (ids= cidentList | '\\*' | i= INTEGER );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:197:1: selectCountClause returns [List<Selector> expr] : (ids= cidentList | '\\*' | i= INTEGER );
     public final List<Selector> selectCountClause() throws RecognitionException {
         List<Selector> expr = null;
 
@@ -1053,7 +1053,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:198:5: (ids= cidentList | '\\*' | i= INTEGER )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:198:5: (ids= cidentList | '\\*' | i= INTEGER )
             int alt12=3;
             switch ( input.LA(1) ) {
             case K_COUNT:
@@ -1107,7 +1107,7 @@ public class CqlParser extends Parser {
 
             switch (alt12) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:198:7: ids= cidentList
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:198:7: ids= cidentList
                     {
                     pushFollow(FOLLOW_cidentList_in_selectCountClause823);
                     ids=cidentList();
@@ -1119,7 +1119,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:199:7: '\\*'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:199:7: '\\*'
                     {
                     match(input,116,FOLLOW_116_in_selectCountClause833); 
                      expr = Collections.<Selector>emptyList();
@@ -1127,7 +1127,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:200:7: i= INTEGER
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:200:7: i= INTEGER
                     {
                     i=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_selectCountClause855); 
                      if (!i.getText().equals("1")) addRecognitionError("Only COUNT(1) is supported, got COUNT(" + i.getText() + ")"); expr = Collections.<Selector>emptyList();
@@ -1149,7 +1149,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "whereClause"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:203:1: whereClause returns [List<Relation> clause] : first= relation ( K_AND next= relation )* ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:203:1: whereClause returns [List<Relation> clause] : first= relation ( K_AND next= relation )* ;
     public final List<Relation> whereClause() throws RecognitionException {
         List<Relation> clause = null;
 
@@ -1160,8 +1160,8 @@ public class CqlParser extends Parser {
 
          clause = new ArrayList<Relation>(); 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:5: (first= relation ( K_AND next= relation )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:7: first= relation ( K_AND next= relation )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:5: (first= relation ( K_AND next= relation )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:7: first= relation ( K_AND next= relation )*
             {
             pushFollow(FOLLOW_relation_in_whereClause893);
             first=relation();
@@ -1169,7 +1169,7 @@ public class CqlParser extends Parser {
             state._fsp--;
 
              clause.add(first); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:46: ( K_AND next= relation )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:46: ( K_AND next= relation )*
             loop13:
             do {
                 int alt13=2;
@@ -1182,7 +1182,7 @@ public class CqlParser extends Parser {
 
                 switch (alt13) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:47: K_AND next= relation
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:205:47: K_AND next= relation
             	    {
             	    match(input,K_AND,FOLLOW_K_AND_in_whereClause898); 
             	    pushFollow(FOLLOW_relation_in_whereClause902);
@@ -1216,7 +1216,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "orderByClause"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:208:1: orderByClause[Map<ColumnIdentifier, Boolean> orderings] : c= cident ( K_ASC | K_DESC )? ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:208:1: orderByClause[Map<ColumnIdentifier, Boolean> orderings] : c= cident ( K_ASC | K_DESC )? ;
     public final void orderByClause(Map<ColumnIdentifier, Boolean> orderings) throws RecognitionException {
         ColumnIdentifier c = null;
 
@@ -1226,8 +1226,8 @@ public class CqlParser extends Parser {
                 boolean reversed = false;
             
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:5: (c= cident ( K_ASC | K_DESC )? )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:7: c= cident ( K_ASC | K_DESC )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:5: (c= cident ( K_ASC | K_DESC )? )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:7: c= cident ( K_ASC | K_DESC )?
             {
             pushFollow(FOLLOW_cident_in_orderByClause934);
             c=cident();
@@ -1235,7 +1235,7 @@ public class CqlParser extends Parser {
             state._fsp--;
 
              orderBy = c; 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:33: ( K_ASC | K_DESC )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:33: ( K_ASC | K_DESC )?
             int alt14=3;
             int LA14_0 = input.LA(1);
 
@@ -1247,14 +1247,14 @@ public class CqlParser extends Parser {
             }
             switch (alt14) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:34: K_ASC
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:34: K_ASC
                     {
                     match(input,K_ASC,FOLLOW_K_ASC_in_orderByClause939); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:42: K_DESC
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:213:42: K_DESC
                     {
                     match(input,K_DESC,FOLLOW_K_DESC_in_orderByClause943); 
                      reversed = true; 
@@ -1281,7 +1281,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "insertStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:216:1: insertStatement returns [UpdateStatement expr] : K_INSERT K_INTO cf= columnFamilyName '(' c1= cident ( ',' cn= cident )+ ')' K_VALUES '(' v1= term ( ',' vn= term )+ ')' ( usingClause[attrs] )? ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:216:1: insertStatement returns [UpdateStatement expr] : K_INSERT K_INTO cf= columnFamilyName '(' c1= cident ( ',' cn= cident )+ ')' K_VALUES '(' v1= term ( ',' vn= term )+ ')' ( usingClause[attrs] )? ;
     public final UpdateStatement insertStatement() throws RecognitionException {
         UpdateStatement expr = null;
 
@@ -1302,8 +1302,8 @@ public class CqlParser extends Parser {
                 List<Term> columnValues = new ArrayList<Term>();
             
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:229:5: ( K_INSERT K_INTO cf= columnFamilyName '(' c1= cident ( ',' cn= cident )+ ')' K_VALUES '(' v1= term ( ',' vn= term )+ ')' ( usingClause[attrs] )? )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:229:7: K_INSERT K_INTO cf= columnFamilyName '(' c1= cident ( ',' cn= cident )+ ')' K_VALUES '(' v1= term ( ',' vn= term )+ ')' ( usingClause[attrs] )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:229:5: ( K_INSERT K_INTO cf= columnFamilyName '(' c1= cident ( ',' cn= cident )+ ')' K_VALUES '(' v1= term ( ',' vn= term )+ ')' ( usingClause[attrs] )? )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:229:7: K_INSERT K_INTO cf= columnFamilyName '(' c1= cident ( ',' cn= cident )+ ')' K_VALUES '(' v1= term ( ',' vn= term )+ ')' ( usingClause[attrs] )?
             {
             match(input,K_INSERT,FOLLOW_K_INSERT_in_insertStatement981); 
             match(input,K_INTO,FOLLOW_K_INTO_in_insertStatement983); 
@@ -1319,7 +1319,7 @@ public class CqlParser extends Parser {
             state._fsp--;
 
              columnNames.add(c1); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:230:51: ( ',' cn= cident )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:230:51: ( ',' cn= cident )+
             int cnt15=0;
             loop15:
             do {
@@ -1333,7 +1333,7 @@ public class CqlParser extends Parser {
 
                 switch (alt15) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:230:53: ',' cn= cident
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:230:53: ',' cn= cident
             	    {
             	    match(input,115,FOLLOW_115_in_insertStatement1010); 
             	    pushFollow(FOLLOW_cident_in_insertStatement1014);
@@ -1364,7 +1364,7 @@ public class CqlParser extends Parser {
             state._fsp--;
 
              columnValues.add(v1); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:232:49: ( ',' vn= term )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:232:49: ( ',' vn= term )+
             int cnt16=0;
             loop16:
             do {
@@ -1378,7 +1378,7 @@ public class CqlParser extends Parser {
 
                 switch (alt16) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:232:51: ',' vn= term
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:232:51: ',' vn= term
             	    {
             	    match(input,115,FOLLOW_115_in_insertStatement1053); 
             	    pushFollow(FOLLOW_term_in_insertStatement1057);
@@ -1401,7 +1401,7 @@ public class CqlParser extends Parser {
             } while (true);
 
             match(input,114,FOLLOW_114_in_insertStatement1064); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:233:9: ( usingClause[attrs] )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:233:9: ( usingClause[attrs] )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -1410,7 +1410,7 @@ public class CqlParser extends Parser {
             }
             switch (alt17) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:233:11: usingClause[attrs]
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:233:11: usingClause[attrs]
                     {
                     pushFollow(FOLLOW_usingClause_in_insertStatement1076);
                     usingClause(attrs);
@@ -1442,11 +1442,11 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "usingClause"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:239:1: usingClause[Attributes attrs] : K_USING usingClauseObjective[attrs] ( ( K_AND )? usingClauseObjective[attrs] )* ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:239:1: usingClause[Attributes attrs] : K_USING usingClauseObjective[attrs] ( ( K_AND )? usingClauseObjective[attrs] )* ;
     public final void usingClause(Attributes attrs) throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:5: ( K_USING usingClauseObjective[attrs] ( ( K_AND )? usingClauseObjective[attrs] )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:7: K_USING usingClauseObjective[attrs] ( ( K_AND )? usingClauseObjective[attrs] )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:5: ( K_USING usingClauseObjective[attrs] ( ( K_AND )? usingClauseObjective[attrs] )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:7: K_USING usingClauseObjective[attrs] ( ( K_AND )? usingClauseObjective[attrs] )*
             {
             match(input,K_USING,FOLLOW_K_USING_in_usingClause1106); 
             pushFollow(FOLLOW_usingClauseObjective_in_usingClause1108);
@@ -1454,7 +1454,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:43: ( ( K_AND )? usingClauseObjective[attrs] )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:43: ( ( K_AND )? usingClauseObjective[attrs] )*
             loop19:
             do {
                 int alt19=2;
@@ -1467,9 +1467,9 @@ public class CqlParser extends Parser {
 
                 switch (alt19) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:45: ( K_AND )? usingClauseObjective[attrs]
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:45: ( K_AND )? usingClauseObjective[attrs]
             	    {
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:45: ( K_AND )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:45: ( K_AND )?
             	    int alt18=2;
             	    int LA18_0 = input.LA(1);
 
@@ -1478,7 +1478,7 @@ public class CqlParser extends Parser {
             	    }
             	    switch (alt18) {
             	        case 1 :
-            	            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:45: K_AND
+            	            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:240:45: K_AND
             	            {
             	            match(input,K_AND,FOLLOW_K_AND_in_usingClause1113); 
 
@@ -1517,11 +1517,11 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "usingClauseDelete"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:243:1: usingClauseDelete[Attributes attrs] : K_USING usingClauseDeleteObjective[attrs] ( ( K_AND )? usingClauseDeleteObjective[attrs] )* ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:243:1: usingClauseDelete[Attributes attrs] : K_USING usingClauseDeleteObjective[attrs] ( ( K_AND )? usingClauseDeleteObjective[attrs] )* ;
     public final void usingClauseDelete(Attributes attrs) throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:5: ( K_USING usingClauseDeleteObjective[attrs] ( ( K_AND )? usingClauseDeleteObjective[attrs] )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:7: K_USING usingClauseDeleteObjective[attrs] ( ( K_AND )? usingClauseDeleteObjective[attrs] )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:5: ( K_USING usingClauseDeleteObjective[attrs] ( ( K_AND )? usingClauseDeleteObjective[attrs] )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:7: K_USING usingClauseDeleteObjective[attrs] ( ( K_AND )? usingClauseDeleteObjective[attrs] )*
             {
             match(input,K_USING,FOLLOW_K_USING_in_usingClauseDelete1138); 
             pushFollow(FOLLOW_usingClauseDeleteObjective_in_usingClauseDelete1140);
@@ -1529,7 +1529,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:49: ( ( K_AND )? usingClauseDeleteObjective[attrs] )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:49: ( ( K_AND )? usingClauseDeleteObjective[attrs] )*
             loop21:
             do {
                 int alt21=2;
@@ -1542,9 +1542,9 @@ public class CqlParser extends Parser {
 
                 switch (alt21) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:51: ( K_AND )? usingClauseDeleteObjective[attrs]
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:51: ( K_AND )? usingClauseDeleteObjective[attrs]
             	    {
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:51: ( K_AND )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:51: ( K_AND )?
             	    int alt20=2;
             	    int LA20_0 = input.LA(1);
 
@@ -1553,7 +1553,7 @@ public class CqlParser extends Parser {
             	    }
             	    switch (alt20) {
             	        case 1 :
-            	            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:51: K_AND
+            	            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:244:51: K_AND
             	            {
             	            match(input,K_AND,FOLLOW_K_AND_in_usingClauseDelete1145); 
 
@@ -1592,13 +1592,13 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "usingClauseDeleteObjective"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:247:1: usingClauseDeleteObjective[Attributes attrs] : ( K_CONSISTENCY K_LEVEL | K_TIMESTAMP ts= INTEGER );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:247:1: usingClauseDeleteObjective[Attributes attrs] : ( K_CONSISTENCY K_LEVEL | K_TIMESTAMP ts= INTEGER );
     public final void usingClauseDeleteObjective(Attributes attrs) throws RecognitionException {
         Token ts=null;
         Token K_LEVEL2=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:248:5: ( K_CONSISTENCY K_LEVEL | K_TIMESTAMP ts= INTEGER )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:248:5: ( K_CONSISTENCY K_LEVEL | K_TIMESTAMP ts= INTEGER )
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -1616,7 +1616,7 @@ public class CqlParser extends Parser {
             }
             switch (alt22) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:248:7: K_CONSISTENCY K_LEVEL
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:248:7: K_CONSISTENCY K_LEVEL
                     {
                     match(input,K_CONSISTENCY,FOLLOW_K_CONSISTENCY_in_usingClauseDeleteObjective1170); 
                     K_LEVEL2=(Token)match(input,K_LEVEL,FOLLOW_K_LEVEL_in_usingClauseDeleteObjective1172); 
@@ -1625,7 +1625,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:249:7: K_TIMESTAMP ts= INTEGER
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:249:7: K_TIMESTAMP ts= INTEGER
                     {
                     match(input,K_TIMESTAMP,FOLLOW_K_TIMESTAMP_in_usingClauseDeleteObjective1183); 
                     ts=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_usingClauseDeleteObjective1187); 
@@ -1648,12 +1648,12 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "usingClauseObjective"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:252:1: usingClauseObjective[Attributes attrs] : ( usingClauseDeleteObjective[attrs] | K_TTL t= INTEGER );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:252:1: usingClauseObjective[Attributes attrs] : ( usingClauseDeleteObjective[attrs] | K_TTL t= INTEGER );
     public final void usingClauseObjective(Attributes attrs) throws RecognitionException {
         Token t=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:253:5: ( usingClauseDeleteObjective[attrs] | K_TTL t= INTEGER )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:253:5: ( usingClauseDeleteObjective[attrs] | K_TTL t= INTEGER )
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -1671,7 +1671,7 @@ public class CqlParser extends Parser {
             }
             switch (alt23) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:253:7: usingClauseDeleteObjective[attrs]
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:253:7: usingClauseDeleteObjective[attrs]
                     {
                     pushFollow(FOLLOW_usingClauseDeleteObjective_in_usingClauseObjective1207);
                     usingClauseDeleteObjective(attrs);
@@ -1682,7 +1682,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:254:7: K_TTL t= INTEGER
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:254:7: K_TTL t= INTEGER
                     {
                     match(input,K_TTL,FOLLOW_K_TTL_in_usingClauseObjective1216); 
                     t=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_usingClauseObjective1220); 
@@ -1705,7 +1705,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "updateStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:257:1: updateStatement returns [UpdateStatement expr] : K_UPDATE cf= columnFamilyName ( usingClause[attrs] )? K_SET termPairWithOperation[columns] ( ',' termPairWithOperation[columns] )* K_WHERE wclause= whereClause ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:257:1: updateStatement returns [UpdateStatement expr] : K_UPDATE cf= columnFamilyName ( usingClause[attrs] )? K_SET termPairWithOperation[columns] ( ',' termPairWithOperation[columns] )* K_WHERE wclause= whereClause ;
     public final UpdateStatement updateStatement() throws RecognitionException {
         UpdateStatement expr = null;
 
@@ -1719,8 +1719,8 @@ public class CqlParser extends Parser {
                 Map<ColumnIdentifier, Operation> columns = new HashMap<ColumnIdentifier, Operation>();
             
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:268:5: ( K_UPDATE cf= columnFamilyName ( usingClause[attrs] )? K_SET termPairWithOperation[columns] ( ',' termPairWithOperation[columns] )* K_WHERE wclause= whereClause )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:268:7: K_UPDATE cf= columnFamilyName ( usingClause[attrs] )? K_SET termPairWithOperation[columns] ( ',' termPairWithOperation[columns] )* K_WHERE wclause= whereClause
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:268:5: ( K_UPDATE cf= columnFamilyName ( usingClause[attrs] )? K_SET termPairWithOperation[columns] ( ',' termPairWithOperation[columns] )* K_WHERE wclause= whereClause )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:268:7: K_UPDATE cf= columnFamilyName ( usingClause[attrs] )? K_SET termPairWithOperation[columns] ( ',' termPairWithOperation[columns] )* K_WHERE wclause= whereClause
             {
             match(input,K_UPDATE,FOLLOW_K_UPDATE_in_updateStatement1254); 
             pushFollow(FOLLOW_columnFamilyName_in_updateStatement1258);
@@ -1728,7 +1728,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:269:7: ( usingClause[attrs] )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:269:7: ( usingClause[attrs] )?
             int alt24=2;
             int LA24_0 = input.LA(1);
 
@@ -1737,7 +1737,7 @@ public class CqlParser extends Parser {
             }
             switch (alt24) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:269:9: usingClause[attrs]
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:269:9: usingClause[attrs]
                     {
                     pushFollow(FOLLOW_usingClause_in_updateStatement1268);
                     usingClause(attrs);
@@ -1756,7 +1756,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:270:44: ( ',' termPairWithOperation[columns] )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:270:44: ( ',' termPairWithOperation[columns] )*
             loop25:
             do {
                 int alt25=2;
@@ -1769,7 +1769,7 @@ public class CqlParser extends Parser {
 
                 switch (alt25) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:270:45: ',' termPairWithOperation[columns]
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:270:45: ',' termPairWithOperation[columns]
             	    {
             	    match(input,115,FOLLOW_115_in_updateStatement1286); 
             	    pushFollow(FOLLOW_termPairWithOperation_in_updateStatement1288);
@@ -1811,7 +1811,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "deleteStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:277:1: deleteStatement returns [DeleteStatement expr] : K_DELETE (ids= cidentList )? K_FROM cf= columnFamilyName ( usingClauseDelete[attrs] )? K_WHERE wclause= whereClause ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:277:1: deleteStatement returns [DeleteStatement expr] : K_DELETE (ids= cidentList )? K_FROM cf= columnFamilyName ( usingClauseDelete[attrs] )? K_WHERE wclause= whereClause ;
     public final DeleteStatement deleteStatement() throws RecognitionException {
         DeleteStatement expr = null;
 
@@ -1827,11 +1827,11 @@ public class CqlParser extends Parser {
                 List<ColumnIdentifier> columnsList = Collections.emptyList();
             
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:5: ( K_DELETE (ids= cidentList )? K_FROM cf= columnFamilyName ( usingClauseDelete[attrs] )? K_WHERE wclause= whereClause )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:7: K_DELETE (ids= cidentList )? K_FROM cf= columnFamilyName ( usingClauseDelete[attrs] )? K_WHERE wclause= whereClause
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:5: ( K_DELETE (ids= cidentList )? K_FROM cf= columnFamilyName ( usingClauseDelete[attrs] )? K_WHERE wclause= whereClause )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:7: K_DELETE (ids= cidentList )? K_FROM cf= columnFamilyName ( usingClauseDelete[attrs] )? K_WHERE wclause= whereClause
             {
             match(input,K_DELETE,FOLLOW_K_DELETE_in_deleteStatement1343); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:16: (ids= cidentList )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:16: (ids= cidentList )?
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -1840,7 +1840,7 @@ public class CqlParser extends Parser {
             }
             switch (alt26) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:18: ids= cidentList
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:288:18: ids= cidentList
                     {
                     pushFollow(FOLLOW_cidentList_in_deleteStatement1349);
                     ids=cidentList();
@@ -1860,7 +1860,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:290:7: ( usingClauseDelete[attrs] )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:290:7: ( usingClauseDelete[attrs] )?
             int alt27=2;
             int LA27_0 = input.LA(1);
 
@@ -1869,7 +1869,7 @@ public class CqlParser extends Parser {
             }
             switch (alt27) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:290:9: usingClauseDelete[attrs]
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:290:9: usingClauseDelete[attrs]
                     {
                     pushFollow(FOLLOW_usingClauseDelete_in_deleteStatement1376);
                     usingClauseDelete(attrs);
@@ -1907,7 +1907,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "batchStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:298:1: batchStatement returns [BatchStatement expr] : K_BEGIN K_BATCH ( usingClause[attrs] )? s1= batchStatementObjective ( ';' )? (sN= batchStatementObjective ( ';' )? )* K_APPLY K_BATCH ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:298:1: batchStatement returns [BatchStatement expr] : K_BEGIN K_BATCH ( usingClause[attrs] )? s1= batchStatementObjective ( ';' )? (sN= batchStatementObjective ( ';' )? )* K_APPLY K_BATCH ;
     public final BatchStatement batchStatement() throws RecognitionException {
         BatchStatement expr = null;
 
@@ -1921,12 +1921,12 @@ public class CqlParser extends Parser {
                 List<ModificationStatement> statements = new ArrayList<ModificationStatement>();
             
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:5: ( K_BEGIN K_BATCH ( usingClause[attrs] )? s1= batchStatementObjective ( ';' )? (sN= batchStatementObjective ( ';' )? )* K_APPLY K_BATCH )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:7: K_BEGIN K_BATCH ( usingClause[attrs] )? s1= batchStatementObjective ( ';' )? (sN= batchStatementObjective ( ';' )? )* K_APPLY K_BATCH
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:5: ( K_BEGIN K_BATCH ( usingClause[attrs] )? s1= batchStatementObjective ( ';' )? (sN= batchStatementObjective ( ';' )? )* K_APPLY K_BATCH )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:7: K_BEGIN K_BATCH ( usingClause[attrs] )? s1= batchStatementObjective ( ';' )? (sN= batchStatementObjective ( ';' )? )* K_APPLY K_BATCH
             {
             match(input,K_BEGIN,FOLLOW_K_BEGIN_in_batchStatement1433); 
             match(input,K_BATCH,FOLLOW_K_BATCH_in_batchStatement1435); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:23: ( usingClause[attrs] )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:23: ( usingClause[attrs] )?
             int alt28=2;
             int LA28_0 = input.LA(1);
 
@@ -1935,7 +1935,7 @@ public class CqlParser extends Parser {
             }
             switch (alt28) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:25: usingClause[attrs]
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:327:25: usingClause[attrs]
                     {
                     pushFollow(FOLLOW_usingClause_in_batchStatement1439);
                     usingClause(attrs);
@@ -1953,7 +1953,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:38: ( ';' )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:38: ( ';' )?
             int alt29=2;
             int LA29_0 = input.LA(1);
 
@@ -1962,7 +1962,7 @@ public class CqlParser extends Parser {
             }
             switch (alt29) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:38: ';'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:38: ';'
                     {
                     match(input,112,FOLLOW_112_in_batchStatement1459); 
 
@@ -1972,7 +1972,7 @@ public class CqlParser extends Parser {
             }
 
              statements.add(s1); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:67: (sN= batchStatementObjective ( ';' )? )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:67: (sN= batchStatementObjective ( ';' )? )*
             loop31:
             do {
                 int alt31=2;
@@ -1985,14 +1985,14 @@ public class CqlParser extends Parser {
 
                 switch (alt31) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:69: sN= batchStatementObjective ( ';' )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:69: sN= batchStatementObjective ( ';' )?
             	    {
             	    pushFollow(FOLLOW_batchStatementObjective_in_batchStatement1468);
             	    sN=batchStatementObjective();
 
             	    state._fsp--;
 
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:96: ( ';' )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:96: ( ';' )?
             	    int alt30=2;
             	    int LA30_0 = input.LA(1);
 
@@ -2001,7 +2001,7 @@ public class CqlParser extends Parser {
             	    }
             	    switch (alt30) {
             	        case 1 :
-            	            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:96: ';'
+            	            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:328:96: ';'
             	            {
             	            match(input,112,FOLLOW_112_in_batchStatement1470); 
 
@@ -2041,7 +2041,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "batchStatementObjective"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:335:1: batchStatementObjective returns [ModificationStatement statement] : (i= insertStatement | u= updateStatement | d= deleteStatement );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:335:1: batchStatementObjective returns [ModificationStatement statement] : (i= insertStatement | u= updateStatement | d= deleteStatement );
     public final ModificationStatement batchStatementObjective() throws RecognitionException {
         ModificationStatement statement = null;
 
@@ -2053,7 +2053,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:336:5: (i= insertStatement | u= updateStatement | d= deleteStatement )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:336:5: (i= insertStatement | u= updateStatement | d= deleteStatement )
             int alt32=3;
             switch ( input.LA(1) ) {
             case K_INSERT:
@@ -2080,7 +2080,7 @@ public class CqlParser extends Parser {
 
             switch (alt32) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:336:7: i= insertStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:336:7: i= insertStatement
                     {
                     pushFollow(FOLLOW_insertStatement_in_batchStatementObjective1517);
                     i=insertStatement();
@@ -2092,7 +2092,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:337:7: u= updateStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:337:7: u= updateStatement
                     {
                     pushFollow(FOLLOW_updateStatement_in_batchStatementObjective1530);
                     u=updateStatement();
@@ -2104,7 +2104,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:338:7: d= deleteStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:338:7: d= deleteStatement
                     {
                     pushFollow(FOLLOW_deleteStatement_in_batchStatementObjective1543);
                     d=deleteStatement();
@@ -2130,7 +2130,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "createKeyspaceStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:341:1: createKeyspaceStatement returns [CreateKeyspaceStatement expr] : K_CREATE K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:341:1: createKeyspaceStatement returns [CreateKeyspaceStatement expr] : K_CREATE K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] ;
     public final CreateKeyspaceStatement createKeyspaceStatement() throws RecognitionException {
         CreateKeyspaceStatement expr = null;
 
@@ -2139,8 +2139,8 @@ public class CqlParser extends Parser {
 
          KSPropDefs attrs = new KSPropDefs(); 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:346:5: ( K_CREATE K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:346:7: K_CREATE K_KEYSPACE ks= keyspaceName K_WITH properties[attrs]
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:346:5: ( K_CREATE K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:346:7: K_CREATE K_KEYSPACE ks= keyspaceName K_WITH properties[attrs]
             {
             match(input,K_CREATE,FOLLOW_K_CREATE_in_createKeyspaceStatement1578); 
             match(input,K_KEYSPACE,FOLLOW_K_KEYSPACE_in_createKeyspaceStatement1580); 
@@ -2172,7 +2172,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "createColumnFamilyStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:350:1: createColumnFamilyStatement returns [CreateColumnFamilyStatement.RawStatement expr] : K_CREATE K_COLUMNFAMILY cf= columnFamilyName cfamDefinition[expr] ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:350:1: createColumnFamilyStatement returns [CreateColumnFamilyStatement.RawStatement expr] : K_CREATE K_COLUMNFAMILY cf= columnFamilyName cfamDefinition[expr] ;
     public final CreateColumnFamilyStatement.RawStatement createColumnFamilyStatement() throws RecognitionException {
         CreateColumnFamilyStatement.RawStatement expr = null;
 
@@ -2180,8 +2180,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:358:5: ( K_CREATE K_COLUMNFAMILY cf= columnFamilyName cfamDefinition[expr] )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:358:7: K_CREATE K_COLUMNFAMILY cf= columnFamilyName cfamDefinition[expr]
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:358:5: ( K_CREATE K_COLUMNFAMILY cf= columnFamilyName cfamDefinition[expr] )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:358:7: K_CREATE K_COLUMNFAMILY cf= columnFamilyName cfamDefinition[expr]
             {
             match(input,K_CREATE,FOLLOW_K_CREATE_in_createColumnFamilyStatement1620); 
             match(input,K_COLUMNFAMILY,FOLLOW_K_COLUMNFAMILY_in_createColumnFamilyStatement1622); 
@@ -2212,11 +2212,11 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cfamDefinition"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:362:1: cfamDefinition[CreateColumnFamilyStatement.RawStatement expr] : '(' cfamColumns[expr] ( ',' ( cfamColumns[expr] )? )* ')' ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )? ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:362:1: cfamDefinition[CreateColumnFamilyStatement.RawStatement expr] : '(' cfamColumns[expr] ( ',' ( cfamColumns[expr] )? )* ')' ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )? ;
     public final void cfamDefinition(CreateColumnFamilyStatement.RawStatement expr) throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:5: ( '(' cfamColumns[expr] ( ',' ( cfamColumns[expr] )? )* ')' ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )? )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:7: '(' cfamColumns[expr] ( ',' ( cfamColumns[expr] )? )* ')' ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:5: ( '(' cfamColumns[expr] ( ',' ( cfamColumns[expr] )? )* ')' ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )? )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:7: '(' cfamColumns[expr] ( ',' ( cfamColumns[expr] )? )* ')' ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )?
             {
             match(input,113,FOLLOW_113_in_cfamDefinition1655); 
             pushFollow(FOLLOW_cfamColumns_in_cfamDefinition1657);
@@ -2224,7 +2224,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:29: ( ',' ( cfamColumns[expr] )? )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:29: ( ',' ( cfamColumns[expr] )? )*
             loop34:
             do {
                 int alt34=2;
@@ -2237,10 +2237,10 @@ public class CqlParser extends Parser {
 
                 switch (alt34) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:31: ',' ( cfamColumns[expr] )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:31: ',' ( cfamColumns[expr] )?
             	    {
             	    match(input,115,FOLLOW_115_in_cfamDefinition1662); 
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:35: ( cfamColumns[expr] )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:35: ( cfamColumns[expr] )?
             	    int alt33=2;
             	    int LA33_0 = input.LA(1);
 
@@ -2249,7 +2249,7 @@ public class CqlParser extends Parser {
             	    }
             	    switch (alt33) {
             	        case 1 :
-            	            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:35: cfamColumns[expr]
+            	            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:363:35: cfamColumns[expr]
             	            {
             	            pushFollow(FOLLOW_cfamColumns_in_cfamDefinition1664);
             	            cfamColumns(expr);
@@ -2272,7 +2272,7 @@ public class CqlParser extends Parser {
             } while (true);
 
             match(input,114,FOLLOW_114_in_cfamDefinition1671); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:7: ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:7: ( K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )* )?
             int alt36=2;
             int LA36_0 = input.LA(1);
 
@@ -2281,7 +2281,7 @@ public class CqlParser extends Parser {
             }
             switch (alt36) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:9: K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:9: K_WITH cfamProperty[expr] ( K_AND cfamProperty[expr] )*
                     {
                     match(input,K_WITH,FOLLOW_K_WITH_in_cfamDefinition1681); 
                     pushFollow(FOLLOW_cfamProperty_in_cfamDefinition1683);
@@ -2289,7 +2289,7 @@ public class CqlParser extends Parser {
 
                     state._fsp--;
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:35: ( K_AND cfamProperty[expr] )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:35: ( K_AND cfamProperty[expr] )*
                     loop35:
                     do {
                         int alt35=2;
@@ -2302,7 +2302,7 @@ public class CqlParser extends Parser {
 
                         switch (alt35) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:37: K_AND cfamProperty[expr]
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:364:37: K_AND cfamProperty[expr]
                     	    {
                     	    match(input,K_AND,FOLLOW_K_AND_in_cfamDefinition1688); 
                     	    pushFollow(FOLLOW_cfamProperty_in_cfamDefinition1690);
@@ -2341,7 +2341,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cfamColumns"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:367:1: cfamColumns[CreateColumnFamilyStatement.RawStatement expr] : (k= cident v= comparatorType ( K_PRIMARY K_KEY )? | K_PRIMARY K_KEY '(' k= cident ( ',' c= cident )* ')' );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:367:1: cfamColumns[CreateColumnFamilyStatement.RawStatement expr] : (k= cident v= comparatorType ( K_PRIMARY K_KEY )? | K_PRIMARY K_KEY '(' k= cident ( ',' c= cident )* ')' );
     public final void cfamColumns(CreateColumnFamilyStatement.RawStatement expr) throws RecognitionException {
         ColumnIdentifier k = null;
 
@@ -2351,7 +2351,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:5: (k= cident v= comparatorType ( K_PRIMARY K_KEY )? | K_PRIMARY K_KEY '(' k= cident ( ',' c= cident )* ')' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:5: (k= cident v= comparatorType ( K_PRIMARY K_KEY )? | K_PRIMARY K_KEY '(' k= cident ( ',' c= cident )* ')' )
             int alt39=2;
             int LA39_0 = input.LA(1);
 
@@ -2369,7 +2369,7 @@ public class CqlParser extends Parser {
             }
             switch (alt39) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:7: k= cident v= comparatorType ( K_PRIMARY K_KEY )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:7: k= cident v= comparatorType ( K_PRIMARY K_KEY )?
                     {
                     pushFollow(FOLLOW_cident_in_cfamColumns1716);
                     k=cident();
@@ -2382,7 +2382,7 @@ public class CqlParser extends Parser {
                     state._fsp--;
 
                      expr.addDefinition(k, v); 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:64: ( K_PRIMARY K_KEY )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:64: ( K_PRIMARY K_KEY )?
                     int alt37=2;
                     int LA37_0 = input.LA(1);
 
@@ -2391,7 +2391,7 @@ public class CqlParser extends Parser {
                     }
                     switch (alt37) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:65: K_PRIMARY K_KEY
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:368:65: K_PRIMARY K_KEY
                             {
                             match(input,K_PRIMARY,FOLLOW_K_PRIMARY_in_cfamColumns1725); 
                             match(input,K_KEY,FOLLOW_K_KEY_in_cfamColumns1727); 
@@ -2406,7 +2406,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:369:7: K_PRIMARY K_KEY '(' k= cident ( ',' c= cident )* ')'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:369:7: K_PRIMARY K_KEY '(' k= cident ( ',' c= cident )* ')'
                     {
                     match(input,K_PRIMARY,FOLLOW_K_PRIMARY_in_cfamColumns1739); 
                     match(input,K_KEY,FOLLOW_K_KEY_in_cfamColumns1741); 
@@ -2417,7 +2417,7 @@ public class CqlParser extends Parser {
                     state._fsp--;
 
                      expr.setKeyAlias(k); 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:369:62: ( ',' c= cident )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:369:62: ( ',' c= cident )*
                     loop38:
                     do {
                         int alt38=2;
@@ -2430,7 +2430,7 @@ public class CqlParser extends Parser {
 
                         switch (alt38) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:369:63: ',' c= cident
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:369:63: ',' c= cident
                     	    {
                     	    match(input,115,FOLLOW_115_in_cfamColumns1752); 
                     	    pushFollow(FOLLOW_cident_in_cfamColumns1756);
@@ -2467,7 +2467,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cfamProperty"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:372:1: cfamProperty[CreateColumnFamilyStatement.RawStatement expr] : (k= propertyKey '=' v= propertyValue | K_COMPACT K_STORAGE | K_CLUSTERING K_ORDER K_BY '(' cfamOrdering[expr] ( ',' cfamOrdering[expr] )* ')' );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:372:1: cfamProperty[CreateColumnFamilyStatement.RawStatement expr] : (k= propertyKey '=' v= propertyValue | K_COMPACT K_STORAGE | K_CLUSTERING K_ORDER K_BY '(' cfamOrdering[expr] ( ',' cfamOrdering[expr] )* ')' );
     public final void cfamProperty(CreateColumnFamilyStatement.RawStatement expr) throws RecognitionException {
         String k = null;
 
@@ -2475,7 +2475,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:373:5: (k= propertyKey '=' v= propertyValue | K_COMPACT K_STORAGE | K_CLUSTERING K_ORDER K_BY '(' cfamOrdering[expr] ( ',' cfamOrdering[expr] )* ')' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:373:5: (k= propertyKey '=' v= propertyValue | K_COMPACT K_STORAGE | K_CLUSTERING K_ORDER K_BY '(' cfamOrdering[expr] ( ',' cfamOrdering[expr] )* ')' )
             int alt41=3;
             switch ( input.LA(1) ) {
             case K_COUNT:
@@ -2553,7 +2553,7 @@ public class CqlParser extends Parser {
 
             switch (alt41) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:373:7: k= propertyKey '=' v= propertyValue
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:373:7: k= propertyKey '=' v= propertyValue
                     {
                     pushFollow(FOLLOW_propertyKey_in_cfamProperty1783);
                     k=propertyKey();
@@ -2571,7 +2571,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:374:7: K_COMPACT K_STORAGE
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:374:7: K_COMPACT K_STORAGE
                     {
                     match(input,K_COMPACT,FOLLOW_K_COMPACT_in_cfamProperty1799); 
                     match(input,K_STORAGE,FOLLOW_K_STORAGE_in_cfamProperty1801); 
@@ -2580,7 +2580,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:375:7: K_CLUSTERING K_ORDER K_BY '(' cfamOrdering[expr] ( ',' cfamOrdering[expr] )* ')'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:375:7: K_CLUSTERING K_ORDER K_BY '(' cfamOrdering[expr] ( ',' cfamOrdering[expr] )* ')'
                     {
                     match(input,K_CLUSTERING,FOLLOW_K_CLUSTERING_in_cfamProperty1811); 
                     match(input,K_ORDER,FOLLOW_K_ORDER_in_cfamProperty1813); 
@@ -2591,7 +2591,7 @@ public class CqlParser extends Parser {
 
                     state._fsp--;
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:375:56: ( ',' cfamOrdering[expr] )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:375:56: ( ',' cfamOrdering[expr] )*
                     loop40:
                     do {
                         int alt40=2;
@@ -2604,7 +2604,7 @@ public class CqlParser extends Parser {
 
                         switch (alt40) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:375:57: ',' cfamOrdering[expr]
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:375:57: ',' cfamOrdering[expr]
                     	    {
                     	    match(input,115,FOLLOW_115_in_cfamProperty1823); 
                     	    pushFollow(FOLLOW_cfamOrdering_in_cfamProperty1825);
@@ -2640,22 +2640,22 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cfamOrdering"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:378:1: cfamOrdering[CreateColumnFamilyStatement.RawStatement expr] : k= cident ( K_ASC | K_DESC ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:378:1: cfamOrdering[CreateColumnFamilyStatement.RawStatement expr] : k= cident ( K_ASC | K_DESC ) ;
     public final void cfamOrdering(CreateColumnFamilyStatement.RawStatement expr) throws RecognitionException {
         ColumnIdentifier k = null;
 
 
          boolean reversed=false; 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:5: (k= cident ( K_ASC | K_DESC ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:7: k= cident ( K_ASC | K_DESC )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:5: (k= cident ( K_ASC | K_DESC ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:7: k= cident ( K_ASC | K_DESC )
             {
             pushFollow(FOLLOW_cident_in_cfamOrdering1858);
             k=cident();
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:16: ( K_ASC | K_DESC )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:16: ( K_ASC | K_DESC )
             int alt42=2;
             int LA42_0 = input.LA(1);
 
@@ -2673,14 +2673,14 @@ public class CqlParser extends Parser {
             }
             switch (alt42) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:17: K_ASC
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:17: K_ASC
                     {
                     match(input,K_ASC,FOLLOW_K_ASC_in_cfamOrdering1861); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:25: K_DESC
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:380:25: K_DESC
                     {
                     match(input,K_DESC,FOLLOW_K_DESC_in_cfamOrdering1865); 
                      reversed=true;
@@ -2707,7 +2707,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "createIndexStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:383:1: createIndexStatement returns [CreateIndexStatement expr] : K_CREATE K_INDEX (idxName= IDENT )? K_ON cf= columnFamilyName '(' id= cident ')' ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:383:1: createIndexStatement returns [CreateIndexStatement expr] : K_CREATE K_INDEX (idxName= IDENT )? K_ON cf= columnFamilyName '(' id= cident ')' ;
     public final CreateIndexStatement createIndexStatement() throws RecognitionException {
         CreateIndexStatement expr = null;
 
@@ -2718,12 +2718,12 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:5: ( K_CREATE K_INDEX (idxName= IDENT )? K_ON cf= columnFamilyName '(' id= cident ')' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:7: K_CREATE K_INDEX (idxName= IDENT )? K_ON cf= columnFamilyName '(' id= cident ')'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:5: ( K_CREATE K_INDEX (idxName= IDENT )? K_ON cf= columnFamilyName '(' id= cident ')' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:7: K_CREATE K_INDEX (idxName= IDENT )? K_ON cf= columnFamilyName '(' id= cident ')'
             {
             match(input,K_CREATE,FOLLOW_K_CREATE_in_createIndexStatement1894); 
             match(input,K_INDEX,FOLLOW_K_INDEX_in_createIndexStatement1896); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:24: (idxName= IDENT )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:24: (idxName= IDENT )?
             int alt43=2;
             int LA43_0 = input.LA(1);
 
@@ -2732,7 +2732,7 @@ public class CqlParser extends Parser {
             }
             switch (alt43) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:25: idxName= IDENT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:387:25: idxName= IDENT
                     {
                     idxName=(Token)match(input,IDENT,FOLLOW_IDENT_in_createIndexStatement1901); 
 
@@ -2771,7 +2771,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "alterKeyspaceStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:391:1: alterKeyspaceStatement returns [AlterKeyspaceStatement expr] : K_ALTER K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:391:1: alterKeyspaceStatement returns [AlterKeyspaceStatement expr] : K_ALTER K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] ;
     public final AlterKeyspaceStatement alterKeyspaceStatement() throws RecognitionException {
         AlterKeyspaceStatement expr = null;
 
@@ -2780,8 +2780,8 @@ public class CqlParser extends Parser {
 
          KSPropDefs attrs = new KSPropDefs(); 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:396:5: ( K_ALTER K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:396:7: K_ALTER K_KEYSPACE ks= keyspaceName K_WITH properties[attrs]
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:396:5: ( K_ALTER K_KEYSPACE ks= keyspaceName K_WITH properties[attrs] )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:396:7: K_ALTER K_KEYSPACE ks= keyspaceName K_WITH properties[attrs]
             {
             match(input,K_ALTER,FOLLOW_K_ALTER_in_alterKeyspaceStatement1957); 
             match(input,K_KEYSPACE,FOLLOW_K_KEYSPACE_in_alterKeyspaceStatement1959); 
@@ -2813,7 +2813,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "alterTableStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:401:1: alterTableStatement returns [AlterTableStatement expr] : K_ALTER K_COLUMNFAMILY cf= columnFamilyName ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:401:1: alterTableStatement returns [AlterTableStatement expr] : K_ALTER K_COLUMNFAMILY cf= columnFamilyName ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] ) ;
     public final AlterTableStatement alterTableStatement() throws RecognitionException {
         AlterTableStatement expr = null;
 
@@ -2829,8 +2829,8 @@ public class CqlParser extends Parser {
                 CFPropDefs props = new CFPropDefs();
             
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:412:5: ( K_ALTER K_COLUMNFAMILY cf= columnFamilyName ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:412:7: K_ALTER K_COLUMNFAMILY cf= columnFamilyName ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:412:5: ( K_ALTER K_COLUMNFAMILY cf= columnFamilyName ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:412:7: K_ALTER K_COLUMNFAMILY cf= columnFamilyName ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] )
             {
             match(input,K_ALTER,FOLLOW_K_ALTER_in_alterTableStatement2011); 
             match(input,K_COLUMNFAMILY,FOLLOW_K_COLUMNFAMILY_in_alterTableStatement2013); 
@@ -2839,7 +2839,7 @@ public class CqlParser extends Parser {
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:413:11: ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:413:11: ( K_ALTER id= cident K_TYPE v= comparatorType | K_ADD id= cident v= comparatorType | K_DROP id= cident | K_WITH properties[props] )
             int alt44=4;
             switch ( input.LA(1) ) {
             case K_ALTER:
@@ -2871,7 +2871,7 @@ public class CqlParser extends Parser {
 
             switch (alt44) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:413:13: K_ALTER id= cident K_TYPE v= comparatorType
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:413:13: K_ALTER id= cident K_TYPE v= comparatorType
                     {
                     match(input,K_ALTER,FOLLOW_K_ALTER_in_alterTableStatement2031); 
                     pushFollow(FOLLOW_cident_in_alterTableStatement2035);
@@ -2890,7 +2890,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:414:13: K_ADD id= cident v= comparatorType
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:414:13: K_ADD id= cident v= comparatorType
                     {
                     match(input,K_ADD,FOLLOW_K_ADD_in_alterTableStatement2057); 
                     pushFollow(FOLLOW_cident_in_alterTableStatement2063);
@@ -2908,7 +2908,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:415:13: K_DROP id= cident
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:415:13: K_DROP id= cident
                     {
                     match(input,K_DROP,FOLLOW_K_DROP_in_alterTableStatement2090); 
                     pushFollow(FOLLOW_cident_in_alterTableStatement2095);
@@ -2921,7 +2921,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:416:13: K_WITH properties[props]
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:416:13: K_WITH properties[props]
                     {
                     match(input,K_WITH,FOLLOW_K_WITH_in_alterTableStatement2135); 
                     pushFollow(FOLLOW_properties_in_alterTableStatement2138);
@@ -2955,7 +2955,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "dropKeyspaceStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:423:1: dropKeyspaceStatement returns [DropKeyspaceStatement ksp] : K_DROP K_KEYSPACE ks= keyspaceName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:423:1: dropKeyspaceStatement returns [DropKeyspaceStatement ksp] : K_DROP K_KEYSPACE ks= keyspaceName ;
     public final DropKeyspaceStatement dropKeyspaceStatement() throws RecognitionException {
         DropKeyspaceStatement ksp = null;
 
@@ -2963,8 +2963,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:427:5: ( K_DROP K_KEYSPACE ks= keyspaceName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:427:7: K_DROP K_KEYSPACE ks= keyspaceName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:427:5: ( K_DROP K_KEYSPACE ks= keyspaceName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:427:7: K_DROP K_KEYSPACE ks= keyspaceName
             {
             match(input,K_DROP,FOLLOW_K_DROP_in_dropKeyspaceStatement2198); 
             match(input,K_KEYSPACE,FOLLOW_K_KEYSPACE_in_dropKeyspaceStatement2200); 
@@ -2990,7 +2990,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "dropColumnFamilyStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:430:1: dropColumnFamilyStatement returns [DropColumnFamilyStatement stmt] : K_DROP K_COLUMNFAMILY cf= columnFamilyName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:430:1: dropColumnFamilyStatement returns [DropColumnFamilyStatement stmt] : K_DROP K_COLUMNFAMILY cf= columnFamilyName ;
     public final DropColumnFamilyStatement dropColumnFamilyStatement() throws RecognitionException {
         DropColumnFamilyStatement stmt = null;
 
@@ -2998,8 +2998,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:434:5: ( K_DROP K_COLUMNFAMILY cf= columnFamilyName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:434:7: K_DROP K_COLUMNFAMILY cf= columnFamilyName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:434:5: ( K_DROP K_COLUMNFAMILY cf= columnFamilyName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:434:7: K_DROP K_COLUMNFAMILY cf= columnFamilyName
             {
             match(input,K_DROP,FOLLOW_K_DROP_in_dropColumnFamilyStatement2229); 
             match(input,K_COLUMNFAMILY,FOLLOW_K_COLUMNFAMILY_in_dropColumnFamilyStatement2231); 
@@ -3025,15 +3025,15 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "dropIndexStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:437:1: dropIndexStatement returns [DropIndexStatement expr] : K_DROP K_INDEX index= IDENT ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:437:1: dropIndexStatement returns [DropIndexStatement expr] : K_DROP K_INDEX index= IDENT ;
     public final DropIndexStatement dropIndexStatement() throws RecognitionException {
         DropIndexStatement expr = null;
 
         Token index=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:441:5: ( K_DROP K_INDEX index= IDENT )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:442:7: K_DROP K_INDEX index= IDENT
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:441:5: ( K_DROP K_INDEX index= IDENT )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:442:7: K_DROP K_INDEX index= IDENT
             {
             match(input,K_DROP,FOLLOW_K_DROP_in_dropIndexStatement2266); 
             match(input,K_INDEX,FOLLOW_K_INDEX_in_dropIndexStatement2268); 
@@ -3055,7 +3055,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "truncateStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:446:1: truncateStatement returns [TruncateStatement stmt] : K_TRUNCATE cf= columnFamilyName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:446:1: truncateStatement returns [TruncateStatement stmt] : K_TRUNCATE cf= columnFamilyName ;
     public final TruncateStatement truncateStatement() throws RecognitionException {
         TruncateStatement stmt = null;
 
@@ -3063,8 +3063,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:450:5: ( K_TRUNCATE cf= columnFamilyName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:450:7: K_TRUNCATE cf= columnFamilyName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:450:5: ( K_TRUNCATE cf= columnFamilyName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:450:7: K_TRUNCATE cf= columnFamilyName
             {
             match(input,K_TRUNCATE,FOLLOW_K_TRUNCATE_in_truncateStatement2303); 
             pushFollow(FOLLOW_columnFamilyName_in_truncateStatement2307);
@@ -3089,7 +3089,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "grantStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:453:1: grantStatement returns [GrantStatement stmt] : K_GRANT permission K_ON resource= columnFamilyName K_TO user= ( IDENT | STRING_LITERAL ) ( K_WITH K_GRANT K_OPTION )? ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:453:1: grantStatement returns [GrantStatement stmt] : K_GRANT permission K_ON resource= columnFamilyName K_TO user= ( IDENT | STRING_LITERAL ) ( K_WITH K_GRANT K_OPTION )? ;
     public final GrantStatement grantStatement() throws RecognitionException {
         GrantStatement stmt = null;
 
@@ -3101,8 +3101,8 @@ public class CqlParser extends Parser {
 
          boolean withGrant = false; 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:458:5: ( K_GRANT permission K_ON resource= columnFamilyName K_TO user= ( IDENT | STRING_LITERAL ) ( K_WITH K_GRANT K_OPTION )? )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:458:7: K_GRANT permission K_ON resource= columnFamilyName K_TO user= ( IDENT | STRING_LITERAL ) ( K_WITH K_GRANT K_OPTION )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:458:5: ( K_GRANT permission K_ON resource= columnFamilyName K_TO user= ( IDENT | STRING_LITERAL ) ( K_WITH K_GRANT K_OPTION )? )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:458:7: K_GRANT permission K_ON resource= columnFamilyName K_TO user= ( IDENT | STRING_LITERAL ) ( K_WITH K_GRANT K_OPTION )?
             {
             match(input,K_GRANT,FOLLOW_K_GRANT_in_grantStatement2341); 
             pushFollow(FOLLOW_permission_in_grantStatement2353);
@@ -3127,7 +3127,7 @@ public class CqlParser extends Parser {
                 throw mse;
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:464:7: ( K_WITH K_GRANT K_OPTION )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:464:7: ( K_WITH K_GRANT K_OPTION )?
             int alt45=2;
             int LA45_0 = input.LA(1);
 
@@ -3136,7 +3136,7 @@ public class CqlParser extends Parser {
             }
             switch (alt45) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:464:8: K_WITH K_GRANT K_OPTION
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:464:8: K_WITH K_GRANT K_OPTION
                     {
                     match(input,K_WITH,FOLLOW_K_WITH_in_grantStatement2412); 
                     match(input,K_GRANT,FOLLOW_K_GRANT_in_grantStatement2414); 
@@ -3170,7 +3170,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "revokeStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:473:1: revokeStatement returns [RevokeStatement stmt] : K_REVOKE permission K_ON resource= columnFamilyName K_FROM user= ( IDENT | STRING_LITERAL ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:473:1: revokeStatement returns [RevokeStatement stmt] : K_REVOKE permission K_ON resource= columnFamilyName K_FROM user= ( IDENT | STRING_LITERAL ) ;
     public final RevokeStatement revokeStatement() throws RecognitionException {
         RevokeStatement stmt = null;
 
@@ -3181,8 +3181,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:477:5: ( K_REVOKE permission K_ON resource= columnFamilyName K_FROM user= ( IDENT | STRING_LITERAL ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:477:7: K_REVOKE permission K_ON resource= columnFamilyName K_FROM user= ( IDENT | STRING_LITERAL )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:477:5: ( K_REVOKE permission K_ON resource= columnFamilyName K_FROM user= ( IDENT | STRING_LITERAL ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:477:7: K_REVOKE permission K_ON resource= columnFamilyName K_FROM user= ( IDENT | STRING_LITERAL )
             {
             match(input,K_REVOKE,FOLLOW_K_REVOKE_in_revokeStatement2451); 
             pushFollow(FOLLOW_permission_in_revokeStatement2461);
@@ -3228,15 +3228,15 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "listGrantsStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:490:1: listGrantsStatement returns [ListGrantsStatement stmt] : K_LIST K_GRANTS K_FOR username= ( IDENT | STRING_LITERAL ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:490:1: listGrantsStatement returns [ListGrantsStatement stmt] : K_LIST K_GRANTS K_FOR username= ( IDENT | STRING_LITERAL ) ;
     public final ListGrantsStatement listGrantsStatement() throws RecognitionException {
         ListGrantsStatement stmt = null;
 
         Token username=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:491:5: ( K_LIST K_GRANTS K_FOR username= ( IDENT | STRING_LITERAL ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:491:7: K_LIST K_GRANTS K_FOR username= ( IDENT | STRING_LITERAL )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:491:5: ( K_LIST K_GRANTS K_FOR username= ( IDENT | STRING_LITERAL ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:491:7: K_LIST K_GRANTS K_FOR username= ( IDENT | STRING_LITERAL )
             {
             match(input,K_LIST,FOLLOW_K_LIST_in_listGrantsStatement2536); 
             match(input,K_GRANTS,FOLLOW_K_GRANTS_in_listGrantsStatement2538); 
@@ -3268,15 +3268,15 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "permission"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:494:1: permission returns [Permission perm] : p= ( K_DESCRIBE | K_USE | K_CREATE | K_ALTER | K_DROP | K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_FULL_ACCESS | K_NO_ACCESS ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:494:1: permission returns [Permission perm] : p= ( K_DESCRIBE | K_USE | K_CREATE | K_ALTER | K_DROP | K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_FULL_ACCESS | K_NO_ACCESS ) ;
     public final Permission permission() throws RecognitionException {
         Permission perm = null;
 
         Token p=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:495:5: (p= ( K_DESCRIBE | K_USE | K_CREATE | K_ALTER | K_DROP | K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_FULL_ACCESS | K_NO_ACCESS ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:495:7: p= ( K_DESCRIBE | K_USE | K_CREATE | K_ALTER | K_DROP | K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_FULL_ACCESS | K_NO_ACCESS )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:495:5: (p= ( K_DESCRIBE | K_USE | K_CREATE | K_ALTER | K_DROP | K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_FULL_ACCESS | K_NO_ACCESS ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:495:7: p= ( K_DESCRIBE | K_USE | K_CREATE | K_ALTER | K_DROP | K_SELECT | K_INSERT | K_UPDATE | K_DELETE | K_FULL_ACCESS | K_NO_ACCESS )
             {
             p=(Token)input.LT(1);
             if ( (input.LA(1)>=K_USE && input.LA(1)<=K_SELECT)||input.LA(1)==K_INSERT||input.LA(1)==K_UPDATE||input.LA(1)==K_DELETE||input.LA(1)==K_CREATE||input.LA(1)==K_ALTER||input.LA(1)==K_DROP||(input.LA(1)>=K_DESCRIBE && input.LA(1)<=K_NO_ACCESS) ) {
@@ -3305,7 +3305,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cident"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:498:1: cident returns [ColumnIdentifier id] : (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:498:1: cident returns [ColumnIdentifier id] : (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword );
     public final ColumnIdentifier cident() throws RecognitionException {
         ColumnIdentifier id = null;
 
@@ -3314,7 +3314,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:502:5: (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:502:5: (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword )
             int alt46=3;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -3366,7 +3366,7 @@ public class CqlParser extends Parser {
 
             switch (alt46) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:502:7: t= IDENT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:502:7: t= IDENT
                     {
                     t=(Token)match(input,IDENT,FOLLOW_IDENT_in_cident2649); 
                      id = new ColumnIdentifier((t!=null?t.getText():null), false); 
@@ -3374,7 +3374,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:503:7: t= QUOTED_NAME
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:503:7: t= QUOTED_NAME
                     {
                     t=(Token)match(input,QUOTED_NAME,FOLLOW_QUOTED_NAME_in_cident2674); 
                      id = new ColumnIdentifier((t!=null?t.getText():null), true); 
@@ -3382,7 +3382,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:504:7: k= unreserved_keyword
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:504:7: k= unreserved_keyword
                     {
                     pushFollow(FOLLOW_unreserved_keyword_in_cident2693);
                     k=unreserved_keyword();
@@ -3408,14 +3408,14 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "keyspaceName"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:508:1: keyspaceName returns [String id] : cfOrKsName[name, true] ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:508:1: keyspaceName returns [String id] : cfOrKsName[name, true] ;
     public final String keyspaceName() throws RecognitionException {
         String id = null;
 
          CFName name = new CFName(); 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:510:5: ( cfOrKsName[name, true] )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:510:7: cfOrKsName[name, true]
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:510:5: ( cfOrKsName[name, true] )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:510:7: cfOrKsName[name, true]
             {
             pushFollow(FOLLOW_cfOrKsName_in_keyspaceName2726);
             cfOrKsName(name, true);
@@ -3439,16 +3439,16 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "columnFamilyName"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:513:1: columnFamilyName returns [CFName name] : ( cfOrKsName[name, true] '.' )? cfOrKsName[name, false] ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:513:1: columnFamilyName returns [CFName name] : ( cfOrKsName[name, true] '.' )? cfOrKsName[name, false] ;
     public final CFName columnFamilyName() throws RecognitionException {
         CFName name = null;
 
          name = new CFName(); 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:5: ( ( cfOrKsName[name, true] '.' )? cfOrKsName[name, false] )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:7: ( cfOrKsName[name, true] '.' )? cfOrKsName[name, false]
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:5: ( ( cfOrKsName[name, true] '.' )? cfOrKsName[name, false] )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:7: ( cfOrKsName[name, true] '.' )? cfOrKsName[name, false]
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:7: ( cfOrKsName[name, true] '.' )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:7: ( cfOrKsName[name, true] '.' )?
             int alt47=2;
             switch ( input.LA(1) ) {
                 case IDENT:
@@ -3515,7 +3515,7 @@ public class CqlParser extends Parser {
 
             switch (alt47) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:8: cfOrKsName[name, true] '.'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:515:8: cfOrKsName[name, true] '.'
                     {
                     pushFollow(FOLLOW_cfOrKsName_in_columnFamilyName2760);
                     cfOrKsName(name, true);
@@ -3550,14 +3550,14 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cfOrKsName"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:518:1: cfOrKsName[CFName name, boolean isKs] : (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:518:1: cfOrKsName[CFName name, boolean isKs] : (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword );
     public final void cfOrKsName(CFName name, boolean isKs) throws RecognitionException {
         Token t=null;
         String k = null;
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:519:5: (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:519:5: (t= IDENT | t= QUOTED_NAME | k= unreserved_keyword )
             int alt48=3;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -3609,7 +3609,7 @@ public class CqlParser extends Parser {
 
             switch (alt48) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:519:7: t= IDENT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:519:7: t= IDENT
                     {
                     t=(Token)match(input,IDENT,FOLLOW_IDENT_in_cfOrKsName2788); 
                      if (isKs) name.setKeyspace((t!=null?t.getText():null), false); else name.setColumnFamily((t!=null?t.getText():null), false); 
@@ -3617,7 +3617,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:520:7: t= QUOTED_NAME
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:520:7: t= QUOTED_NAME
                     {
                     t=(Token)match(input,QUOTED_NAME,FOLLOW_QUOTED_NAME_in_cfOrKsName2813); 
                      if (isKs) name.setKeyspace((t!=null?t.getText():null), true); else name.setColumnFamily((t!=null?t.getText():null), true); 
@@ -3625,7 +3625,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:521:7: k= unreserved_keyword
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:521:7: k= unreserved_keyword
                     {
                     pushFollow(FOLLOW_unreserved_keyword_in_cfOrKsName2832);
                     k=unreserved_keyword();
@@ -3651,7 +3651,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "cidentList"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:524:1: cidentList returns [List<ColumnIdentifier> items] : t1= cident ( ',' tN= cident )* ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:524:1: cidentList returns [List<ColumnIdentifier> items] : t1= cident ( ',' tN= cident )* ;
     public final List<ColumnIdentifier> cidentList() throws RecognitionException {
         List<ColumnIdentifier> items = null;
 
@@ -3662,8 +3662,8 @@ public class CqlParser extends Parser {
 
          items = new ArrayList<ColumnIdentifier>(); 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:5: (t1= cident ( ',' tN= cident )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:8: t1= cident ( ',' tN= cident )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:5: (t1= cident ( ',' tN= cident )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:8: t1= cident ( ',' tN= cident )*
             {
             pushFollow(FOLLOW_cident_in_cidentList2866);
             t1=cident();
@@ -3671,7 +3671,7 @@ public class CqlParser extends Parser {
             state._fsp--;
 
              items.add(t1); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:38: ( ',' tN= cident )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:38: ( ',' tN= cident )*
             loop49:
             do {
                 int alt49=2;
@@ -3684,7 +3684,7 @@ public class CqlParser extends Parser {
 
                 switch (alt49) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:39: ',' tN= cident
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:526:39: ',' tN= cident
             	    {
             	    match(input,115,FOLLOW_115_in_cidentList2871); 
             	    pushFollow(FOLLOW_cident_in_cidentList2875);
@@ -3718,7 +3718,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "extendedTerm"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:530:1: extendedTerm returns [Term term] : ( K_TOKEN '(' t= term ')' | t= term );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:530:1: extendedTerm returns [Term term] : ( K_TOKEN '(' t= term ')' | t= term );
     public final Term extendedTerm() throws RecognitionException {
         Term term = null;
 
@@ -3726,7 +3726,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:531:5: ( K_TOKEN '(' t= term ')' | t= term )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:531:5: ( K_TOKEN '(' t= term ')' | t= term )
             int alt50=2;
             int LA50_0 = input.LA(1);
 
@@ -3744,7 +3744,7 @@ public class CqlParser extends Parser {
             }
             switch (alt50) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:531:7: K_TOKEN '(' t= term ')'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:531:7: K_TOKEN '(' t= term ')'
                     {
                     match(input,K_TOKEN,FOLLOW_K_TOKEN_in_extendedTerm2901); 
                     match(input,113,FOLLOW_113_in_extendedTerm2903); 
@@ -3759,7 +3759,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:532:7: t= term
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:532:7: t= term
                     {
                     pushFollow(FOLLOW_term_in_extendedTerm2921);
                     t=term();
@@ -3785,14 +3785,14 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "term"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:535:1: term returns [Term term] : (t= ( STRING_LITERAL | UUID | INTEGER | FLOAT ) | t= QMARK );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:535:1: term returns [Term term] : (t= ( STRING_LITERAL | UUID | INTEGER | FLOAT ) | t= QMARK );
     public final Term term() throws RecognitionException {
         Term term = null;
 
         Token t=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:536:5: (t= ( STRING_LITERAL | UUID | INTEGER | FLOAT ) | t= QMARK )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:536:5: (t= ( STRING_LITERAL | UUID | INTEGER | FLOAT ) | t= QMARK )
             int alt51=2;
             int LA51_0 = input.LA(1);
 
@@ -3810,7 +3810,7 @@ public class CqlParser extends Parser {
             }
             switch (alt51) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:536:7: t= ( STRING_LITERAL | UUID | INTEGER | FLOAT )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:536:7: t= ( STRING_LITERAL | UUID | INTEGER | FLOAT )
                     {
                     t=(Token)input.LT(1);
                     if ( input.LA(1)==INTEGER||input.LA(1)==STRING_LITERAL||(input.LA(1)>=UUID && input.LA(1)<=FLOAT) ) {
@@ -3827,7 +3827,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:537:7: t= QMARK
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:537:7: t= QMARK
                     {
                     t=(Token)match(input,QMARK,FOLLOW_QMARK_in_term2989); 
                      term = new Term((t!=null?t.getText():null), (t!=null?t.getType():0), ++currentBindMarkerIdx); 
@@ -3849,14 +3849,14 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "intTerm"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:540:1: intTerm returns [Term integer] : (t= INTEGER | t= QMARK );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:540:1: intTerm returns [Term integer] : (t= INTEGER | t= QMARK );
     public final Term intTerm() throws RecognitionException {
         Term integer = null;
 
         Token t=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:541:5: (t= INTEGER | t= QMARK )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:541:5: (t= INTEGER | t= QMARK )
             int alt52=2;
             int LA52_0 = input.LA(1);
 
@@ -3874,7 +3874,7 @@ public class CqlParser extends Parser {
             }
             switch (alt52) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:541:7: t= INTEGER
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:541:7: t= INTEGER
                     {
                     t=(Token)match(input,INTEGER,FOLLOW_INTEGER_in_intTerm3051); 
                      integer = new Term((t!=null?t.getText():null), (t!=null?t.getType():0)); 
@@ -3882,7 +3882,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:542:7: t= QMARK
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:542:7: t= QMARK
                     {
                     t=(Token)match(input,QMARK,FOLLOW_QMARK_in_intTerm3063); 
                      integer = new Term((t!=null?t.getText():null), (t!=null?t.getType():0), ++currentBindMarkerIdx); 
@@ -3904,7 +3904,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "termPairWithOperation"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:545:1: termPairWithOperation[Map<ColumnIdentifier, Operation> columns] : key= cident '=' (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:545:1: termPairWithOperation[Map<ColumnIdentifier, Operation> columns] : key= cident '=' (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) ) ;
     public final void termPairWithOperation(Map<ColumnIdentifier, Operation> columns) throws RecognitionException {
         Token op=null;
         ColumnIdentifier key = null;
@@ -3917,8 +3917,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:546:5: (key= cident '=' (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:546:7: key= cident '=' (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:546:5: (key= cident '=' (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:546:7: key= cident '=' (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) )
             {
             pushFollow(FOLLOW_cident_in_termPairWithOperation3087);
             key=cident();
@@ -3926,7 +3926,7 @@ public class CqlParser extends Parser {
             state._fsp--;
 
             match(input,117,FOLLOW_117_in_termPairWithOperation3089); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:547:9: (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:547:9: (value= term | c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm ) )
             int alt55=2;
             int LA55_0 = input.LA(1);
 
@@ -3944,7 +3944,7 @@ public class CqlParser extends Parser {
             }
             switch (alt55) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:547:11: value= term
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:547:11: value= term
                     {
                     pushFollow(FOLLOW_term_in_termPairWithOperation3103);
                     value=term();
@@ -3956,14 +3956,14 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:548:11: c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:548:11: c= cident ( '+' v= intTerm | (op= '-' )? v= intTerm )
                     {
                     pushFollow(FOLLOW_cident_in_termPairWithOperation3119);
                     c=cident();
 
                     state._fsp--;
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:548:20: ( '+' v= intTerm | (op= '-' )? v= intTerm )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:548:20: ( '+' v= intTerm | (op= '-' )? v= intTerm )
                     int alt54=2;
                     int LA54_0 = input.LA(1);
 
@@ -3981,7 +3981,7 @@ public class CqlParser extends Parser {
                     }
                     switch (alt54) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:548:22: '+' v= intTerm
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:548:22: '+' v= intTerm
                             {
                             match(input,119,FOLLOW_119_in_termPairWithOperation3123); 
                             pushFollow(FOLLOW_intTerm_in_termPairWithOperation3131);
@@ -3994,9 +3994,9 @@ public class CqlParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:549:22: (op= '-' )? v= intTerm
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:549:22: (op= '-' )? v= intTerm
                             {
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:549:24: (op= '-' )?
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:549:24: (op= '-' )?
                             int alt53=2;
                             int LA53_0 = input.LA(1);
 
@@ -4005,7 +4005,7 @@ public class CqlParser extends Parser {
                             }
                             switch (alt53) {
                                 case 1 :
-                                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:549:24: op= '-'
+                                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:549:24: op= '-'
                                     {
                                     op=(Token)match(input,120,FOLLOW_120_in_termPairWithOperation3158); 
 
@@ -4053,18 +4053,18 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "properties"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:560:1: properties[PropertyDefinitions props] : property[props] ( K_AND property[props] )* ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:560:1: properties[PropertyDefinitions props] : property[props] ( K_AND property[props] )* ;
     public final void properties(PropertyDefinitions props) throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:5: ( property[props] ( K_AND property[props] )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:7: property[props] ( K_AND property[props] )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:5: ( property[props] ( K_AND property[props] )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:7: property[props] ( K_AND property[props] )*
             {
             pushFollow(FOLLOW_property_in_properties3236);
             property(props);
 
             state._fsp--;
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:23: ( K_AND property[props] )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:23: ( K_AND property[props] )*
             loop56:
             do {
                 int alt56=2;
@@ -4077,7 +4077,7 @@ public class CqlParser extends Parser {
 
                 switch (alt56) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:24: K_AND property[props]
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:561:24: K_AND property[props]
             	    {
             	    match(input,K_AND,FOLLOW_K_AND_in_properties3240); 
             	    pushFollow(FOLLOW_property_in_properties3242);
@@ -4110,7 +4110,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "property"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:564:1: property[PropertyDefinitions props] : k= propertyKey '=' simple= propertyValue ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:564:1: property[PropertyDefinitions props] : k= propertyKey '=' simple= propertyValue ;
     public final void property(PropertyDefinitions props) throws RecognitionException {
         String k = null;
 
@@ -4118,8 +4118,8 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:565:5: (k= propertyKey '=' simple= propertyValue )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:565:7: k= propertyKey '=' simple= propertyValue
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:565:5: (k= propertyKey '=' simple= propertyValue )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:565:7: k= propertyKey '=' simple= propertyValue
             {
             pushFollow(FOLLOW_propertyKey_in_property3265);
             k=propertyKey();
@@ -4149,7 +4149,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "propertyKey"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:568:1: propertyKey returns [String str] : c1= cident ( ':' cn= cident )* ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:568:1: propertyKey returns [String str] : c1= cident ( ':' cn= cident )* ;
     public final String propertyKey() throws RecognitionException {
         String str = null;
 
@@ -4160,8 +4160,8 @@ public class CqlParser extends Parser {
 
          StringBuilder sb = new StringBuilder(); 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:5: (c1= cident ( ':' cn= cident )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:7: c1= cident ( ':' cn= cident )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:5: (c1= cident ( ':' cn= cident )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:7: c1= cident ( ':' cn= cident )*
             {
             pushFollow(FOLLOW_cident_in_propertyKey3304);
             c1=cident();
@@ -4169,7 +4169,7 @@ public class CqlParser extends Parser {
             state._fsp--;
 
              sb.append(c1); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:36: ( ':' cn= cident )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:36: ( ':' cn= cident )*
             loop57:
             do {
                 int alt57=2;
@@ -4182,7 +4182,7 @@ public class CqlParser extends Parser {
 
                 switch (alt57) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:38: ':' cn= cident
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:570:38: ':' cn= cident
             	    {
             	    match(input,121,FOLLOW_121_in_propertyKey3310); 
             	    pushFollow(FOLLOW_cident_in_propertyKey3314);
@@ -4217,7 +4217,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "propertyValue"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:573:1: propertyValue returns [String str] : (v= ( STRING_LITERAL | IDENT | INTEGER | FLOAT ) | u= unreserved_keyword );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:573:1: propertyValue returns [String str] : (v= ( STRING_LITERAL | IDENT | INTEGER | FLOAT ) | u= unreserved_keyword );
     public final String propertyValue() throws RecognitionException {
         String str = null;
 
@@ -4226,7 +4226,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:574:5: (v= ( STRING_LITERAL | IDENT | INTEGER | FLOAT ) | u= unreserved_keyword )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:574:5: (v= ( STRING_LITERAL | IDENT | INTEGER | FLOAT ) | u= unreserved_keyword )
             int alt58=2;
             int LA58_0 = input.LA(1);
 
@@ -4244,7 +4244,7 @@ public class CqlParser extends Parser {
             }
             switch (alt58) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:574:7: v= ( STRING_LITERAL | IDENT | INTEGER | FLOAT )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:574:7: v= ( STRING_LITERAL | IDENT | INTEGER | FLOAT )
                     {
                     v=(Token)input.LT(1);
                     if ( input.LA(1)==INTEGER||input.LA(1)==IDENT||input.LA(1)==STRING_LITERAL||input.LA(1)==FLOAT ) {
@@ -4261,7 +4261,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:575:7: u= unreserved_keyword
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:575:7: u= unreserved_keyword
                     {
                     pushFollow(FOLLOW_unreserved_keyword_in_propertyValue3370);
                     u=unreserved_keyword();
@@ -4287,7 +4287,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "relation"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:578:1: relation returns [Relation rel] : (name= cident type= ( '=' | '<' | '<=' | '>=' | '>' ) t= term | K_TOKEN '(' name= cident ')' type= ( '=' | '<' | '<=' | '>=' | '>' ) t= extendedTerm | name= cident K_IN '(' f1= term ( ',' fN= term )* ')' );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:578:1: relation returns [Relation rel] : (name= cident type= ( '=' | '<' | '<=' | '>=' | '>' ) t= term | K_TOKEN '(' name= cident ')' type= ( '=' | '<' | '<=' | '>=' | '>' ) t= extendedTerm | name= cident K_IN '(' f1= term ( ',' fN= term )* ')' );
     public final Relation relation() throws RecognitionException {
         Relation rel = null;
 
@@ -4302,7 +4302,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:579:5: (name= cident type= ( '=' | '<' | '<=' | '>=' | '>' ) t= term | K_TOKEN '(' name= cident ')' type= ( '=' | '<' | '<=' | '>=' | '>' ) t= extendedTerm | name= cident K_IN '(' f1= term ( ',' fN= term )* ')' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:579:5: (name= cident type= ( '=' | '<' | '<=' | '>=' | '>' ) t= term | K_TOKEN '(' name= cident ')' type= ( '=' | '<' | '<=' | '>=' | '>' ) t= extendedTerm | name= cident K_IN '(' f1= term ( ',' fN= term )* ')' )
             int alt60=3;
             switch ( input.LA(1) ) {
             case IDENT:
@@ -4415,7 +4415,7 @@ public class CqlParser extends Parser {
 
             switch (alt60) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:579:7: name= cident type= ( '=' | '<' | '<=' | '>=' | '>' ) t= term
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:579:7: name= cident type= ( '=' | '<' | '<=' | '>=' | '>' ) t= term
                     {
                     pushFollow(FOLLOW_cident_in_relation3419);
                     name=cident();
@@ -4442,7 +4442,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:580:7: K_TOKEN '(' name= cident ')' type= ( '=' | '<' | '<=' | '>=' | '>' ) t= extendedTerm
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:580:7: K_TOKEN '(' name= cident ')' type= ( '=' | '<' | '<=' | '>=' | '>' ) t= extendedTerm
                     {
                     match(input,K_TOKEN,FOLLOW_K_TOKEN_in_relation3455); 
                     match(input,113,FOLLOW_113_in_relation3457); 
@@ -4472,7 +4472,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:581:7: name= cident K_IN '(' f1= term ( ',' fN= term )* ')'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:581:7: name= cident K_IN '(' f1= term ( ',' fN= term )* ')'
                     {
                     pushFollow(FOLLOW_cident_in_relation3500);
                     name=cident();
@@ -4488,7 +4488,7 @@ public class CqlParser extends Parser {
                     state._fsp--;
 
                      rel.addInValue(f1); 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:582:44: ( ',' fN= term )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:582:44: ( ',' fN= term )*
                     loop59:
                     do {
                         int alt59=2;
@@ -4501,7 +4501,7 @@ public class CqlParser extends Parser {
 
                         switch (alt59) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:582:45: ',' fN= term
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:582:45: ',' fN= term
                     	    {
                     	    match(input,115,FOLLOW_115_in_relation3521); 
                     	    pushFollow(FOLLOW_term_in_relation3525);
@@ -4538,7 +4538,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "comparatorType"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:585:1: comparatorType returns [String str] : (c= native_type | s= STRING_LITERAL );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:585:1: comparatorType returns [String str] : (c= native_type | s= STRING_LITERAL );
     public final String comparatorType() throws RecognitionException {
         String str = null;
 
@@ -4547,7 +4547,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:586:5: (c= native_type | s= STRING_LITERAL )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:586:5: (c= native_type | s= STRING_LITERAL )
             int alt61=2;
             int LA61_0 = input.LA(1);
 
@@ -4565,7 +4565,7 @@ public class CqlParser extends Parser {
             }
             switch (alt61) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:586:7: c= native_type
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:586:7: c= native_type
                     {
                     pushFollow(FOLLOW_native_type_in_comparatorType3555);
                     c=native_type();
@@ -4577,7 +4577,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:587:7: s= STRING_LITERAL
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:587:7: s= STRING_LITERAL
                     {
                     s=(Token)match(input,STRING_LITERAL,FOLLOW_STRING_LITERAL_in_comparatorType3570); 
                      str = (s!=null?s.getText():null); 
@@ -4599,15 +4599,15 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "native_type"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:590:1: native_type returns [String str] : c= ( K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_TIMESTAMP | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:590:1: native_type returns [String str] : c= ( K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_TIMESTAMP | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID ) ;
     public final String native_type() throws RecognitionException {
         String str = null;
 
         Token c=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:591:5: (c= ( K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_TIMESTAMP | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:591:7: c= ( K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_TIMESTAMP | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:591:5: (c= ( K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_TIMESTAMP | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:591:7: c= ( K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_TIMESTAMP | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID )
             {
             c=(Token)input.LT(1);
             if ( input.LA(1)==K_TIMESTAMP||(input.LA(1)>=K_ASCII && input.LA(1)<=K_TIMEUUID) ) {
@@ -4636,7 +4636,7 @@ public class CqlParser extends Parser {
 
 
     // $ANTLR start "unreserved_keyword"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:609:1: unreserved_keyword returns [String str] : (k= ( K_KEY | K_CONSISTENCY | K_CLUSTERING | K_LEVEL | K_COUNT | K_TTL | K_COMPACT | K_STORAGE | K_TYPE | K_VALUES | K_WRITETIME ) | t= native_type );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:609:1: unreserved_keyword returns [String str] : (k= ( K_KEY | K_CONSISTENCY | K_CLUSTERING | K_LEVEL | K_COUNT | K_TTL | K_COMPACT | K_STORAGE | K_TYPE | K_VALUES | K_WRITETIME ) | t= native_type );
     public final String unreserved_keyword() throws RecognitionException {
         String str = null;
 
@@ -4645,7 +4645,7 @@ public class CqlParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:610:5: (k= ( K_KEY | K_CONSISTENCY | K_CLUSTERING | K_LEVEL | K_COUNT | K_TTL | K_COMPACT | K_STORAGE | K_TYPE | K_VALUES | K_WRITETIME ) | t= native_type )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:610:5: (k= ( K_KEY | K_CONSISTENCY | K_CLUSTERING | K_LEVEL | K_COUNT | K_TTL | K_COMPACT | K_STORAGE | K_TYPE | K_VALUES | K_WRITETIME ) | t= native_type )
             int alt62=2;
             int LA62_0 = input.LA(1);
 
@@ -4663,7 +4663,7 @@ public class CqlParser extends Parser {
             }
             switch (alt62) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:610:7: k= ( K_KEY | K_CONSISTENCY | K_CLUSTERING | K_LEVEL | K_COUNT | K_TTL | K_COMPACT | K_STORAGE | K_TYPE | K_VALUES | K_WRITETIME )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:610:7: k= ( K_KEY | K_CONSISTENCY | K_CLUSTERING | K_LEVEL | K_COUNT | K_TTL | K_COMPACT | K_STORAGE | K_TYPE | K_VALUES | K_WRITETIME )
                     {
                     k=(Token)input.LT(1);
                     if ( input.LA(1)==K_COUNT||(input.LA(1)>=K_CONSISTENCY && input.LA(1)<=K_LEVEL)||(input.LA(1)>=K_WRITETIME && input.LA(1)<=K_TTL)||input.LA(1)==K_VALUES||(input.LA(1)>=K_KEY && input.LA(1)<=K_CLUSTERING)||input.LA(1)==K_TYPE ) {
@@ -4680,7 +4680,7 @@ public class CqlParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:622:7: t= native_type
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:622:7: t= native_type
                     {
                     pushFollow(FOLLOW_native_type_in_unreserved_keyword3942);
                     t=native_type();

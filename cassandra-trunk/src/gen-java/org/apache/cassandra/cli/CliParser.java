@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g 2012-10-19 20:50:32
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g 2012-12-09 01:29:51
 
 package org.apache.cassandra.cli;
 
@@ -180,7 +180,7 @@ public class CliParser extends Parser {
     }
 
     public String[] getTokenNames() { return CliParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g"; }
+    public String getGrammarFileName() { return "/home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g"; }
 
 
         public void reportError(RecognitionException e) 
@@ -197,7 +197,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "root"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:1: root : statement ( SEMICOLON )? EOF -> statement ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:1: root : statement ( SEMICOLON )? EOF -> statement ;
     public final CliParser.root_return root() throws RecognitionException {
         CliParser.root_return retval = new CliParser.root_return();
         retval.start = input.LT(1);
@@ -215,8 +215,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_EOF=new RewriteRuleTokenStream(adaptor,"token EOF");
         RewriteRuleSubtreeStream stream_statement=new RewriteRuleSubtreeStream(adaptor,"rule statement");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:5: ( statement ( SEMICOLON )? EOF -> statement )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:7: statement ( SEMICOLON )? EOF
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:5: ( statement ( SEMICOLON )? EOF -> statement )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:7: statement ( SEMICOLON )? EOF
             {
             pushFollow(FOLLOW_statement_in_root435);
             statement1=statement();
@@ -224,7 +224,7 @@ public class CliParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_statement.add(statement1.getTree());
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:17: ( SEMICOLON )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:133:17: ( SEMICOLON )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -233,7 +233,7 @@ public class CliParser extends Parser {
             }
             switch (alt1) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: SEMICOLON
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: SEMICOLON
                     {
                     SEMICOLON2=(Token)match(input,SEMICOLON,FOLLOW_SEMICOLON_in_root437); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_SEMICOLON.add(SEMICOLON2);
@@ -296,7 +296,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "statement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:135:1: statement : ( connectStatement | exitStatement | countStatement | describeTable | describeCluster | addKeyspace | addColumnFamily | updateKeyspace | updateColumnFamily | delColumnFamily | delKeyspace | useKeyspace | delStatement | getStatement | helpStatement | setStatement | incrStatement | showStatement | listStatement | truncateStatement | assumeStatement | consistencyLevelStatement | dropIndex | -> ^( NODE_NO_OP ) );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:135:1: statement : ( connectStatement | exitStatement | countStatement | describeTable | describeCluster | addKeyspace | addColumnFamily | updateKeyspace | updateColumnFamily | delColumnFamily | delKeyspace | useKeyspace | delStatement | getStatement | helpStatement | setStatement | incrStatement | showStatement | listStatement | truncateStatement | assumeStatement | consistencyLevelStatement | dropIndex | -> ^( NODE_NO_OP ) );
     public final CliParser.statement_return statement() throws RecognitionException {
         CliParser.statement_return retval = new CliParser.statement_return();
         retval.start = input.LT(1);
@@ -352,12 +352,12 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:136:5: ( connectStatement | exitStatement | countStatement | describeTable | describeCluster | addKeyspace | addColumnFamily | updateKeyspace | updateColumnFamily | delColumnFamily | delKeyspace | useKeyspace | delStatement | getStatement | helpStatement | setStatement | incrStatement | showStatement | listStatement | truncateStatement | assumeStatement | consistencyLevelStatement | dropIndex | -> ^( NODE_NO_OP ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:136:5: ( connectStatement | exitStatement | countStatement | describeTable | describeCluster | addKeyspace | addColumnFamily | updateKeyspace | updateColumnFamily | delColumnFamily | delKeyspace | useKeyspace | delStatement | getStatement | helpStatement | setStatement | incrStatement | showStatement | listStatement | truncateStatement | assumeStatement | consistencyLevelStatement | dropIndex | -> ^( NODE_NO_OP ) )
             int alt2=24;
             alt2 = dfa2.predict(input);
             switch (alt2) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:136:7: connectStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:136:7: connectStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -371,7 +371,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:137:7: exitStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:137:7: exitStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -385,7 +385,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:138:7: countStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:138:7: countStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -399,7 +399,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:139:7: describeTable
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:139:7: describeTable
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -413,7 +413,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:140:7: describeCluster
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:140:7: describeCluster
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -427,7 +427,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:141:7: addKeyspace
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:141:7: addKeyspace
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -441,7 +441,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:142:7: addColumnFamily
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:142:7: addColumnFamily
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -455,7 +455,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:143:7: updateKeyspace
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:143:7: updateKeyspace
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -469,7 +469,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:144:7: updateColumnFamily
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:144:7: updateColumnFamily
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -483,7 +483,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 10 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:145:7: delColumnFamily
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:145:7: delColumnFamily
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -497,7 +497,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 11 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:146:7: delKeyspace
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:146:7: delKeyspace
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -511,7 +511,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 12 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:147:7: useKeyspace
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:147:7: useKeyspace
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -525,7 +525,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 13 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:148:7: delStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:148:7: delStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -539,7 +539,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 14 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:149:7: getStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:149:7: getStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -553,7 +553,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 15 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:150:7: helpStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:150:7: helpStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -567,7 +567,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 16 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:151:7: setStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:151:7: setStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -581,7 +581,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 17 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:152:7: incrStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:152:7: incrStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -595,7 +595,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 18 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:153:7: showStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:153:7: showStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -609,7 +609,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 19 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:154:7: listStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:154:7: listStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -623,7 +623,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 20 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:155:7: truncateStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:155:7: truncateStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -637,7 +637,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 21 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:156:7: assumeStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:156:7: assumeStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -651,7 +651,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 22 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:157:7: consistencyLevelStatement
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:157:7: consistencyLevelStatement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -665,7 +665,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 23 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:158:7: dropIndex
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:158:7: dropIndex
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -679,7 +679,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 24 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:159:7: 
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:159:7: 
                     {
 
                     // AST REWRITE
@@ -696,7 +696,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 159:7: -> ^( NODE_NO_OP )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:159:10: ^( NODE_NO_OP )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:159:10: ^( NODE_NO_OP )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_NO_OP, "NODE_NO_OP"), root_1);
@@ -737,7 +737,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "connectStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:162:1: connectStatement : ( CONNECT host '/' port ( username password )? -> ^( NODE_CONNECT host port ( username password )? ) | CONNECT ip_address '/' port ( username password )? -> ^( NODE_CONNECT ip_address port ( username password )? ) );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:162:1: connectStatement : ( CONNECT host '/' port ( username password )? -> ^( NODE_CONNECT host port ( username password )? ) | CONNECT ip_address '/' port ( username password )? -> ^( NODE_CONNECT ip_address port ( username password )? ) );
     public final CliParser.connectStatement_return connectStatement() throws RecognitionException {
         CliParser.connectStatement_return retval = new CliParser.connectStatement_return();
         retval.start = input.LT(1);
@@ -777,7 +777,7 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_host=new RewriteRuleSubtreeStream(adaptor,"rule host");
         RewriteRuleSubtreeStream stream_password=new RewriteRuleSubtreeStream(adaptor,"rule password");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:5: ( CONNECT host '/' port ( username password )? -> ^( NODE_CONNECT host port ( username password )? ) | CONNECT ip_address '/' port ( username password )? -> ^( NODE_CONNECT ip_address port ( username password )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:5: ( CONNECT host '/' port ( username password )? -> ^( NODE_CONNECT host port ( username password )? ) | CONNECT ip_address '/' port ( username password )? -> ^( NODE_CONNECT ip_address port ( username password )? ) )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -807,7 +807,7 @@ public class CliParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:7: CONNECT host '/' port ( username password )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:7: CONNECT host '/' port ( username password )?
                     {
                     CONNECT27=(Token)match(input,CONNECT,FOLLOW_CONNECT_in_connectStatement661); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_CONNECT.add(CONNECT27);
@@ -827,7 +827,7 @@ public class CliParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_port.add(port30.getTree());
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:29: ( username password )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:29: ( username password )?
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -836,7 +836,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt3) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:30: username password
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:163:30: username password
                             {
                             pushFollow(FOLLOW_username_in_connectStatement670);
                             username31=username();
@@ -859,7 +859,7 @@ public class CliParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: password, port, host, username
+                    // elements: password, host, username, port
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -872,14 +872,14 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 164:9: -> ^( NODE_CONNECT host port ( username password )? )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:164:12: ^( NODE_CONNECT host port ( username password )? )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:164:12: ^( NODE_CONNECT host port ( username password )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_CONNECT, "NODE_CONNECT"), root_1);
 
                         adaptor.addChild(root_1, stream_host.nextTree());
                         adaptor.addChild(root_1, stream_port.nextTree());
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:164:37: ( username password )?
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:164:37: ( username password )?
                         if ( stream_password.hasNext()||stream_username.hasNext() ) {
                             adaptor.addChild(root_1, stream_username.nextTree());
                             adaptor.addChild(root_1, stream_password.nextTree());
@@ -897,7 +897,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:165:7: CONNECT ip_address '/' port ( username password )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:165:7: CONNECT ip_address '/' port ( username password )?
                     {
                     CONNECT33=(Token)match(input,CONNECT,FOLLOW_CONNECT_in_connectStatement707); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_CONNECT.add(CONNECT33);
@@ -917,7 +917,7 @@ public class CliParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_port.add(port36.getTree());
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:165:35: ( username password )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:165:35: ( username password )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -926,7 +926,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt4) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:165:36: username password
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:165:36: username password
                             {
                             pushFollow(FOLLOW_username_in_connectStatement716);
                             username37=username();
@@ -949,7 +949,7 @@ public class CliParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: port, username, password, ip_address
+                    // elements: password, username, port, ip_address
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -962,21 +962,21 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 166:9: -> ^( NODE_CONNECT ip_address port ( username password )? )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:166:12: ^( NODE_CONNECT ip_address port ( username password )? )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:166:12: ^( NODE_CONNECT ip_address port ( username password )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_CONNECT, "NODE_CONNECT"), root_1);
 
                         adaptor.addChild(root_1, stream_ip_address.nextTree());
                         adaptor.addChild(root_1, stream_port.nextTree());
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:166:43: ( username password )?
-                        if ( stream_username.hasNext()||stream_password.hasNext() ) {
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:166:43: ( username password )?
+                        if ( stream_password.hasNext()||stream_username.hasNext() ) {
                             adaptor.addChild(root_1, stream_username.nextTree());
                             adaptor.addChild(root_1, stream_password.nextTree());
 
                         }
-                        stream_username.reset();
                         stream_password.reset();
+                        stream_username.reset();
 
                         adaptor.addChild(root_0, root_1);
                         }
@@ -1014,7 +1014,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "helpStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:169:1: helpStatement : ( HELP HELP -> ^( NODE_HELP NODE_HELP ) | HELP CONNECT -> ^( NODE_HELP NODE_CONNECT ) | HELP USE -> ^( NODE_HELP NODE_USE_TABLE ) | HELP DESCRIBE -> ^( NODE_HELP NODE_DESCRIBE ) | HELP DESCRIBE 'CLUSTER' -> ^( NODE_HELP NODE_DESCRIBE_CLUSTER ) | HELP EXIT -> ^( NODE_HELP NODE_EXIT ) | HELP QUIT -> ^( NODE_HELP NODE_EXIT ) | HELP SHOW 'CLUSTER NAME' -> ^( NODE_HELP NODE_SHOW_CLUSTER_NAME ) | HELP SHOW KEYSPACES -> ^( NODE_HELP NODE_SHOW_KEYSPACES ) | HELP SHOW SCHEMA -> ^( NODE_HELP NODE_SHOW_SCHEMA ) | HELP SHOW API_VERSION -> ^( NODE_HELP NODE_SHOW_VERSION ) | HELP CREATE KEYSPACE -> ^( NODE_HELP NODE_ADD_KEYSPACE ) | HELP UPDATE KEYSPACE -> ^( NODE_HELP NODE_UPDATE_KEYSPACE ) | HELP CREATE COLUMN FAMILY -> ^( NODE_HELP NODE_ADD_COLUMN_FAMILY ) | HELP UPDATE COLUMN FAMILY -> ^( NODE_HELP NODE_UPDATE_COLUMN_FAMILY ) | HELP DROP KEYSPACE -> ^( NODE_HELP NODE_DEL_KEYSPACE ) | HELP DROP COLUMN FAMILY -> ^( NODE_HELP NODE_DEL_COLUMN_FAMILY ) | HELP DROP INDEX -> ^( NODE_HELP NODE_DROP_INDEX ) | HELP GET -> ^( NODE_HELP NODE_THRIFT_GET ) | HELP SET -> ^( NODE_HELP NODE_THRIFT_SET ) | HELP INCR -> ^( NODE_HELP NODE_THRIFT_INCR ) | HELP DECR -> ^( NODE_HELP NODE_THRIFT_DECR ) | HELP DEL -> ^( NODE_HELP NODE_THRIFT_DEL ) | HELP COUNT -> ^( NODE_HELP NODE_THRIFT_COUNT ) | HELP LIST -> ^( NODE_HELP NODE_LIST ) | HELP TRUNCATE -> ^( NODE_HELP NODE_TRUNCATE ) | HELP ASSUME -> ^( NODE_HELP NODE_ASSUME ) | HELP CONSISTENCYLEVEL -> ^( NODE_HELP NODE_CONSISTENCY_LEVEL ) | HELP -> ^( NODE_HELP ) | '?' -> ^( NODE_HELP ) );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:169:1: helpStatement : ( HELP HELP -> ^( NODE_HELP NODE_HELP ) | HELP CONNECT -> ^( NODE_HELP NODE_CONNECT ) | HELP USE -> ^( NODE_HELP NODE_USE_TABLE ) | HELP DESCRIBE -> ^( NODE_HELP NODE_DESCRIBE ) | HELP DESCRIBE 'CLUSTER' -> ^( NODE_HELP NODE_DESCRIBE_CLUSTER ) | HELP EXIT -> ^( NODE_HELP NODE_EXIT ) | HELP QUIT -> ^( NODE_HELP NODE_EXIT ) | HELP SHOW 'CLUSTER NAME' -> ^( NODE_HELP NODE_SHOW_CLUSTER_NAME ) | HELP SHOW KEYSPACES -> ^( NODE_HELP NODE_SHOW_KEYSPACES ) | HELP SHOW SCHEMA -> ^( NODE_HELP NODE_SHOW_SCHEMA ) | HELP SHOW API_VERSION -> ^( NODE_HELP NODE_SHOW_VERSION ) | HELP CREATE KEYSPACE -> ^( NODE_HELP NODE_ADD_KEYSPACE ) | HELP UPDATE KEYSPACE -> ^( NODE_HELP NODE_UPDATE_KEYSPACE ) | HELP CREATE COLUMN FAMILY -> ^( NODE_HELP NODE_ADD_COLUMN_FAMILY ) | HELP UPDATE COLUMN FAMILY -> ^( NODE_HELP NODE_UPDATE_COLUMN_FAMILY ) | HELP DROP KEYSPACE -> ^( NODE_HELP NODE_DEL_KEYSPACE ) | HELP DROP COLUMN FAMILY -> ^( NODE_HELP NODE_DEL_COLUMN_FAMILY ) | HELP DROP INDEX -> ^( NODE_HELP NODE_DROP_INDEX ) | HELP GET -> ^( NODE_HELP NODE_THRIFT_GET ) | HELP SET -> ^( NODE_HELP NODE_THRIFT_SET ) | HELP INCR -> ^( NODE_HELP NODE_THRIFT_INCR ) | HELP DECR -> ^( NODE_HELP NODE_THRIFT_DECR ) | HELP DEL -> ^( NODE_HELP NODE_THRIFT_DEL ) | HELP COUNT -> ^( NODE_HELP NODE_THRIFT_COUNT ) | HELP LIST -> ^( NODE_HELP NODE_LIST ) | HELP TRUNCATE -> ^( NODE_HELP NODE_TRUNCATE ) | HELP ASSUME -> ^( NODE_HELP NODE_ASSUME ) | HELP CONSISTENCYLEVEL -> ^( NODE_HELP NODE_CONSISTENCY_LEVEL ) | HELP -> ^( NODE_HELP ) | '?' -> ^( NODE_HELP ) );
     public final CliParser.helpStatement_return helpStatement() throws RecognitionException {
         CliParser.helpStatement_return retval = new CliParser.helpStatement_return();
         retval.start = input.LT(1);
@@ -1200,12 +1200,12 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_SHOW=new RewriteRuleTokenStream(adaptor,"token SHOW");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:170:5: ( HELP HELP -> ^( NODE_HELP NODE_HELP ) | HELP CONNECT -> ^( NODE_HELP NODE_CONNECT ) | HELP USE -> ^( NODE_HELP NODE_USE_TABLE ) | HELP DESCRIBE -> ^( NODE_HELP NODE_DESCRIBE ) | HELP DESCRIBE 'CLUSTER' -> ^( NODE_HELP NODE_DESCRIBE_CLUSTER ) | HELP EXIT -> ^( NODE_HELP NODE_EXIT ) | HELP QUIT -> ^( NODE_HELP NODE_EXIT ) | HELP SHOW 'CLUSTER NAME' -> ^( NODE_HELP NODE_SHOW_CLUSTER_NAME ) | HELP SHOW KEYSPACES -> ^( NODE_HELP NODE_SHOW_KEYSPACES ) | HELP SHOW SCHEMA -> ^( NODE_HELP NODE_SHOW_SCHEMA ) | HELP SHOW API_VERSION -> ^( NODE_HELP NODE_SHOW_VERSION ) | HELP CREATE KEYSPACE -> ^( NODE_HELP NODE_ADD_KEYSPACE ) | HELP UPDATE KEYSPACE -> ^( NODE_HELP NODE_UPDATE_KEYSPACE ) | HELP CREATE COLUMN FAMILY -> ^( NODE_HELP NODE_ADD_COLUMN_FAMILY ) | HELP UPDATE COLUMN FAMILY -> ^( NODE_HELP NODE_UPDATE_COLUMN_FAMILY ) | HELP DROP KEYSPACE -> ^( NODE_HELP NODE_DEL_KEYSPACE ) | HELP DROP COLUMN FAMILY -> ^( NODE_HELP NODE_DEL_COLUMN_FAMILY ) | HELP DROP INDEX -> ^( NODE_HELP NODE_DROP_INDEX ) | HELP GET -> ^( NODE_HELP NODE_THRIFT_GET ) | HELP SET -> ^( NODE_HELP NODE_THRIFT_SET ) | HELP INCR -> ^( NODE_HELP NODE_THRIFT_INCR ) | HELP DECR -> ^( NODE_HELP NODE_THRIFT_DECR ) | HELP DEL -> ^( NODE_HELP NODE_THRIFT_DEL ) | HELP COUNT -> ^( NODE_HELP NODE_THRIFT_COUNT ) | HELP LIST -> ^( NODE_HELP NODE_LIST ) | HELP TRUNCATE -> ^( NODE_HELP NODE_TRUNCATE ) | HELP ASSUME -> ^( NODE_HELP NODE_ASSUME ) | HELP CONSISTENCYLEVEL -> ^( NODE_HELP NODE_CONSISTENCY_LEVEL ) | HELP -> ^( NODE_HELP ) | '?' -> ^( NODE_HELP ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:170:5: ( HELP HELP -> ^( NODE_HELP NODE_HELP ) | HELP CONNECT -> ^( NODE_HELP NODE_CONNECT ) | HELP USE -> ^( NODE_HELP NODE_USE_TABLE ) | HELP DESCRIBE -> ^( NODE_HELP NODE_DESCRIBE ) | HELP DESCRIBE 'CLUSTER' -> ^( NODE_HELP NODE_DESCRIBE_CLUSTER ) | HELP EXIT -> ^( NODE_HELP NODE_EXIT ) | HELP QUIT -> ^( NODE_HELP NODE_EXIT ) | HELP SHOW 'CLUSTER NAME' -> ^( NODE_HELP NODE_SHOW_CLUSTER_NAME ) | HELP SHOW KEYSPACES -> ^( NODE_HELP NODE_SHOW_KEYSPACES ) | HELP SHOW SCHEMA -> ^( NODE_HELP NODE_SHOW_SCHEMA ) | HELP SHOW API_VERSION -> ^( NODE_HELP NODE_SHOW_VERSION ) | HELP CREATE KEYSPACE -> ^( NODE_HELP NODE_ADD_KEYSPACE ) | HELP UPDATE KEYSPACE -> ^( NODE_HELP NODE_UPDATE_KEYSPACE ) | HELP CREATE COLUMN FAMILY -> ^( NODE_HELP NODE_ADD_COLUMN_FAMILY ) | HELP UPDATE COLUMN FAMILY -> ^( NODE_HELP NODE_UPDATE_COLUMN_FAMILY ) | HELP DROP KEYSPACE -> ^( NODE_HELP NODE_DEL_KEYSPACE ) | HELP DROP COLUMN FAMILY -> ^( NODE_HELP NODE_DEL_COLUMN_FAMILY ) | HELP DROP INDEX -> ^( NODE_HELP NODE_DROP_INDEX ) | HELP GET -> ^( NODE_HELP NODE_THRIFT_GET ) | HELP SET -> ^( NODE_HELP NODE_THRIFT_SET ) | HELP INCR -> ^( NODE_HELP NODE_THRIFT_INCR ) | HELP DECR -> ^( NODE_HELP NODE_THRIFT_DECR ) | HELP DEL -> ^( NODE_HELP NODE_THRIFT_DEL ) | HELP COUNT -> ^( NODE_HELP NODE_THRIFT_COUNT ) | HELP LIST -> ^( NODE_HELP NODE_LIST ) | HELP TRUNCATE -> ^( NODE_HELP NODE_TRUNCATE ) | HELP ASSUME -> ^( NODE_HELP NODE_ASSUME ) | HELP CONSISTENCYLEVEL -> ^( NODE_HELP NODE_CONSISTENCY_LEVEL ) | HELP -> ^( NODE_HELP ) | '?' -> ^( NODE_HELP ) )
             int alt6=30;
             alt6 = dfa6.predict(input);
             switch (alt6) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:170:7: HELP HELP
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:170:7: HELP HELP
                     {
                     HELP39=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement762); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP39);
@@ -1229,7 +1229,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 171:9: -> ^( NODE_HELP NODE_HELP )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:171:12: ^( NODE_HELP NODE_HELP )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:171:12: ^( NODE_HELP NODE_HELP )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1245,7 +1245,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:172:7: HELP CONNECT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:172:7: HELP CONNECT
                     {
                     HELP41=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement789); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP41);
@@ -1269,7 +1269,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 173:9: -> ^( NODE_HELP NODE_CONNECT )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:173:12: ^( NODE_HELP NODE_CONNECT )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:173:12: ^( NODE_HELP NODE_CONNECT )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1285,7 +1285,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:174:7: HELP USE
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:174:7: HELP USE
                     {
                     HELP43=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement816); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP43);
@@ -1309,7 +1309,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 175:9: -> ^( NODE_HELP NODE_USE_TABLE )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:175:12: ^( NODE_HELP NODE_USE_TABLE )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:175:12: ^( NODE_HELP NODE_USE_TABLE )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1325,7 +1325,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:176:7: HELP DESCRIBE
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:176:7: HELP DESCRIBE
                     {
                     HELP45=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement843); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP45);
@@ -1349,7 +1349,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 177:9: -> ^( NODE_HELP NODE_DESCRIBE )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:177:12: ^( NODE_HELP NODE_DESCRIBE )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:177:12: ^( NODE_HELP NODE_DESCRIBE )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1365,7 +1365,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:178:7: HELP DESCRIBE 'CLUSTER'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:178:7: HELP DESCRIBE 'CLUSTER'
                     {
                     HELP47=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement869); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP47);
@@ -1392,7 +1392,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 179:9: -> ^( NODE_HELP NODE_DESCRIBE_CLUSTER )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:179:12: ^( NODE_HELP NODE_DESCRIBE_CLUSTER )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:179:12: ^( NODE_HELP NODE_DESCRIBE_CLUSTER )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1408,7 +1408,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:180:7: HELP EXIT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:180:7: HELP EXIT
                     {
                     HELP50=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement897); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP50);
@@ -1432,7 +1432,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 181:9: -> ^( NODE_HELP NODE_EXIT )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:181:12: ^( NODE_HELP NODE_EXIT )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:181:12: ^( NODE_HELP NODE_EXIT )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1448,7 +1448,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 7 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:182:7: HELP QUIT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:182:7: HELP QUIT
                     {
                     HELP52=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement924); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP52);
@@ -1472,7 +1472,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 183:9: -> ^( NODE_HELP NODE_EXIT )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:183:12: ^( NODE_HELP NODE_EXIT )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:183:12: ^( NODE_HELP NODE_EXIT )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1488,7 +1488,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 8 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:184:7: HELP SHOW 'CLUSTER NAME'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:184:7: HELP SHOW 'CLUSTER NAME'
                     {
                     HELP54=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement951); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP54);
@@ -1515,7 +1515,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 185:9: -> ^( NODE_HELP NODE_SHOW_CLUSTER_NAME )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:185:12: ^( NODE_HELP NODE_SHOW_CLUSTER_NAME )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:185:12: ^( NODE_HELP NODE_SHOW_CLUSTER_NAME )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1531,7 +1531,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 9 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:186:7: HELP SHOW KEYSPACES
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:186:7: HELP SHOW KEYSPACES
                     {
                     HELP57=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement979); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP57);
@@ -1558,7 +1558,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 187:9: -> ^( NODE_HELP NODE_SHOW_KEYSPACES )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:187:12: ^( NODE_HELP NODE_SHOW_KEYSPACES )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:187:12: ^( NODE_HELP NODE_SHOW_KEYSPACES )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1574,7 +1574,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 10 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:188:7: HELP SHOW SCHEMA
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:188:7: HELP SHOW SCHEMA
                     {
                     HELP60=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1008); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP60);
@@ -1601,7 +1601,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 189:13: -> ^( NODE_HELP NODE_SHOW_SCHEMA )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:189:16: ^( NODE_HELP NODE_SHOW_SCHEMA )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:189:16: ^( NODE_HELP NODE_SHOW_SCHEMA )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1617,7 +1617,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 11 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:190:7: HELP SHOW API_VERSION
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:190:7: HELP SHOW API_VERSION
                     {
                     HELP63=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1040); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP63);
@@ -1644,7 +1644,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 191:9: -> ^( NODE_HELP NODE_SHOW_VERSION )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:191:12: ^( NODE_HELP NODE_SHOW_VERSION )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:191:12: ^( NODE_HELP NODE_SHOW_VERSION )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1660,7 +1660,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 12 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:192:7: HELP CREATE KEYSPACE
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:192:7: HELP CREATE KEYSPACE
                     {
                     HELP66=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1068); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP66);
@@ -1687,7 +1687,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 193:9: -> ^( NODE_HELP NODE_ADD_KEYSPACE )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:193:12: ^( NODE_HELP NODE_ADD_KEYSPACE )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:193:12: ^( NODE_HELP NODE_ADD_KEYSPACE )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1703,7 +1703,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 13 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:194:7: HELP UPDATE KEYSPACE
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:194:7: HELP UPDATE KEYSPACE
                     {
                     HELP69=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1097); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP69);
@@ -1730,7 +1730,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 195:9: -> ^( NODE_HELP NODE_UPDATE_KEYSPACE )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:195:12: ^( NODE_HELP NODE_UPDATE_KEYSPACE )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:195:12: ^( NODE_HELP NODE_UPDATE_KEYSPACE )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1746,7 +1746,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 14 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:196:7: HELP CREATE COLUMN FAMILY
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:196:7: HELP CREATE COLUMN FAMILY
                     {
                     HELP72=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1125); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP72);
@@ -1776,7 +1776,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 197:9: -> ^( NODE_HELP NODE_ADD_COLUMN_FAMILY )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:197:12: ^( NODE_HELP NODE_ADD_COLUMN_FAMILY )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:197:12: ^( NODE_HELP NODE_ADD_COLUMN_FAMILY )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1792,7 +1792,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 15 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:198:7: HELP UPDATE COLUMN FAMILY
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:198:7: HELP UPDATE COLUMN FAMILY
                     {
                     HELP76=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1156); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP76);
@@ -1822,7 +1822,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 199:9: -> ^( NODE_HELP NODE_UPDATE_COLUMN_FAMILY )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:199:12: ^( NODE_HELP NODE_UPDATE_COLUMN_FAMILY )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:199:12: ^( NODE_HELP NODE_UPDATE_COLUMN_FAMILY )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1838,7 +1838,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 16 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:200:7: HELP DROP KEYSPACE
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:200:7: HELP DROP KEYSPACE
                     {
                     HELP80=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1186); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP80);
@@ -1865,7 +1865,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 201:9: -> ^( NODE_HELP NODE_DEL_KEYSPACE )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:201:12: ^( NODE_HELP NODE_DEL_KEYSPACE )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:201:12: ^( NODE_HELP NODE_DEL_KEYSPACE )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1881,7 +1881,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 17 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:202:7: HELP DROP COLUMN FAMILY
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:202:7: HELP DROP COLUMN FAMILY
                     {
                     HELP83=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1215); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP83);
@@ -1911,7 +1911,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 203:9: -> ^( NODE_HELP NODE_DEL_COLUMN_FAMILY )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:203:12: ^( NODE_HELP NODE_DEL_COLUMN_FAMILY )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:203:12: ^( NODE_HELP NODE_DEL_COLUMN_FAMILY )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1927,7 +1927,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 18 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:204:7: HELP DROP INDEX
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:204:7: HELP DROP INDEX
                     {
                     HELP87=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1246); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP87);
@@ -1954,7 +1954,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 205:9: -> ^( NODE_HELP NODE_DROP_INDEX )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:205:12: ^( NODE_HELP NODE_DROP_INDEX )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:205:12: ^( NODE_HELP NODE_DROP_INDEX )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -1970,7 +1970,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 19 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:206:7: HELP GET
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:206:7: HELP GET
                     {
                     HELP90=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1274); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP90);
@@ -1994,7 +1994,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 207:9: -> ^( NODE_HELP NODE_THRIFT_GET )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:207:12: ^( NODE_HELP NODE_THRIFT_GET )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:207:12: ^( NODE_HELP NODE_THRIFT_GET )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2010,7 +2010,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 20 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:208:7: HELP SET
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:208:7: HELP SET
                     {
                     HELP92=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1301); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP92);
@@ -2034,7 +2034,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 209:9: -> ^( NODE_HELP NODE_THRIFT_SET )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:209:12: ^( NODE_HELP NODE_THRIFT_SET )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:209:12: ^( NODE_HELP NODE_THRIFT_SET )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2050,7 +2050,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 21 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:210:7: HELP INCR
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:210:7: HELP INCR
                     {
                     HELP94=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1328); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP94);
@@ -2074,7 +2074,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 211:9: -> ^( NODE_HELP NODE_THRIFT_INCR )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:211:12: ^( NODE_HELP NODE_THRIFT_INCR )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:211:12: ^( NODE_HELP NODE_THRIFT_INCR )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2090,7 +2090,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 22 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:212:7: HELP DECR
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:212:7: HELP DECR
                     {
                     HELP96=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1354); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP96);
@@ -2114,7 +2114,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 213:9: -> ^( NODE_HELP NODE_THRIFT_DECR )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:213:12: ^( NODE_HELP NODE_THRIFT_DECR )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:213:12: ^( NODE_HELP NODE_THRIFT_DECR )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2130,7 +2130,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 23 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:214:7: HELP DEL
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:214:7: HELP DEL
                     {
                     HELP98=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1380); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP98);
@@ -2154,7 +2154,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 215:9: -> ^( NODE_HELP NODE_THRIFT_DEL )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:215:12: ^( NODE_HELP NODE_THRIFT_DEL )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:215:12: ^( NODE_HELP NODE_THRIFT_DEL )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2170,7 +2170,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 24 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:216:7: HELP COUNT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:216:7: HELP COUNT
                     {
                     HELP100=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1407); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP100);
@@ -2194,7 +2194,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 217:9: -> ^( NODE_HELP NODE_THRIFT_COUNT )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:217:12: ^( NODE_HELP NODE_THRIFT_COUNT )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:217:12: ^( NODE_HELP NODE_THRIFT_COUNT )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2210,7 +2210,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 25 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:218:7: HELP LIST
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:218:7: HELP LIST
                     {
                     HELP102=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1434); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP102);
@@ -2234,7 +2234,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 219:9: -> ^( NODE_HELP NODE_LIST )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:219:12: ^( NODE_HELP NODE_LIST )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:219:12: ^( NODE_HELP NODE_LIST )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2250,7 +2250,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 26 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:220:7: HELP TRUNCATE
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:220:7: HELP TRUNCATE
                     {
                     HELP104=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1461); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP104);
@@ -2274,7 +2274,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 221:9: -> ^( NODE_HELP NODE_TRUNCATE )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:221:12: ^( NODE_HELP NODE_TRUNCATE )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:221:12: ^( NODE_HELP NODE_TRUNCATE )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2290,7 +2290,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 27 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:222:7: HELP ASSUME
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:222:7: HELP ASSUME
                     {
                     HELP106=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1487); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP106);
@@ -2314,7 +2314,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 223:9: -> ^( NODE_HELP NODE_ASSUME )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:223:12: ^( NODE_HELP NODE_ASSUME )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:223:12: ^( NODE_HELP NODE_ASSUME )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2330,7 +2330,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 28 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:224:7: HELP CONSISTENCYLEVEL
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:224:7: HELP CONSISTENCYLEVEL
                     {
                     HELP108=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1513); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP108);
@@ -2354,7 +2354,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 225:9: -> ^( NODE_HELP NODE_CONSISTENCY_LEVEL )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:225:12: ^( NODE_HELP NODE_CONSISTENCY_LEVEL )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:225:12: ^( NODE_HELP NODE_CONSISTENCY_LEVEL )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2370,7 +2370,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 29 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:226:7: HELP
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:226:7: HELP
                     {
                     HELP110=(Token)match(input,HELP,FOLLOW_HELP_in_helpStatement1539); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_HELP.add(HELP110);
@@ -2391,7 +2391,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 227:9: -> ^( NODE_HELP )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:227:12: ^( NODE_HELP )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:227:12: ^( NODE_HELP )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2405,7 +2405,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 30 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:228:7: '?'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:228:7: '?'
                     {
                     char_literal111=(Token)match(input,108,FOLLOW_108_in_helpStatement1562); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_108.add(char_literal111);
@@ -2426,7 +2426,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 229:9: -> ^( NODE_HELP )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:229:12: ^( NODE_HELP )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:229:12: ^( NODE_HELP )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_HELP, "NODE_HELP"), root_1);
@@ -2467,7 +2467,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "exitStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:232:1: exitStatement : ( QUIT -> ^( NODE_EXIT ) | EXIT -> ^( NODE_EXIT ) );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:232:1: exitStatement : ( QUIT -> ^( NODE_EXIT ) | EXIT -> ^( NODE_EXIT ) );
     public final CliParser.exitStatement_return exitStatement() throws RecognitionException {
         CliParser.exitStatement_return retval = new CliParser.exitStatement_return();
         retval.start = input.LT(1);
@@ -2483,7 +2483,7 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_QUIT=new RewriteRuleTokenStream(adaptor,"token QUIT");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:233:5: ( QUIT -> ^( NODE_EXIT ) | EXIT -> ^( NODE_EXIT ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:233:5: ( QUIT -> ^( NODE_EXIT ) | EXIT -> ^( NODE_EXIT ) )
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -2502,7 +2502,7 @@ public class CliParser extends Parser {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:233:7: QUIT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:233:7: QUIT
                     {
                     QUIT112=(Token)match(input,QUIT,FOLLOW_QUIT_in_exitStatement1597); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_QUIT.add(QUIT112);
@@ -2523,7 +2523,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 233:12: -> ^( NODE_EXIT )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:233:15: ^( NODE_EXIT )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:233:15: ^( NODE_EXIT )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_EXIT, "NODE_EXIT"), root_1);
@@ -2537,7 +2537,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:234:7: EXIT
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:234:7: EXIT
                     {
                     EXIT113=(Token)match(input,EXIT,FOLLOW_EXIT_in_exitStatement1611); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_EXIT.add(EXIT113);
@@ -2558,7 +2558,7 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 234:12: -> ^( NODE_EXIT )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:234:15: ^( NODE_EXIT )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:234:15: ^( NODE_EXIT )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_EXIT, "NODE_EXIT"), root_1);
@@ -2599,7 +2599,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "getStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:237:1: getStatement : ( GET columnFamilyExpr ( 'AS' typeIdentifier )? ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET columnFamilyExpr ( ^( CONVERT_TO_TYPE typeIdentifier ) )? ( ^( NODE_LIMIT $limit) )? ) | GET columnFamily 'WHERE' getCondition ( 'AND' getCondition )* ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET_WITH_CONDITIONS columnFamily ^( CONDITIONS ( getCondition )+ ) ( ^( NODE_LIMIT $limit) )? ) );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:237:1: getStatement : ( GET columnFamilyExpr ( 'AS' typeIdentifier )? ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET columnFamilyExpr ( ^( CONVERT_TO_TYPE typeIdentifier ) )? ( ^( NODE_LIMIT $limit) )? ) | GET columnFamily 'WHERE' getCondition ( 'AND' getCondition )* ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET_WITH_CONDITIONS columnFamily ^( CONDITIONS ( getCondition )+ ) ( ^( NODE_LIMIT $limit) )? ) );
     public final CliParser.getStatement_return getStatement() throws RecognitionException {
         CliParser.getStatement_return retval = new CliParser.getStatement_return();
         retval.start = input.LT(1);
@@ -2644,7 +2644,7 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_columnFamilyExpr=new RewriteRuleSubtreeStream(adaptor,"rule columnFamilyExpr");
         RewriteRuleSubtreeStream stream_columnFamily=new RewriteRuleSubtreeStream(adaptor,"rule columnFamily");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:5: ( GET columnFamilyExpr ( 'AS' typeIdentifier )? ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET columnFamilyExpr ( ^( CONVERT_TO_TYPE typeIdentifier ) )? ( ^( NODE_LIMIT $limit) )? ) | GET columnFamily 'WHERE' getCondition ( 'AND' getCondition )* ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET_WITH_CONDITIONS columnFamily ^( CONDITIONS ( getCondition )+ ) ( ^( NODE_LIMIT $limit) )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:5: ( GET columnFamilyExpr ( 'AS' typeIdentifier )? ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET columnFamilyExpr ( ^( CONVERT_TO_TYPE typeIdentifier ) )? ( ^( NODE_LIMIT $limit) )? ) | GET columnFamily 'WHERE' getCondition ( 'AND' getCondition )* ( 'LIMIT' limit= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_GET_WITH_CONDITIONS columnFamily ^( CONDITIONS ( getCondition )+ ) ( ^( NODE_LIMIT $limit) )? ) )
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -2685,7 +2685,7 @@ public class CliParser extends Parser {
             }
             switch (alt12) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:7: GET columnFamilyExpr ( 'AS' typeIdentifier )? ( 'LIMIT' limit= IntegerPositiveLiteral )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:7: GET columnFamilyExpr ( 'AS' typeIdentifier )? ( 'LIMIT' limit= IntegerPositiveLiteral )?
                     {
                     GET114=(Token)match(input,GET,FOLLOW_GET_in_getStatement1634); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_GET.add(GET114);
@@ -2696,7 +2696,7 @@ public class CliParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_columnFamilyExpr.add(columnFamilyExpr115.getTree());
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:28: ( 'AS' typeIdentifier )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:28: ( 'AS' typeIdentifier )?
                     int alt8=2;
                     int LA8_0 = input.LA(1);
 
@@ -2705,7 +2705,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt8) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:29: 'AS' typeIdentifier
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:29: 'AS' typeIdentifier
                             {
                             string_literal116=(Token)match(input,109,FOLLOW_109_in_getStatement1639); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_109.add(string_literal116);
@@ -2722,7 +2722,7 @@ public class CliParser extends Parser {
 
                     }
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:51: ( 'LIMIT' limit= IntegerPositiveLiteral )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:51: ( 'LIMIT' limit= IntegerPositiveLiteral )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -2731,7 +2731,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt9) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:52: 'LIMIT' limit= IntegerPositiveLiteral
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:238:52: 'LIMIT' limit= IntegerPositiveLiteral
                             {
                             string_literal118=(Token)match(input,LIMIT,FOLLOW_LIMIT_in_getStatement1646); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_LIMIT.add(string_literal118);
@@ -2748,7 +2748,7 @@ public class CliParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: columnFamilyExpr, typeIdentifier, limit
+                    // elements: typeIdentifier, columnFamilyExpr, limit
                     // token labels: limit
                     // rule labels: retval
                     // token list labels: 
@@ -2762,15 +2762,15 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 239:9: -> ^( NODE_THRIFT_GET columnFamilyExpr ( ^( CONVERT_TO_TYPE typeIdentifier ) )? ( ^( NODE_LIMIT $limit) )? )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:12: ^( NODE_THRIFT_GET columnFamilyExpr ( ^( CONVERT_TO_TYPE typeIdentifier ) )? ( ^( NODE_LIMIT $limit) )? )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:12: ^( NODE_THRIFT_GET columnFamilyExpr ( ^( CONVERT_TO_TYPE typeIdentifier ) )? ( ^( NODE_LIMIT $limit) )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_THRIFT_GET, "NODE_THRIFT_GET"), root_1);
 
                         adaptor.addChild(root_1, stream_columnFamilyExpr.nextTree());
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:47: ( ^( CONVERT_TO_TYPE typeIdentifier ) )?
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:47: ( ^( CONVERT_TO_TYPE typeIdentifier ) )?
                         if ( stream_typeIdentifier.hasNext() ) {
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:49: ^( CONVERT_TO_TYPE typeIdentifier )
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:49: ^( CONVERT_TO_TYPE typeIdentifier )
                             {
                             CommonTree root_2 = (CommonTree)adaptor.nil();
                             root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(CONVERT_TO_TYPE, "CONVERT_TO_TYPE"), root_2);
@@ -2782,9 +2782,9 @@ public class CliParser extends Parser {
 
                         }
                         stream_typeIdentifier.reset();
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:86: ( ^( NODE_LIMIT $limit) )?
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:86: ( ^( NODE_LIMIT $limit) )?
                         if ( stream_limit.hasNext() ) {
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:86: ^( NODE_LIMIT $limit)
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:239:86: ^( NODE_LIMIT $limit)
                             {
                             CommonTree root_2 = (CommonTree)adaptor.nil();
                             root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_LIMIT, "NODE_LIMIT"), root_2);
@@ -2806,7 +2806,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:7: GET columnFamily 'WHERE' getCondition ( 'AND' getCondition )* ( 'LIMIT' limit= IntegerPositiveLiteral )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:7: GET columnFamily 'WHERE' getCondition ( 'AND' getCondition )* ( 'LIMIT' limit= IntegerPositiveLiteral )?
                     {
                     GET119=(Token)match(input,GET,FOLLOW_GET_in_getStatement1695); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_GET.add(GET119);
@@ -2826,7 +2826,7 @@ public class CliParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_getCondition.add(getCondition122.getTree());
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:45: ( 'AND' getCondition )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:45: ( 'AND' getCondition )*
                     loop10:
                     do {
                         int alt10=2;
@@ -2839,7 +2839,7 @@ public class CliParser extends Parser {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:46: 'AND' getCondition
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:46: 'AND' getCondition
                     	    {
                     	    string_literal123=(Token)match(input,AND,FOLLOW_AND_in_getStatement1704); if (state.failed) return retval; 
                     	    if ( state.backtracking==0 ) stream_AND.add(string_literal123);
@@ -2859,7 +2859,7 @@ public class CliParser extends Parser {
                         }
                     } while (true);
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:67: ( 'LIMIT' limit= IntegerPositiveLiteral )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:67: ( 'LIMIT' limit= IntegerPositiveLiteral )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -2868,7 +2868,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt11) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:68: 'LIMIT' limit= IntegerPositiveLiteral
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:240:68: 'LIMIT' limit= IntegerPositiveLiteral
                             {
                             string_literal125=(Token)match(input,LIMIT,FOLLOW_LIMIT_in_getStatement1711); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_LIMIT.add(string_literal125);
@@ -2885,7 +2885,7 @@ public class CliParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: columnFamily, getCondition, limit
+                    // elements: getCondition, limit, columnFamily
                     // token labels: limit
                     // rule labels: retval
                     // token list labels: 
@@ -2899,13 +2899,13 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 241:9: -> ^( NODE_THRIFT_GET_WITH_CONDITIONS columnFamily ^( CONDITIONS ( getCondition )+ ) ( ^( NODE_LIMIT $limit) )? )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:12: ^( NODE_THRIFT_GET_WITH_CONDITIONS columnFamily ^( CONDITIONS ( getCondition )+ ) ( ^( NODE_LIMIT $limit) )? )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:12: ^( NODE_THRIFT_GET_WITH_CONDITIONS columnFamily ^( CONDITIONS ( getCondition )+ ) ( ^( NODE_LIMIT $limit) )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_THRIFT_GET_WITH_CONDITIONS, "NODE_THRIFT_GET_WITH_CONDITIONS"), root_1);
 
                         adaptor.addChild(root_1, stream_columnFamily.nextTree());
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:59: ^( CONDITIONS ( getCondition )+ )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:59: ^( CONDITIONS ( getCondition )+ )
                         {
                         CommonTree root_2 = (CommonTree)adaptor.nil();
                         root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(CONDITIONS, "CONDITIONS"), root_2);
@@ -2921,9 +2921,9 @@ public class CliParser extends Parser {
 
                         adaptor.addChild(root_1, root_2);
                         }
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:87: ( ^( NODE_LIMIT $limit) )?
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:87: ( ^( NODE_LIMIT $limit) )?
                         if ( stream_limit.hasNext() ) {
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:87: ^( NODE_LIMIT $limit)
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:241:87: ^( NODE_LIMIT $limit)
                             {
                             CommonTree root_2 = (CommonTree)adaptor.nil();
                             root_2 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_LIMIT, "NODE_LIMIT"), root_2);
@@ -2972,7 +2972,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "getCondition"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:244:1: getCondition : columnOrSuperColumn operator value -> ^( CONDITION operator columnOrSuperColumn value ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:244:1: getCondition : columnOrSuperColumn operator value -> ^( CONDITION operator columnOrSuperColumn value ) ;
     public final CliParser.getCondition_return getCondition() throws RecognitionException {
         CliParser.getCondition_return retval = new CliParser.getCondition_return();
         retval.start = input.LT(1);
@@ -2990,8 +2990,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_columnOrSuperColumn=new RewriteRuleSubtreeStream(adaptor,"rule columnOrSuperColumn");
         RewriteRuleSubtreeStream stream_operator=new RewriteRuleSubtreeStream(adaptor,"rule operator");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:245:5: ( columnOrSuperColumn operator value -> ^( CONDITION operator columnOrSuperColumn value ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:245:7: columnOrSuperColumn operator value
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:245:5: ( columnOrSuperColumn operator value -> ^( CONDITION operator columnOrSuperColumn value ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:245:7: columnOrSuperColumn operator value
             {
             pushFollow(FOLLOW_columnOrSuperColumn_in_getCondition1766);
             columnOrSuperColumn126=columnOrSuperColumn();
@@ -3014,7 +3014,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: operator, value, columnOrSuperColumn
+            // elements: value, columnOrSuperColumn, operator
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3027,7 +3027,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 246:9: -> ^( CONDITION operator columnOrSuperColumn value )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:246:12: ^( CONDITION operator columnOrSuperColumn value )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:246:12: ^( CONDITION operator columnOrSuperColumn value )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(CONDITION, "CONDITION"), root_1);
@@ -3070,7 +3070,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "operator"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:249:1: operator : ( '=' | '>' | '<' | '>=' | '<=' );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:249:1: operator : ( '=' | '>' | '<' | '>=' | '<=' );
     public final CliParser.operator_return operator() throws RecognitionException {
         CliParser.operator_return retval = new CliParser.operator_return();
         retval.start = input.LT(1);
@@ -3082,8 +3082,8 @@ public class CliParser extends Parser {
         CommonTree set129_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:250:5: ( '=' | '>' | '<' | '>=' | '<=' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:250:5: ( '=' | '>' | '<' | '>=' | '<=' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -3128,7 +3128,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "typeIdentifier"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:253:1: typeIdentifier : ( Identifier | StringLiteral | IntegerPositiveLiteral );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:253:1: typeIdentifier : ( Identifier | StringLiteral | IntegerPositiveLiteral );
     public final CliParser.typeIdentifier_return typeIdentifier() throws RecognitionException {
         CliParser.typeIdentifier_return retval = new CliParser.typeIdentifier_return();
         retval.start = input.LT(1);
@@ -3140,8 +3140,8 @@ public class CliParser extends Parser {
         CommonTree set130_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:254:5: ( Identifier | StringLiteral | IntegerPositiveLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:254:5: ( Identifier | StringLiteral | IntegerPositiveLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -3186,7 +3186,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "setStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:257:1: setStatement : SET columnFamilyExpr '=' objectValue= value ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_SET columnFamilyExpr $objectValue ( $ttlValue)? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:257:1: setStatement : SET columnFamilyExpr '=' objectValue= value ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_SET columnFamilyExpr $objectValue ( $ttlValue)? ) ;
     public final CliParser.setStatement_return setStatement() throws RecognitionException {
         CliParser.setStatement_return retval = new CliParser.setStatement_return();
         retval.start = input.LT(1);
@@ -3218,8 +3218,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_columnFamilyExpr=new RewriteRuleSubtreeStream(adaptor,"rule columnFamilyExpr");
         RewriteRuleSubtreeStream stream_value=new RewriteRuleSubtreeStream(adaptor,"rule value");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:5: ( SET columnFamilyExpr '=' objectValue= value ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_SET columnFamilyExpr $objectValue ( $ttlValue)? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:7: SET columnFamilyExpr '=' objectValue= value ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:5: ( SET columnFamilyExpr '=' objectValue= value ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )? -> ^( NODE_THRIFT_SET columnFamilyExpr $objectValue ( $ttlValue)? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:7: SET columnFamilyExpr '=' objectValue= value ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )?
             {
             SET131=(Token)match(input,SET,FOLLOW_SET_in_setStatement1866); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_SET.add(SET131);
@@ -3239,7 +3239,7 @@ public class CliParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_value.add(objectValue.getTree());
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:50: ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:50: ( WITH TTL '=' ttlValue= IntegerPositiveLiteral )?
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -3248,7 +3248,7 @@ public class CliParser extends Parser {
             }
             switch (alt13) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:51: WITH TTL '=' ttlValue= IntegerPositiveLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:258:51: WITH TTL '=' ttlValue= IntegerPositiveLiteral
                     {
                     WITH134=(Token)match(input,WITH,FOLLOW_WITH_in_setStatement1877); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_WITH.add(WITH134);
@@ -3271,7 +3271,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: objectValue, ttlValue, columnFamilyExpr
+            // elements: objectValue, columnFamilyExpr, ttlValue
             // token labels: ttlValue
             // rule labels: retval, objectValue
             // token list labels: 
@@ -3286,14 +3286,14 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 259:9: -> ^( NODE_THRIFT_SET columnFamilyExpr $objectValue ( $ttlValue)? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:259:12: ^( NODE_THRIFT_SET columnFamilyExpr $objectValue ( $ttlValue)? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:259:12: ^( NODE_THRIFT_SET columnFamilyExpr $objectValue ( $ttlValue)? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_THRIFT_SET, "NODE_THRIFT_SET"), root_1);
 
                 adaptor.addChild(root_1, stream_columnFamilyExpr.nextTree());
                 adaptor.addChild(root_1, stream_objectValue.nextTree());
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:259:60: ( $ttlValue)?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:259:60: ( $ttlValue)?
                 if ( stream_ttlValue.hasNext() ) {
                     adaptor.addChild(root_1, stream_ttlValue.nextNode());
 
@@ -3334,7 +3334,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "incrStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:262:1: incrStatement : ( INCR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_INCR columnFamilyExpr ( $byValue)? ) | DECR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_DECR columnFamilyExpr ( $byValue)? ) );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:262:1: incrStatement : ( INCR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_INCR columnFamilyExpr ( $byValue)? ) | DECR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_DECR columnFamilyExpr ( $byValue)? ) );
     public final CliParser.incrStatement_return incrStatement() throws RecognitionException {
         CliParser.incrStatement_return retval = new CliParser.incrStatement_return();
         retval.start = input.LT(1);
@@ -3362,7 +3362,7 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_columnFamilyExpr=new RewriteRuleSubtreeStream(adaptor,"rule columnFamilyExpr");
         RewriteRuleSubtreeStream stream_incrementValue=new RewriteRuleSubtreeStream(adaptor,"rule incrementValue");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:5: ( INCR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_INCR columnFamilyExpr ( $byValue)? ) | DECR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_DECR columnFamilyExpr ( $byValue)? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:5: ( INCR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_INCR columnFamilyExpr ( $byValue)? ) | DECR columnFamilyExpr ( BY byValue= incrementValue )? -> ^( NODE_THRIFT_DECR columnFamilyExpr ( $byValue)? ) )
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -3381,7 +3381,7 @@ public class CliParser extends Parser {
             }
             switch (alt16) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:7: INCR columnFamilyExpr ( BY byValue= incrementValue )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:7: INCR columnFamilyExpr ( BY byValue= incrementValue )?
                     {
                     INCR137=(Token)match(input,INCR,FOLLOW_INCR_in_incrStatement1931); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_INCR.add(INCR137);
@@ -3392,7 +3392,7 @@ public class CliParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_columnFamilyExpr.add(columnFamilyExpr138.getTree());
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:29: ( BY byValue= incrementValue )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:29: ( BY byValue= incrementValue )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -3401,7 +3401,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt14) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:30: BY byValue= incrementValue
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:263:30: BY byValue= incrementValue
                             {
                             BY139=(Token)match(input,BY,FOLLOW_BY_in_incrStatement1936); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_BY.add(BY139);
@@ -3435,13 +3435,13 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 264:9: -> ^( NODE_THRIFT_INCR columnFamilyExpr ( $byValue)? )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:264:12: ^( NODE_THRIFT_INCR columnFamilyExpr ( $byValue)? )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:264:12: ^( NODE_THRIFT_INCR columnFamilyExpr ( $byValue)? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_THRIFT_INCR, "NODE_THRIFT_INCR"), root_1);
 
                         adaptor.addChild(root_1, stream_columnFamilyExpr.nextTree());
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:264:48: ( $byValue)?
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:264:48: ( $byValue)?
                         if ( stream_byValue.hasNext() ) {
                             adaptor.addChild(root_1, stream_byValue.nextTree());
 
@@ -3457,7 +3457,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:265:7: DECR columnFamilyExpr ( BY byValue= incrementValue )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:265:7: DECR columnFamilyExpr ( BY byValue= incrementValue )?
                     {
                     DECR140=(Token)match(input,DECR,FOLLOW_DECR_in_incrStatement1974); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_DECR.add(DECR140);
@@ -3468,7 +3468,7 @@ public class CliParser extends Parser {
                     state._fsp--;
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_columnFamilyExpr.add(columnFamilyExpr141.getTree());
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:265:29: ( BY byValue= incrementValue )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:265:29: ( BY byValue= incrementValue )?
                     int alt15=2;
                     int LA15_0 = input.LA(1);
 
@@ -3477,7 +3477,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt15) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:265:30: BY byValue= incrementValue
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:265:30: BY byValue= incrementValue
                             {
                             BY142=(Token)match(input,BY,FOLLOW_BY_in_incrStatement1979); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_BY.add(BY142);
@@ -3497,7 +3497,7 @@ public class CliParser extends Parser {
 
 
                     // AST REWRITE
-                    // elements: columnFamilyExpr, byValue
+                    // elements: byValue, columnFamilyExpr
                     // token labels: 
                     // rule labels: retval, byValue
                     // token list labels: 
@@ -3511,13 +3511,13 @@ public class CliParser extends Parser {
                     root_0 = (CommonTree)adaptor.nil();
                     // 266:9: -> ^( NODE_THRIFT_DECR columnFamilyExpr ( $byValue)? )
                     {
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:266:12: ^( NODE_THRIFT_DECR columnFamilyExpr ( $byValue)? )
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:266:12: ^( NODE_THRIFT_DECR columnFamilyExpr ( $byValue)? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_THRIFT_DECR, "NODE_THRIFT_DECR"), root_1);
 
                         adaptor.addChild(root_1, stream_columnFamilyExpr.nextTree());
-                        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:266:48: ( $byValue)?
+                        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:266:48: ( $byValue)?
                         if ( stream_byValue.hasNext() ) {
                             adaptor.addChild(root_1, stream_byValue.nextTree());
 
@@ -3560,7 +3560,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "countStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:269:1: countStatement : COUNT columnFamilyExpr -> ^( NODE_THRIFT_COUNT columnFamilyExpr ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:269:1: countStatement : COUNT columnFamilyExpr -> ^( NODE_THRIFT_COUNT columnFamilyExpr ) ;
     public final CliParser.countStatement_return countStatement() throws RecognitionException {
         CliParser.countStatement_return retval = new CliParser.countStatement_return();
         retval.start = input.LT(1);
@@ -3575,8 +3575,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_COUNT=new RewriteRuleTokenStream(adaptor,"token COUNT");
         RewriteRuleSubtreeStream stream_columnFamilyExpr=new RewriteRuleSubtreeStream(adaptor,"rule columnFamilyExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:270:5: ( COUNT columnFamilyExpr -> ^( NODE_THRIFT_COUNT columnFamilyExpr ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:270:7: COUNT columnFamilyExpr
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:270:5: ( COUNT columnFamilyExpr -> ^( NODE_THRIFT_COUNT columnFamilyExpr ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:270:7: COUNT columnFamilyExpr
             {
             COUNT143=(Token)match(input,COUNT,FOLLOW_COUNT_in_countStatement2026); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_COUNT.add(COUNT143);
@@ -3603,7 +3603,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 271:9: -> ^( NODE_THRIFT_COUNT columnFamilyExpr )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:271:12: ^( NODE_THRIFT_COUNT columnFamilyExpr )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:271:12: ^( NODE_THRIFT_COUNT columnFamilyExpr )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_THRIFT_COUNT, "NODE_THRIFT_COUNT"), root_1);
@@ -3644,7 +3644,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "delStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:274:1: delStatement : DEL columnFamilyExpr -> ^( NODE_THRIFT_DEL columnFamilyExpr ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:274:1: delStatement : DEL columnFamilyExpr -> ^( NODE_THRIFT_DEL columnFamilyExpr ) ;
     public final CliParser.delStatement_return delStatement() throws RecognitionException {
         CliParser.delStatement_return retval = new CliParser.delStatement_return();
         retval.start = input.LT(1);
@@ -3659,8 +3659,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_DEL=new RewriteRuleTokenStream(adaptor,"token DEL");
         RewriteRuleSubtreeStream stream_columnFamilyExpr=new RewriteRuleSubtreeStream(adaptor,"rule columnFamilyExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:275:5: ( DEL columnFamilyExpr -> ^( NODE_THRIFT_DEL columnFamilyExpr ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:275:7: DEL columnFamilyExpr
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:275:5: ( DEL columnFamilyExpr -> ^( NODE_THRIFT_DEL columnFamilyExpr ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:275:7: DEL columnFamilyExpr
             {
             DEL145=(Token)match(input,DEL,FOLLOW_DEL_in_delStatement2062); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_DEL.add(DEL145);
@@ -3687,7 +3687,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 276:9: -> ^( NODE_THRIFT_DEL columnFamilyExpr )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:276:12: ^( NODE_THRIFT_DEL columnFamilyExpr )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:276:12: ^( NODE_THRIFT_DEL columnFamilyExpr )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_THRIFT_DEL, "NODE_THRIFT_DEL"), root_1);
@@ -3728,7 +3728,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "showStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:279:1: showStatement : ( showClusterName | showVersion | showKeyspaces | showSchema );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:279:1: showStatement : ( showClusterName | showVersion | showKeyspaces | showSchema );
     public final CliParser.showStatement_return showStatement() throws RecognitionException {
         CliParser.showStatement_return retval = new CliParser.showStatement_return();
         retval.start = input.LT(1);
@@ -3746,7 +3746,7 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:280:5: ( showClusterName | showVersion | showKeyspaces | showSchema )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:280:5: ( showClusterName | showVersion | showKeyspaces | showSchema )
             int alt17=4;
             int LA17_0 = input.LA(1);
 
@@ -3790,7 +3790,7 @@ public class CliParser extends Parser {
             }
             switch (alt17) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:280:7: showClusterName
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:280:7: showClusterName
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -3804,7 +3804,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:281:7: showVersion
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:281:7: showVersion
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -3818,7 +3818,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:282:7: showKeyspaces
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:282:7: showKeyspaces
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -3832,7 +3832,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:283:7: showSchema
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:283:7: showSchema
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -3873,7 +3873,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "listStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:286:1: listStatement : LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? -> ^( NODE_LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:286:1: listStatement : LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? -> ^( NODE_LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? ) ;
     public final CliParser.listStatement_return listStatement() throws RecognitionException {
         CliParser.listStatement_return retval = new CliParser.listStatement_return();
         retval.start = input.LT(1);
@@ -3897,8 +3897,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_columnLimitExpr=new RewriteRuleSubtreeStream(adaptor,"rule columnLimitExpr");
         RewriteRuleSubtreeStream stream_keyRangeExpr=new RewriteRuleSubtreeStream(adaptor,"rule keyRangeExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:5: ( LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? -> ^( NODE_LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:7: LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:5: ( LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? -> ^( NODE_LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:7: LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )?
             {
             LIST151=(Token)match(input,LIST,FOLLOW_LIST_in_listStatement2139); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_LIST.add(LIST151);
@@ -3909,7 +3909,7 @@ public class CliParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_columnFamily.add(columnFamily152.getTree());
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:25: ( keyRangeExpr )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:25: ( keyRangeExpr )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -3918,7 +3918,7 @@ public class CliParser extends Parser {
             }
             switch (alt18) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: keyRangeExpr
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: keyRangeExpr
                     {
                     pushFollow(FOLLOW_keyRangeExpr_in_listStatement2143);
                     keyRangeExpr153=keyRangeExpr();
@@ -3932,7 +3932,7 @@ public class CliParser extends Parser {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:39: ( rowLimitExpr )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:39: ( rowLimitExpr )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -3941,7 +3941,7 @@ public class CliParser extends Parser {
             }
             switch (alt19) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: rowLimitExpr
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: rowLimitExpr
                     {
                     pushFollow(FOLLOW_rowLimitExpr_in_listStatement2146);
                     rowLimitExpr154=rowLimitExpr();
@@ -3955,7 +3955,7 @@ public class CliParser extends Parser {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:53: ( columnLimitExpr )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:287:53: ( columnLimitExpr )?
             int alt20=2;
             int LA20_0 = input.LA(1);
 
@@ -3964,7 +3964,7 @@ public class CliParser extends Parser {
             }
             switch (alt20) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: columnLimitExpr
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: columnLimitExpr
                     {
                     pushFollow(FOLLOW_columnLimitExpr_in_listStatement2149);
                     columnLimitExpr155=columnLimitExpr();
@@ -3981,7 +3981,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: columnFamily, keyRangeExpr, columnLimitExpr, rowLimitExpr
+            // elements: rowLimitExpr, keyRangeExpr, columnLimitExpr, columnFamily
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -3994,25 +3994,25 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 288:9: -> ^( NODE_LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:12: ^( NODE_LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:12: ^( NODE_LIST columnFamily ( keyRangeExpr )? ( rowLimitExpr )? ( columnLimitExpr )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_LIST, "NODE_LIST"), root_1);
 
                 adaptor.addChild(root_1, stream_columnFamily.nextTree());
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:37: ( keyRangeExpr )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:37: ( keyRangeExpr )?
                 if ( stream_keyRangeExpr.hasNext() ) {
                     adaptor.addChild(root_1, stream_keyRangeExpr.nextTree());
 
                 }
                 stream_keyRangeExpr.reset();
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:51: ( rowLimitExpr )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:51: ( rowLimitExpr )?
                 if ( stream_rowLimitExpr.hasNext() ) {
                     adaptor.addChild(root_1, stream_rowLimitExpr.nextTree());
 
                 }
                 stream_rowLimitExpr.reset();
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:65: ( columnLimitExpr )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:288:65: ( columnLimitExpr )?
                 if ( stream_columnLimitExpr.hasNext() ) {
                     adaptor.addChild(root_1, stream_columnLimitExpr.nextTree());
 
@@ -4053,7 +4053,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "truncateStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:291:1: truncateStatement : TRUNCATE columnFamily -> ^( NODE_TRUNCATE columnFamily ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:291:1: truncateStatement : TRUNCATE columnFamily -> ^( NODE_TRUNCATE columnFamily ) ;
     public final CliParser.truncateStatement_return truncateStatement() throws RecognitionException {
         CliParser.truncateStatement_return retval = new CliParser.truncateStatement_return();
         retval.start = input.LT(1);
@@ -4068,8 +4068,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_TRUNCATE=new RewriteRuleTokenStream(adaptor,"token TRUNCATE");
         RewriteRuleSubtreeStream stream_columnFamily=new RewriteRuleSubtreeStream(adaptor,"rule columnFamily");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:292:5: ( TRUNCATE columnFamily -> ^( NODE_TRUNCATE columnFamily ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:292:7: TRUNCATE columnFamily
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:292:5: ( TRUNCATE columnFamily -> ^( NODE_TRUNCATE columnFamily ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:292:7: TRUNCATE columnFamily
             {
             TRUNCATE156=(Token)match(input,TRUNCATE,FOLLOW_TRUNCATE_in_truncateStatement2192); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_TRUNCATE.add(TRUNCATE156);
@@ -4096,7 +4096,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 293:9: -> ^( NODE_TRUNCATE columnFamily )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:293:12: ^( NODE_TRUNCATE columnFamily )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:293:12: ^( NODE_TRUNCATE columnFamily )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_TRUNCATE, "NODE_TRUNCATE"), root_1);
@@ -4137,7 +4137,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "assumeStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:296:1: assumeStatement : ASSUME columnFamily assumptionElement= Identifier 'AS' entityName -> ^( NODE_ASSUME columnFamily $assumptionElement entityName ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:296:1: assumeStatement : ASSUME columnFamily assumptionElement= Identifier 'AS' entityName -> ^( NODE_ASSUME columnFamily $assumptionElement entityName ) ;
     public final CliParser.assumeStatement_return assumeStatement() throws RecognitionException {
         CliParser.assumeStatement_return retval = new CliParser.assumeStatement_return();
         retval.start = input.LT(1);
@@ -4161,8 +4161,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_columnFamily=new RewriteRuleSubtreeStream(adaptor,"rule columnFamily");
         RewriteRuleSubtreeStream stream_entityName=new RewriteRuleSubtreeStream(adaptor,"rule entityName");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:297:5: ( ASSUME columnFamily assumptionElement= Identifier 'AS' entityName -> ^( NODE_ASSUME columnFamily $assumptionElement entityName ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:297:7: ASSUME columnFamily assumptionElement= Identifier 'AS' entityName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:297:5: ( ASSUME columnFamily assumptionElement= Identifier 'AS' entityName -> ^( NODE_ASSUME columnFamily $assumptionElement entityName ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:297:7: ASSUME columnFamily assumptionElement= Identifier 'AS' entityName
             {
             ASSUME158=(Token)match(input,ASSUME,FOLLOW_ASSUME_in_assumeStatement2227); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_ASSUME.add(ASSUME158);
@@ -4202,7 +4202,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 298:9: -> ^( NODE_ASSUME columnFamily $assumptionElement entityName )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:298:12: ^( NODE_ASSUME columnFamily $assumptionElement entityName )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:298:12: ^( NODE_ASSUME columnFamily $assumptionElement entityName )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_ASSUME, "NODE_ASSUME"), root_1);
@@ -4245,7 +4245,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "consistencyLevelStatement"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:301:1: consistencyLevelStatement : CONSISTENCYLEVEL 'AS' defaultType= Identifier -> ^( NODE_CONSISTENCY_LEVEL $defaultType) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:301:1: consistencyLevelStatement : CONSISTENCYLEVEL 'AS' defaultType= Identifier -> ^( NODE_CONSISTENCY_LEVEL $defaultType) ;
     public final CliParser.consistencyLevelStatement_return consistencyLevelStatement() throws RecognitionException {
         CliParser.consistencyLevelStatement_return retval = new CliParser.consistencyLevelStatement_return();
         retval.start = input.LT(1);
@@ -4264,8 +4264,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:302:5: ( CONSISTENCYLEVEL 'AS' defaultType= Identifier -> ^( NODE_CONSISTENCY_LEVEL $defaultType) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:302:7: CONSISTENCYLEVEL 'AS' defaultType= Identifier
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:302:5: ( CONSISTENCYLEVEL 'AS' defaultType= Identifier -> ^( NODE_CONSISTENCY_LEVEL $defaultType) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:302:7: CONSISTENCYLEVEL 'AS' defaultType= Identifier
             {
             CONSISTENCYLEVEL162=(Token)match(input,CONSISTENCYLEVEL,FOLLOW_CONSISTENCYLEVEL_in_consistencyLevelStatement2275); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_CONSISTENCYLEVEL.add(CONSISTENCYLEVEL162);
@@ -4293,7 +4293,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 303:9: -> ^( NODE_CONSISTENCY_LEVEL $defaultType)
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:303:12: ^( NODE_CONSISTENCY_LEVEL $defaultType)
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:303:12: ^( NODE_CONSISTENCY_LEVEL $defaultType)
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_CONSISTENCY_LEVEL, "NODE_CONSISTENCY_LEVEL"), root_1);
@@ -4334,7 +4334,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "showClusterName"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:306:1: showClusterName : SHOW 'CLUSTER NAME' -> ^( NODE_SHOW_CLUSTER_NAME ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:306:1: showClusterName : SHOW 'CLUSTER NAME' -> ^( NODE_SHOW_CLUSTER_NAME ) ;
     public final CliParser.showClusterName_return showClusterName() throws RecognitionException {
         CliParser.showClusterName_return retval = new CliParser.showClusterName_return();
         retval.start = input.LT(1);
@@ -4350,8 +4350,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_SHOW=new RewriteRuleTokenStream(adaptor,"token SHOW");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:307:5: ( SHOW 'CLUSTER NAME' -> ^( NODE_SHOW_CLUSTER_NAME ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:307:7: SHOW 'CLUSTER NAME'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:307:5: ( SHOW 'CLUSTER NAME' -> ^( NODE_SHOW_CLUSTER_NAME ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:307:7: SHOW 'CLUSTER NAME'
             {
             SHOW164=(Token)match(input,SHOW,FOLLOW_SHOW_in_showClusterName2315); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_SHOW.add(SHOW164);
@@ -4375,7 +4375,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 308:9: -> ^( NODE_SHOW_CLUSTER_NAME )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:308:12: ^( NODE_SHOW_CLUSTER_NAME )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:308:12: ^( NODE_SHOW_CLUSTER_NAME )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_SHOW_CLUSTER_NAME, "NODE_SHOW_CLUSTER_NAME"), root_1);
@@ -4414,7 +4414,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "addKeyspace"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:311:1: addKeyspace : CREATE KEYSPACE keyValuePairExpr -> ^( NODE_ADD_KEYSPACE keyValuePairExpr ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:311:1: addKeyspace : CREATE KEYSPACE keyValuePairExpr -> ^( NODE_ADD_KEYSPACE keyValuePairExpr ) ;
     public final CliParser.addKeyspace_return addKeyspace() throws RecognitionException {
         CliParser.addKeyspace_return retval = new CliParser.addKeyspace_return();
         retval.start = input.LT(1);
@@ -4432,8 +4432,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_KEYSPACE=new RewriteRuleTokenStream(adaptor,"token KEYSPACE");
         RewriteRuleSubtreeStream stream_keyValuePairExpr=new RewriteRuleSubtreeStream(adaptor,"rule keyValuePairExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:312:5: ( CREATE KEYSPACE keyValuePairExpr -> ^( NODE_ADD_KEYSPACE keyValuePairExpr ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:312:7: CREATE KEYSPACE keyValuePairExpr
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:312:5: ( CREATE KEYSPACE keyValuePairExpr -> ^( NODE_ADD_KEYSPACE keyValuePairExpr ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:312:7: CREATE KEYSPACE keyValuePairExpr
             {
             CREATE166=(Token)match(input,CREATE,FOLLOW_CREATE_in_addKeyspace2348); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_CREATE.add(CREATE166);
@@ -4463,7 +4463,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 313:9: -> ^( NODE_ADD_KEYSPACE keyValuePairExpr )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:313:12: ^( NODE_ADD_KEYSPACE keyValuePairExpr )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:313:12: ^( NODE_ADD_KEYSPACE keyValuePairExpr )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_ADD_KEYSPACE, "NODE_ADD_KEYSPACE"), root_1);
@@ -4504,7 +4504,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "addColumnFamily"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:316:1: addColumnFamily : CREATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_ADD_COLUMN_FAMILY keyValuePairExpr ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:316:1: addColumnFamily : CREATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_ADD_COLUMN_FAMILY keyValuePairExpr ) ;
     public final CliParser.addColumnFamily_return addColumnFamily() throws RecognitionException {
         CliParser.addColumnFamily_return retval = new CliParser.addColumnFamily_return();
         retval.start = input.LT(1);
@@ -4525,8 +4525,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_COLUMN=new RewriteRuleTokenStream(adaptor,"token COLUMN");
         RewriteRuleSubtreeStream stream_keyValuePairExpr=new RewriteRuleSubtreeStream(adaptor,"rule keyValuePairExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:317:5: ( CREATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_ADD_COLUMN_FAMILY keyValuePairExpr ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:317:7: CREATE COLUMN FAMILY keyValuePairExpr
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:317:5: ( CREATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_ADD_COLUMN_FAMILY keyValuePairExpr ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:317:7: CREATE COLUMN FAMILY keyValuePairExpr
             {
             CREATE169=(Token)match(input,CREATE,FOLLOW_CREATE_in_addColumnFamily2386); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_CREATE.add(CREATE169);
@@ -4559,7 +4559,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 318:9: -> ^( NODE_ADD_COLUMN_FAMILY keyValuePairExpr )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:318:12: ^( NODE_ADD_COLUMN_FAMILY keyValuePairExpr )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:318:12: ^( NODE_ADD_COLUMN_FAMILY keyValuePairExpr )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_ADD_COLUMN_FAMILY, "NODE_ADD_COLUMN_FAMILY"), root_1);
@@ -4600,7 +4600,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "updateKeyspace"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:321:1: updateKeyspace : UPDATE KEYSPACE keyValuePairExpr -> ^( NODE_UPDATE_KEYSPACE keyValuePairExpr ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:321:1: updateKeyspace : UPDATE KEYSPACE keyValuePairExpr -> ^( NODE_UPDATE_KEYSPACE keyValuePairExpr ) ;
     public final CliParser.updateKeyspace_return updateKeyspace() throws RecognitionException {
         CliParser.updateKeyspace_return retval = new CliParser.updateKeyspace_return();
         retval.start = input.LT(1);
@@ -4618,8 +4618,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_KEYSPACE=new RewriteRuleTokenStream(adaptor,"token KEYSPACE");
         RewriteRuleSubtreeStream stream_keyValuePairExpr=new RewriteRuleSubtreeStream(adaptor,"rule keyValuePairExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:322:5: ( UPDATE KEYSPACE keyValuePairExpr -> ^( NODE_UPDATE_KEYSPACE keyValuePairExpr ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:322:7: UPDATE KEYSPACE keyValuePairExpr
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:322:5: ( UPDATE KEYSPACE keyValuePairExpr -> ^( NODE_UPDATE_KEYSPACE keyValuePairExpr ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:322:7: UPDATE KEYSPACE keyValuePairExpr
             {
             UPDATE173=(Token)match(input,UPDATE,FOLLOW_UPDATE_in_updateKeyspace2426); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_UPDATE.add(UPDATE173);
@@ -4649,7 +4649,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 323:9: -> ^( NODE_UPDATE_KEYSPACE keyValuePairExpr )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:323:12: ^( NODE_UPDATE_KEYSPACE keyValuePairExpr )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:323:12: ^( NODE_UPDATE_KEYSPACE keyValuePairExpr )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_UPDATE_KEYSPACE, "NODE_UPDATE_KEYSPACE"), root_1);
@@ -4690,7 +4690,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "updateColumnFamily"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:326:1: updateColumnFamily : UPDATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_UPDATE_COLUMN_FAMILY keyValuePairExpr ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:326:1: updateColumnFamily : UPDATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_UPDATE_COLUMN_FAMILY keyValuePairExpr ) ;
     public final CliParser.updateColumnFamily_return updateColumnFamily() throws RecognitionException {
         CliParser.updateColumnFamily_return retval = new CliParser.updateColumnFamily_return();
         retval.start = input.LT(1);
@@ -4711,8 +4711,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_COLUMN=new RewriteRuleTokenStream(adaptor,"token COLUMN");
         RewriteRuleSubtreeStream stream_keyValuePairExpr=new RewriteRuleSubtreeStream(adaptor,"rule keyValuePairExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:327:5: ( UPDATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_UPDATE_COLUMN_FAMILY keyValuePairExpr ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:327:7: UPDATE COLUMN FAMILY keyValuePairExpr
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:327:5: ( UPDATE COLUMN FAMILY keyValuePairExpr -> ^( NODE_UPDATE_COLUMN_FAMILY keyValuePairExpr ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:327:7: UPDATE COLUMN FAMILY keyValuePairExpr
             {
             UPDATE176=(Token)match(input,UPDATE,FOLLOW_UPDATE_in_updateColumnFamily2463); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_UPDATE.add(UPDATE176);
@@ -4745,7 +4745,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 328:9: -> ^( NODE_UPDATE_COLUMN_FAMILY keyValuePairExpr )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:328:12: ^( NODE_UPDATE_COLUMN_FAMILY keyValuePairExpr )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:328:12: ^( NODE_UPDATE_COLUMN_FAMILY keyValuePairExpr )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_UPDATE_COLUMN_FAMILY, "NODE_UPDATE_COLUMN_FAMILY"), root_1);
@@ -4786,7 +4786,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "delKeyspace"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:331:1: delKeyspace : DROP KEYSPACE keyspace -> ^( NODE_DEL_KEYSPACE keyspace ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:331:1: delKeyspace : DROP KEYSPACE keyspace -> ^( NODE_DEL_KEYSPACE keyspace ) ;
     public final CliParser.delKeyspace_return delKeyspace() throws RecognitionException {
         CliParser.delKeyspace_return retval = new CliParser.delKeyspace_return();
         retval.start = input.LT(1);
@@ -4804,8 +4804,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_KEYSPACE=new RewriteRuleTokenStream(adaptor,"token KEYSPACE");
         RewriteRuleSubtreeStream stream_keyspace=new RewriteRuleSubtreeStream(adaptor,"rule keyspace");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:332:5: ( DROP KEYSPACE keyspace -> ^( NODE_DEL_KEYSPACE keyspace ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:332:7: DROP KEYSPACE keyspace
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:332:5: ( DROP KEYSPACE keyspace -> ^( NODE_DEL_KEYSPACE keyspace ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:332:7: DROP KEYSPACE keyspace
             {
             DROP180=(Token)match(input,DROP,FOLLOW_DROP_in_delKeyspace2502); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_DROP.add(DROP180);
@@ -4835,7 +4835,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 333:9: -> ^( NODE_DEL_KEYSPACE keyspace )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:333:12: ^( NODE_DEL_KEYSPACE keyspace )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:333:12: ^( NODE_DEL_KEYSPACE keyspace )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_DEL_KEYSPACE, "NODE_DEL_KEYSPACE"), root_1);
@@ -4876,7 +4876,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "delColumnFamily"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:336:1: delColumnFamily : DROP COLUMN FAMILY columnFamily -> ^( NODE_DEL_COLUMN_FAMILY columnFamily ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:336:1: delColumnFamily : DROP COLUMN FAMILY columnFamily -> ^( NODE_DEL_COLUMN_FAMILY columnFamily ) ;
     public final CliParser.delColumnFamily_return delColumnFamily() throws RecognitionException {
         CliParser.delColumnFamily_return retval = new CliParser.delColumnFamily_return();
         retval.start = input.LT(1);
@@ -4897,8 +4897,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_COLUMN=new RewriteRuleTokenStream(adaptor,"token COLUMN");
         RewriteRuleSubtreeStream stream_columnFamily=new RewriteRuleSubtreeStream(adaptor,"rule columnFamily");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:337:5: ( DROP COLUMN FAMILY columnFamily -> ^( NODE_DEL_COLUMN_FAMILY columnFamily ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:337:7: DROP COLUMN FAMILY columnFamily
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:337:5: ( DROP COLUMN FAMILY columnFamily -> ^( NODE_DEL_COLUMN_FAMILY columnFamily ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:337:7: DROP COLUMN FAMILY columnFamily
             {
             DROP183=(Token)match(input,DROP,FOLLOW_DROP_in_delColumnFamily2540); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_DROP.add(DROP183);
@@ -4931,7 +4931,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 338:9: -> ^( NODE_DEL_COLUMN_FAMILY columnFamily )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:338:12: ^( NODE_DEL_COLUMN_FAMILY columnFamily )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:338:12: ^( NODE_DEL_COLUMN_FAMILY columnFamily )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_DEL_COLUMN_FAMILY, "NODE_DEL_COLUMN_FAMILY"), root_1);
@@ -4972,7 +4972,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "dropIndex"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:341:1: dropIndex : DROP INDEX ON columnFamily '.' columnName -> ^( NODE_DROP_INDEX columnFamily columnName ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:341:1: dropIndex : DROP INDEX ON columnFamily '.' columnName -> ^( NODE_DROP_INDEX columnFamily columnName ) ;
     public final CliParser.dropIndex_return dropIndex() throws RecognitionException {
         CliParser.dropIndex_return retval = new CliParser.dropIndex_return();
         retval.start = input.LT(1);
@@ -4999,8 +4999,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_columnFamily=new RewriteRuleSubtreeStream(adaptor,"rule columnFamily");
         RewriteRuleSubtreeStream stream_columnName=new RewriteRuleSubtreeStream(adaptor,"rule columnName");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:342:5: ( DROP INDEX ON columnFamily '.' columnName -> ^( NODE_DROP_INDEX columnFamily columnName ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:342:7: DROP INDEX ON columnFamily '.' columnName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:342:5: ( DROP INDEX ON columnFamily '.' columnName -> ^( NODE_DROP_INDEX columnFamily columnName ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:342:7: DROP INDEX ON columnFamily '.' columnName
             {
             DROP187=(Token)match(input,DROP,FOLLOW_DROP_in_dropIndex2580); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_DROP.add(DROP187);
@@ -5029,7 +5029,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: columnName, columnFamily
+            // elements: columnFamily, columnName
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -5042,7 +5042,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 343:9: -> ^( NODE_DROP_INDEX columnFamily columnName )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:343:12: ^( NODE_DROP_INDEX columnFamily columnName )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:343:12: ^( NODE_DROP_INDEX columnFamily columnName )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_DROP_INDEX, "NODE_DROP_INDEX"), root_1);
@@ -5084,7 +5084,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "showVersion"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:346:1: showVersion : SHOW API_VERSION -> ^( NODE_SHOW_VERSION ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:346:1: showVersion : SHOW API_VERSION -> ^( NODE_SHOW_VERSION ) ;
     public final CliParser.showVersion_return showVersion() throws RecognitionException {
         CliParser.showVersion_return retval = new CliParser.showVersion_return();
         retval.start = input.LT(1);
@@ -5100,8 +5100,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_SHOW=new RewriteRuleTokenStream(adaptor,"token SHOW");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:347:5: ( SHOW API_VERSION -> ^( NODE_SHOW_VERSION ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:347:7: SHOW API_VERSION
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:347:5: ( SHOW API_VERSION -> ^( NODE_SHOW_VERSION ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:347:7: SHOW API_VERSION
             {
             SHOW193=(Token)match(input,SHOW,FOLLOW_SHOW_in_showVersion2625); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_SHOW.add(SHOW193);
@@ -5125,7 +5125,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 348:9: -> ^( NODE_SHOW_VERSION )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:348:12: ^( NODE_SHOW_VERSION )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:348:12: ^( NODE_SHOW_VERSION )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_SHOW_VERSION, "NODE_SHOW_VERSION"), root_1);
@@ -5164,7 +5164,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "showKeyspaces"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:351:1: showKeyspaces : SHOW KEYSPACES -> ^( NODE_SHOW_KEYSPACES ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:351:1: showKeyspaces : SHOW KEYSPACES -> ^( NODE_SHOW_KEYSPACES ) ;
     public final CliParser.showKeyspaces_return showKeyspaces() throws RecognitionException {
         CliParser.showKeyspaces_return retval = new CliParser.showKeyspaces_return();
         retval.start = input.LT(1);
@@ -5180,8 +5180,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_SHOW=new RewriteRuleTokenStream(adaptor,"token SHOW");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:352:5: ( SHOW KEYSPACES -> ^( NODE_SHOW_KEYSPACES ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:352:7: SHOW KEYSPACES
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:352:5: ( SHOW KEYSPACES -> ^( NODE_SHOW_KEYSPACES ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:352:7: SHOW KEYSPACES
             {
             SHOW195=(Token)match(input,SHOW,FOLLOW_SHOW_in_showKeyspaces2658); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_SHOW.add(SHOW195);
@@ -5205,7 +5205,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 353:9: -> ^( NODE_SHOW_KEYSPACES )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:353:12: ^( NODE_SHOW_KEYSPACES )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:353:12: ^( NODE_SHOW_KEYSPACES )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_SHOW_KEYSPACES, "NODE_SHOW_KEYSPACES"), root_1);
@@ -5244,7 +5244,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "showSchema"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:356:1: showSchema : SHOW SCHEMA ( keyspace )? -> ^( NODE_SHOW_SCHEMA ( keyspace )? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:356:1: showSchema : SHOW SCHEMA ( keyspace )? -> ^( NODE_SHOW_SCHEMA ( keyspace )? ) ;
     public final CliParser.showSchema_return showSchema() throws RecognitionException {
         CliParser.showSchema_return retval = new CliParser.showSchema_return();
         retval.start = input.LT(1);
@@ -5262,8 +5262,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_SHOW=new RewriteRuleTokenStream(adaptor,"token SHOW");
         RewriteRuleSubtreeStream stream_keyspace=new RewriteRuleSubtreeStream(adaptor,"rule keyspace");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:5: ( SHOW SCHEMA ( keyspace )? -> ^( NODE_SHOW_SCHEMA ( keyspace )? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:7: SHOW SCHEMA ( keyspace )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:5: ( SHOW SCHEMA ( keyspace )? -> ^( NODE_SHOW_SCHEMA ( keyspace )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:7: SHOW SCHEMA ( keyspace )?
             {
             SHOW197=(Token)match(input,SHOW,FOLLOW_SHOW_in_showSchema2692); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_SHOW.add(SHOW197);
@@ -5271,7 +5271,7 @@ public class CliParser extends Parser {
             SCHEMA198=(Token)match(input,SCHEMA,FOLLOW_SCHEMA_in_showSchema2694); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_SCHEMA.add(SCHEMA198);
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:19: ( keyspace )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:19: ( keyspace )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -5280,7 +5280,7 @@ public class CliParser extends Parser {
             }
             switch (alt21) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:20: keyspace
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:357:20: keyspace
                     {
                     pushFollow(FOLLOW_keyspace_in_showSchema2697);
                     keyspace199=keyspace();
@@ -5310,12 +5310,12 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 358:9: -> ^( NODE_SHOW_SCHEMA ( keyspace )? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:358:12: ^( NODE_SHOW_SCHEMA ( keyspace )? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:358:12: ^( NODE_SHOW_SCHEMA ( keyspace )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_SHOW_SCHEMA, "NODE_SHOW_SCHEMA"), root_1);
 
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:358:31: ( keyspace )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:358:31: ( keyspace )?
                 if ( stream_keyspace.hasNext() ) {
                     adaptor.addChild(root_1, stream_keyspace.nextTree());
 
@@ -5356,7 +5356,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "describeTable"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:361:1: describeTable : DESCRIBE ( keyspace )? -> ^( NODE_DESCRIBE ( keyspace )? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:361:1: describeTable : DESCRIBE ( keyspace )? -> ^( NODE_DESCRIBE ( keyspace )? ) ;
     public final CliParser.describeTable_return describeTable() throws RecognitionException {
         CliParser.describeTable_return retval = new CliParser.describeTable_return();
         retval.start = input.LT(1);
@@ -5371,13 +5371,13 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_DESCRIBE=new RewriteRuleTokenStream(adaptor,"token DESCRIBE");
         RewriteRuleSubtreeStream stream_keyspace=new RewriteRuleSubtreeStream(adaptor,"rule keyspace");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:5: ( DESCRIBE ( keyspace )? -> ^( NODE_DESCRIBE ( keyspace )? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:7: DESCRIBE ( keyspace )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:5: ( DESCRIBE ( keyspace )? -> ^( NODE_DESCRIBE ( keyspace )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:7: DESCRIBE ( keyspace )?
             {
             DESCRIBE200=(Token)match(input,DESCRIBE,FOLLOW_DESCRIBE_in_describeTable2735); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_DESCRIBE.add(DESCRIBE200);
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:16: ( keyspace )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:16: ( keyspace )?
             int alt22=2;
             int LA22_0 = input.LA(1);
 
@@ -5386,7 +5386,7 @@ public class CliParser extends Parser {
             }
             switch (alt22) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:17: keyspace
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:362:17: keyspace
                     {
                     pushFollow(FOLLOW_keyspace_in_describeTable2738);
                     keyspace201=keyspace();
@@ -5416,12 +5416,12 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 363:9: -> ^( NODE_DESCRIBE ( keyspace )? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:363:12: ^( NODE_DESCRIBE ( keyspace )? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:363:12: ^( NODE_DESCRIBE ( keyspace )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_DESCRIBE, "NODE_DESCRIBE"), root_1);
 
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:363:28: ( keyspace )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:363:28: ( keyspace )?
                 if ( stream_keyspace.hasNext() ) {
                     adaptor.addChild(root_1, stream_keyspace.nextTree());
 
@@ -5462,7 +5462,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "describeCluster"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:366:1: describeCluster : DESCRIBE 'CLUSTER' -> ^( NODE_DESCRIBE_CLUSTER ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:366:1: describeCluster : DESCRIBE 'CLUSTER' -> ^( NODE_DESCRIBE_CLUSTER ) ;
     public final CliParser.describeCluster_return describeCluster() throws RecognitionException {
         CliParser.describeCluster_return retval = new CliParser.describeCluster_return();
         retval.start = input.LT(1);
@@ -5478,8 +5478,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_DESCRIBE=new RewriteRuleTokenStream(adaptor,"token DESCRIBE");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:367:5: ( DESCRIBE 'CLUSTER' -> ^( NODE_DESCRIBE_CLUSTER ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:367:7: DESCRIBE 'CLUSTER'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:367:5: ( DESCRIBE 'CLUSTER' -> ^( NODE_DESCRIBE_CLUSTER ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:367:7: DESCRIBE 'CLUSTER'
             {
             DESCRIBE202=(Token)match(input,DESCRIBE,FOLLOW_DESCRIBE_in_describeCluster2780); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_DESCRIBE.add(DESCRIBE202);
@@ -5503,7 +5503,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 368:9: -> ^( NODE_DESCRIBE_CLUSTER )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:368:12: ^( NODE_DESCRIBE_CLUSTER )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:368:12: ^( NODE_DESCRIBE_CLUSTER )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_DESCRIBE_CLUSTER, "NODE_DESCRIBE_CLUSTER"), root_1);
@@ -5542,7 +5542,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "useKeyspace"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:371:1: useKeyspace : USE keyspace ( username )? ( password )? -> ^( NODE_USE_TABLE keyspace ( username )? ( password )? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:371:1: useKeyspace : USE keyspace ( username )? ( password )? -> ^( NODE_USE_TABLE keyspace ( username )? ( password )? ) ;
     public final CliParser.useKeyspace_return useKeyspace() throws RecognitionException {
         CliParser.useKeyspace_return retval = new CliParser.useKeyspace_return();
         retval.start = input.LT(1);
@@ -5563,8 +5563,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_keyspace=new RewriteRuleSubtreeStream(adaptor,"rule keyspace");
         RewriteRuleSubtreeStream stream_password=new RewriteRuleSubtreeStream(adaptor,"rule password");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:5: ( USE keyspace ( username )? ( password )? -> ^( NODE_USE_TABLE keyspace ( username )? ( password )? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:7: USE keyspace ( username )? ( password )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:5: ( USE keyspace ( username )? ( password )? -> ^( NODE_USE_TABLE keyspace ( username )? ( password )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:7: USE keyspace ( username )? ( password )?
             {
             USE204=(Token)match(input,USE,FOLLOW_USE_in_useKeyspace2813); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_USE.add(USE204);
@@ -5575,7 +5575,7 @@ public class CliParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_keyspace.add(keyspace205.getTree());
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:20: ( username )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:20: ( username )?
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -5584,7 +5584,7 @@ public class CliParser extends Parser {
             }
             switch (alt23) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:22: username
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:22: username
                     {
                     pushFollow(FOLLOW_username_in_useKeyspace2819);
                     username206=username();
@@ -5598,7 +5598,7 @@ public class CliParser extends Parser {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:34: ( password )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:34: ( password )?
             int alt24=2;
             int LA24_0 = input.LA(1);
 
@@ -5607,7 +5607,7 @@ public class CliParser extends Parser {
             }
             switch (alt24) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:36: password
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:372:36: password
                     {
                     pushFollow(FOLLOW_password_in_useKeyspace2826);
                     password207=password();
@@ -5637,19 +5637,19 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 373:9: -> ^( NODE_USE_TABLE keyspace ( username )? ( password )? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:373:12: ^( NODE_USE_TABLE keyspace ( username )? ( password )? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:373:12: ^( NODE_USE_TABLE keyspace ( username )? ( password )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_USE_TABLE, "NODE_USE_TABLE"), root_1);
 
                 adaptor.addChild(root_1, stream_keyspace.nextTree());
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:373:38: ( username )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:373:38: ( username )?
                 if ( stream_username.hasNext() ) {
                     adaptor.addChild(root_1, stream_username.nextTree());
 
                 }
                 stream_username.reset();
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:373:52: ( password )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:373:52: ( password )?
                 if ( stream_password.hasNext() ) {
                     adaptor.addChild(root_1, stream_password.nextTree());
 
@@ -5690,7 +5690,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "keyValuePairExpr"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:377:1: keyValuePairExpr : entityName ( ( AND | WITH ) keyValuePair )* -> ^( NODE_NEW_KEYSPACE_ACCESS entityName ( keyValuePair )* ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:377:1: keyValuePairExpr : entityName ( ( AND | WITH ) keyValuePair )* -> ^( NODE_NEW_KEYSPACE_ACCESS entityName ( keyValuePair )* ) ;
     public final CliParser.keyValuePairExpr_return keyValuePairExpr() throws RecognitionException {
         CliParser.keyValuePairExpr_return retval = new CliParser.keyValuePairExpr_return();
         retval.start = input.LT(1);
@@ -5711,8 +5711,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_keyValuePair=new RewriteRuleSubtreeStream(adaptor,"rule keyValuePair");
         RewriteRuleSubtreeStream stream_entityName=new RewriteRuleSubtreeStream(adaptor,"rule entityName");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:5: ( entityName ( ( AND | WITH ) keyValuePair )* -> ^( NODE_NEW_KEYSPACE_ACCESS entityName ( keyValuePair )* ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:7: entityName ( ( AND | WITH ) keyValuePair )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:5: ( entityName ( ( AND | WITH ) keyValuePair )* -> ^( NODE_NEW_KEYSPACE_ACCESS entityName ( keyValuePair )* ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:7: entityName ( ( AND | WITH ) keyValuePair )*
             {
             pushFollow(FOLLOW_entityName_in_keyValuePairExpr2878);
             entityName208=entityName();
@@ -5720,7 +5720,7 @@ public class CliParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_entityName.add(entityName208.getTree());
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:18: ( ( AND | WITH ) keyValuePair )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:18: ( ( AND | WITH ) keyValuePair )*
             loop26:
             do {
                 int alt26=2;
@@ -5733,9 +5733,9 @@ public class CliParser extends Parser {
 
                 switch (alt26) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:20: ( AND | WITH ) keyValuePair
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:20: ( AND | WITH ) keyValuePair
             	    {
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:20: ( AND | WITH )
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:20: ( AND | WITH )
             	    int alt25=2;
             	    int LA25_0 = input.LA(1);
 
@@ -5754,7 +5754,7 @@ public class CliParser extends Parser {
             	    }
             	    switch (alt25) {
             	        case 1 :
-            	            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:21: AND
+            	            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:21: AND
             	            {
             	            AND209=(Token)match(input,AND,FOLLOW_AND_in_keyValuePairExpr2883); if (state.failed) return retval; 
             	            if ( state.backtracking==0 ) stream_AND.add(AND209);
@@ -5763,7 +5763,7 @@ public class CliParser extends Parser {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:27: WITH
+            	            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:378:27: WITH
             	            {
             	            WITH210=(Token)match(input,WITH,FOLLOW_WITH_in_keyValuePairExpr2887); if (state.failed) return retval; 
             	            if ( state.backtracking==0 ) stream_WITH.add(WITH210);
@@ -5792,7 +5792,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: keyValuePair, entityName
+            // elements: entityName, keyValuePair
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -5805,13 +5805,13 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 379:9: -> ^( NODE_NEW_KEYSPACE_ACCESS entityName ( keyValuePair )* )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:379:12: ^( NODE_NEW_KEYSPACE_ACCESS entityName ( keyValuePair )* )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:379:12: ^( NODE_NEW_KEYSPACE_ACCESS entityName ( keyValuePair )* )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_NEW_KEYSPACE_ACCESS, "NODE_NEW_KEYSPACE_ACCESS"), root_1);
 
                 adaptor.addChild(root_1, stream_entityName.nextTree());
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:379:50: ( keyValuePair )*
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:379:50: ( keyValuePair )*
                 while ( stream_keyValuePair.hasNext() ) {
                     adaptor.addChild(root_1, stream_keyValuePair.nextTree());
 
@@ -5852,7 +5852,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "keyValuePair"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:382:1: keyValuePair : attr_name '=' attrValue -> attr_name attrValue ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:382:1: keyValuePair : attr_name '=' attrValue -> attr_name attrValue ;
     public final CliParser.keyValuePair_return keyValuePair() throws RecognitionException {
         CliParser.keyValuePair_return retval = new CliParser.keyValuePair_return();
         retval.start = input.LT(1);
@@ -5870,8 +5870,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_attr_name=new RewriteRuleSubtreeStream(adaptor,"rule attr_name");
         RewriteRuleSubtreeStream stream_attrValue=new RewriteRuleSubtreeStream(adaptor,"rule attrValue");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:383:5: ( attr_name '=' attrValue -> attr_name attrValue )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:383:7: attr_name '=' attrValue
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:383:5: ( attr_name '=' attrValue -> attr_name attrValue )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:383:7: attr_name '=' attrValue
             {
             pushFollow(FOLLOW_attr_name_in_keyValuePair2947);
             attr_name212=attr_name();
@@ -5938,7 +5938,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "attrValue"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:387:1: attrValue : ( arrayConstruct | hashConstruct | attrValueString | attrValueInt | attrValueDouble );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:387:1: attrValue : ( arrayConstruct | hashConstruct | attrValueString | attrValueInt | attrValueDouble );
     public final CliParser.attrValue_return attrValue() throws RecognitionException {
         CliParser.attrValue_return retval = new CliParser.attrValue_return();
         retval.start = input.LT(1);
@@ -5958,7 +5958,7 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:388:5: ( arrayConstruct | hashConstruct | attrValueString | attrValueInt | attrValueDouble )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:388:5: ( arrayConstruct | hashConstruct | attrValueString | attrValueInt | attrValueDouble )
             int alt27=5;
             switch ( input.LA(1) ) {
             case 117:
@@ -5998,7 +5998,7 @@ public class CliParser extends Parser {
 
             switch (alt27) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:388:7: arrayConstruct
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:388:7: arrayConstruct
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -6012,7 +6012,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:389:7: hashConstruct
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:389:7: hashConstruct
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -6026,7 +6026,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:390:7: attrValueString
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:390:7: attrValueString
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -6040,7 +6040,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:391:7: attrValueInt
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:391:7: attrValueInt
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -6054,7 +6054,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:392:7: attrValueDouble
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:392:7: attrValueDouble
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -6095,7 +6095,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "arrayConstruct"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:396:1: arrayConstruct : '[' ( hashConstruct ( ',' )? )* ']' -> ^( ARRAY ( hashConstruct )* ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:396:1: arrayConstruct : '[' ( hashConstruct ( ',' )? )* ']' -> ^( ARRAY ( hashConstruct )* ) ;
     public final CliParser.arrayConstruct_return arrayConstruct() throws RecognitionException {
         CliParser.arrayConstruct_return retval = new CliParser.arrayConstruct_return();
         retval.start = input.LT(1);
@@ -6116,13 +6116,13 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_119=new RewriteRuleTokenStream(adaptor,"token 119");
         RewriteRuleSubtreeStream stream_hashConstruct=new RewriteRuleSubtreeStream(adaptor,"rule hashConstruct");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:5: ( '[' ( hashConstruct ( ',' )? )* ']' -> ^( ARRAY ( hashConstruct )* ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:7: '[' ( hashConstruct ( ',' )? )* ']'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:5: ( '[' ( hashConstruct ( ',' )? )* ']' -> ^( ARRAY ( hashConstruct )* ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:7: '[' ( hashConstruct ( ',' )? )* ']'
             {
             char_literal220=(Token)match(input,117,FOLLOW_117_in_arrayConstruct3034); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_117.add(char_literal220);
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:11: ( hashConstruct ( ',' )? )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:11: ( hashConstruct ( ',' )? )*
             loop29:
             do {
                 int alt29=2;
@@ -6135,7 +6135,7 @@ public class CliParser extends Parser {
 
                 switch (alt29) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:12: hashConstruct ( ',' )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:12: hashConstruct ( ',' )?
             	    {
             	    pushFollow(FOLLOW_hashConstruct_in_arrayConstruct3037);
             	    hashConstruct221=hashConstruct();
@@ -6143,7 +6143,7 @@ public class CliParser extends Parser {
             	    state._fsp--;
             	    if (state.failed) return retval;
             	    if ( state.backtracking==0 ) stream_hashConstruct.add(hashConstruct221.getTree());
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:26: ( ',' )?
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:397:26: ( ',' )?
             	    int alt28=2;
             	    int LA28_0 = input.LA(1);
 
@@ -6152,7 +6152,7 @@ public class CliParser extends Parser {
             	    }
             	    switch (alt28) {
             	        case 1 :
-            	            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: ','
+            	            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: ','
             	            {
             	            char_literal222=(Token)match(input,118,FOLLOW_118_in_arrayConstruct3039); if (state.failed) return retval; 
             	            if ( state.backtracking==0 ) stream_118.add(char_literal222);
@@ -6191,12 +6191,12 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 398:9: -> ^( ARRAY ( hashConstruct )* )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:398:12: ^( ARRAY ( hashConstruct )* )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:398:12: ^( ARRAY ( hashConstruct )* )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(ARRAY, "ARRAY"), root_1);
 
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:398:20: ( hashConstruct )*
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:398:20: ( hashConstruct )*
                 while ( stream_hashConstruct.hasNext() ) {
                     adaptor.addChild(root_1, stream_hashConstruct.nextTree());
 
@@ -6237,7 +6237,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "hashConstruct"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:401:1: hashConstruct : '{' hashElementPair ( ',' hashElementPair )* '}' -> ^( HASH ( hashElementPair )+ ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:401:1: hashConstruct : '{' hashElementPair ( ',' hashElementPair )* '}' -> ^( HASH ( hashElementPair )+ ) ;
     public final CliParser.hashConstruct_return hashConstruct() throws RecognitionException {
         CliParser.hashConstruct_return retval = new CliParser.hashConstruct_return();
         retval.start = input.LT(1);
@@ -6260,8 +6260,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_118=new RewriteRuleTokenStream(adaptor,"token 118");
         RewriteRuleSubtreeStream stream_hashElementPair=new RewriteRuleSubtreeStream(adaptor,"rule hashElementPair");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:5: ( '{' hashElementPair ( ',' hashElementPair )* '}' -> ^( HASH ( hashElementPair )+ ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:7: '{' hashElementPair ( ',' hashElementPair )* '}'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:5: ( '{' hashElementPair ( ',' hashElementPair )* '}' -> ^( HASH ( hashElementPair )+ ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:7: '{' hashElementPair ( ',' hashElementPair )* '}'
             {
             char_literal224=(Token)match(input,120,FOLLOW_120_in_hashConstruct3082); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_120.add(char_literal224);
@@ -6272,7 +6272,7 @@ public class CliParser extends Parser {
             state._fsp--;
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_hashElementPair.add(hashElementPair225.getTree());
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:27: ( ',' hashElementPair )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:27: ( ',' hashElementPair )*
             loop30:
             do {
                 int alt30=2;
@@ -6285,7 +6285,7 @@ public class CliParser extends Parser {
 
                 switch (alt30) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:28: ',' hashElementPair
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:402:28: ',' hashElementPair
             	    {
             	    char_literal226=(Token)match(input,118,FOLLOW_118_in_hashConstruct3087); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_118.add(char_literal226);
@@ -6324,7 +6324,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 403:9: -> ^( HASH ( hashElementPair )+ )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:403:12: ^( HASH ( hashElementPair )+ )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:403:12: ^( HASH ( hashElementPair )+ )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(HASH, "HASH"), root_1);
@@ -6372,7 +6372,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "hashElementPair"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:406:1: hashElementPair : rowKey ':' rowValue -> ^( PAIR rowKey rowValue ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:406:1: hashElementPair : rowKey ':' rowValue -> ^( PAIR rowKey rowValue ) ;
     public final CliParser.hashElementPair_return hashElementPair() throws RecognitionException {
         CliParser.hashElementPair_return retval = new CliParser.hashElementPair_return();
         retval.start = input.LT(1);
@@ -6390,8 +6390,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_rowKey=new RewriteRuleSubtreeStream(adaptor,"rule rowKey");
         RewriteRuleSubtreeStream stream_rowValue=new RewriteRuleSubtreeStream(adaptor,"rule rowValue");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:407:5: ( rowKey ':' rowValue -> ^( PAIR rowKey rowValue ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:407:7: rowKey ':' rowValue
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:407:5: ( rowKey ':' rowValue -> ^( PAIR rowKey rowValue ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:407:7: rowKey ':' rowValue
             {
             pushFollow(FOLLOW_rowKey_in_hashElementPair3129);
             rowKey229=rowKey();
@@ -6411,7 +6411,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: rowKey, rowValue
+            // elements: rowValue, rowKey
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -6424,7 +6424,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 408:9: -> ^( PAIR rowKey rowValue )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:408:12: ^( PAIR rowKey rowValue )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:408:12: ^( PAIR rowKey rowValue )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(PAIR, "PAIR"), root_1);
@@ -6466,7 +6466,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "columnFamilyExpr"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:411:1: columnFamilyExpr : columnFamily '[' rowKey ']' ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )? -> ^( NODE_COLUMN_ACCESS columnFamily rowKey ( $column ( $super_column)? )? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:411:1: columnFamilyExpr : columnFamily '[' rowKey ']' ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )? -> ^( NODE_COLUMN_ACCESS columnFamily rowKey ( $column ( $super_column)? )? ) ;
     public final CliParser.columnFamilyExpr_return columnFamilyExpr() throws RecognitionException {
         CliParser.columnFamilyExpr_return retval = new CliParser.columnFamilyExpr_return();
         retval.start = input.LT(1);
@@ -6500,8 +6500,8 @@ public class CliParser extends Parser {
         RewriteRuleSubtreeStream stream_rowKey=new RewriteRuleSubtreeStream(adaptor,"rule rowKey");
         RewriteRuleSubtreeStream stream_columnOrSuperColumn=new RewriteRuleSubtreeStream(adaptor,"rule columnOrSuperColumn");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:412:5: ( columnFamily '[' rowKey ']' ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )? -> ^( NODE_COLUMN_ACCESS columnFamily rowKey ( $column ( $super_column)? )? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:412:7: columnFamily '[' rowKey ']' ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:412:5: ( columnFamily '[' rowKey ']' ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )? -> ^( NODE_COLUMN_ACCESS columnFamily rowKey ( $column ( $super_column)? )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:412:7: columnFamily '[' rowKey ']' ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )?
             {
             pushFollow(FOLLOW_columnFamily_in_columnFamilyExpr3168);
             columnFamily232=columnFamily();
@@ -6521,7 +6521,7 @@ public class CliParser extends Parser {
             char_literal235=(Token)match(input,119,FOLLOW_119_in_columnFamilyExpr3174); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_119.add(char_literal235);
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:413:9: ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:413:9: ( '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )? )?
             int alt32=2;
             int LA32_0 = input.LA(1);
 
@@ -6530,7 +6530,7 @@ public class CliParser extends Parser {
             }
             switch (alt32) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:413:11: '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:413:11: '[' column= columnOrSuperColumn ']' ( '[' super_column= columnOrSuperColumn ']' )?
                     {
                     char_literal236=(Token)match(input,117,FOLLOW_117_in_columnFamilyExpr3187); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_117.add(char_literal236);
@@ -6544,7 +6544,7 @@ public class CliParser extends Parser {
                     char_literal237=(Token)match(input,119,FOLLOW_119_in_columnFamilyExpr3193); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_119.add(char_literal237);
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:414:13: ( '[' super_column= columnOrSuperColumn ']' )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:414:13: ( '[' super_column= columnOrSuperColumn ']' )?
                     int alt31=2;
                     int LA31_0 = input.LA(1);
 
@@ -6553,7 +6553,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt31) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:414:14: '[' super_column= columnOrSuperColumn ']'
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:414:14: '[' super_column= columnOrSuperColumn ']'
                             {
                             char_literal238=(Token)match(input,117,FOLLOW_117_in_columnFamilyExpr3209); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_117.add(char_literal238);
@@ -6582,7 +6582,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: rowKey, columnFamily, super_column, column
+            // elements: super_column, column, columnFamily, rowKey
             // token labels: 
             // rule labels: retval, column, super_column
             // token list labels: 
@@ -6597,17 +6597,17 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 416:7: -> ^( NODE_COLUMN_ACCESS columnFamily rowKey ( $column ( $super_column)? )? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:416:10: ^( NODE_COLUMN_ACCESS columnFamily rowKey ( $column ( $super_column)? )? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:416:10: ^( NODE_COLUMN_ACCESS columnFamily rowKey ( $column ( $super_column)? )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_COLUMN_ACCESS, "NODE_COLUMN_ACCESS"), root_1);
 
                 adaptor.addChild(root_1, stream_columnFamily.nextTree());
                 adaptor.addChild(root_1, stream_rowKey.nextTree());
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:416:51: ( $column ( $super_column)? )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:416:51: ( $column ( $super_column)? )?
                 if ( stream_super_column.hasNext()||stream_column.hasNext() ) {
                     adaptor.addChild(root_1, stream_column.nextTree());
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:416:60: ( $super_column)?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:416:60: ( $super_column)?
                     if ( stream_super_column.hasNext() ) {
                         adaptor.addChild(root_1, stream_super_column.nextTree());
 
@@ -6652,7 +6652,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "keyRangeExpr"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:419:1: keyRangeExpr : '[' ( (startKey= entityName )? ':' (endKey= entityName )? )? ']' -> ^( NODE_KEY_RANGE ( $startKey)? ( $endKey)? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:419:1: keyRangeExpr : '[' ( (startKey= entityName )? ':' (endKey= entityName )? )? ']' -> ^( NODE_KEY_RANGE ( $startKey)? ( $endKey)? ) ;
     public final CliParser.keyRangeExpr_return keyRangeExpr() throws RecognitionException {
         CliParser.keyRangeExpr_return retval = new CliParser.keyRangeExpr_return();
         retval.start = input.LT(1);
@@ -6675,13 +6675,13 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_119=new RewriteRuleTokenStream(adaptor,"token 119");
         RewriteRuleSubtreeStream stream_entityName=new RewriteRuleSubtreeStream(adaptor,"rule entityName");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:5: ( '[' ( (startKey= entityName )? ':' (endKey= entityName )? )? ']' -> ^( NODE_KEY_RANGE ( $startKey)? ( $endKey)? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:10: '[' ( (startKey= entityName )? ':' (endKey= entityName )? )? ']'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:5: ( '[' ( (startKey= entityName )? ':' (endKey= entityName )? )? ']' -> ^( NODE_KEY_RANGE ( $startKey)? ( $endKey)? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:10: '[' ( (startKey= entityName )? ':' (endKey= entityName )? )? ']'
             {
             char_literal240=(Token)match(input,117,FOLLOW_117_in_keyRangeExpr3278); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_117.add(char_literal240);
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:14: ( (startKey= entityName )? ':' (endKey= entityName )? )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:14: ( (startKey= entityName )? ':' (endKey= entityName )? )?
             int alt35=2;
             int LA35_0 = input.LA(1);
 
@@ -6690,9 +6690,9 @@ public class CliParser extends Parser {
             }
             switch (alt35) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:16: (startKey= entityName )? ':' (endKey= entityName )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:16: (startKey= entityName )? ':' (endKey= entityName )?
                     {
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:24: (startKey= entityName )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:24: (startKey= entityName )?
                     int alt33=2;
                     int LA33_0 = input.LA(1);
 
@@ -6701,7 +6701,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt33) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: startKey= entityName
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: startKey= entityName
                             {
                             pushFollow(FOLLOW_entityName_in_keyRangeExpr3284);
                             startKey=entityName();
@@ -6718,7 +6718,7 @@ public class CliParser extends Parser {
                     char_literal241=(Token)match(input,122,FOLLOW_122_in_keyRangeExpr3287); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_122.add(char_literal241);
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:47: (endKey= entityName )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:420:47: (endKey= entityName )?
                     int alt34=2;
                     int LA34_0 = input.LA(1);
 
@@ -6727,7 +6727,7 @@ public class CliParser extends Parser {
                     }
                     switch (alt34) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: endKey= entityName
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: endKey= entityName
                             {
                             pushFollow(FOLLOW_entityName_in_keyRangeExpr3291);
                             endKey=entityName();
@@ -6768,18 +6768,18 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 421:7: -> ^( NODE_KEY_RANGE ( $startKey)? ( $endKey)? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:421:10: ^( NODE_KEY_RANGE ( $startKey)? ( $endKey)? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:421:10: ^( NODE_KEY_RANGE ( $startKey)? ( $endKey)? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_KEY_RANGE, "NODE_KEY_RANGE"), root_1);
 
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:421:27: ( $startKey)?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:421:27: ( $startKey)?
                 if ( stream_startKey.hasNext() ) {
                     adaptor.addChild(root_1, stream_startKey.nextTree());
 
                 }
                 stream_startKey.reset();
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:421:38: ( $endKey)?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:421:38: ( $endKey)?
                 if ( stream_endKey.hasNext() ) {
                     adaptor.addChild(root_1, stream_endKey.nextTree());
 
@@ -6820,7 +6820,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "rowLimitExpr"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:424:1: rowLimitExpr : 'LIMIT' limit= IntegerPositiveLiteral -> ^( NODE_LIMIT $limit) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:424:1: rowLimitExpr : 'LIMIT' limit= IntegerPositiveLiteral -> ^( NODE_LIMIT $limit) ;
     public final CliParser.rowLimitExpr_return rowLimitExpr() throws RecognitionException {
         CliParser.rowLimitExpr_return retval = new CliParser.rowLimitExpr_return();
         retval.start = input.LT(1);
@@ -6836,8 +6836,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_LIMIT=new RewriteRuleTokenStream(adaptor,"token LIMIT");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:425:5: ( 'LIMIT' limit= IntegerPositiveLiteral -> ^( NODE_LIMIT $limit) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:425:7: 'LIMIT' limit= IntegerPositiveLiteral
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:425:5: ( 'LIMIT' limit= IntegerPositiveLiteral -> ^( NODE_LIMIT $limit) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:425:7: 'LIMIT' limit= IntegerPositiveLiteral
             {
             string_literal243=(Token)match(input,LIMIT,FOLLOW_LIMIT_in_rowLimitExpr3334); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_LIMIT.add(string_literal243);
@@ -6862,7 +6862,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 426:9: -> ^( NODE_LIMIT $limit)
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:426:12: ^( NODE_LIMIT $limit)
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:426:12: ^( NODE_LIMIT $limit)
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_LIMIT, "NODE_LIMIT"), root_1);
@@ -6903,7 +6903,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "columnLimitExpr"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:429:1: columnLimitExpr : 'COLUMNS' columns= IntegerPositiveLiteral ( reversedExpr )? -> ^( NODE_COLUMNS $columns ( reversedExpr )? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:429:1: columnLimitExpr : 'COLUMNS' columns= IntegerPositiveLiteral ( reversedExpr )? -> ^( NODE_COLUMNS $columns ( reversedExpr )? ) ;
     public final CliParser.columnLimitExpr_return columnLimitExpr() throws RecognitionException {
         CliParser.columnLimitExpr_return retval = new CliParser.columnLimitExpr_return();
         retval.start = input.LT(1);
@@ -6921,8 +6921,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_123=new RewriteRuleTokenStream(adaptor,"token 123");
         RewriteRuleSubtreeStream stream_reversedExpr=new RewriteRuleSubtreeStream(adaptor,"rule reversedExpr");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:430:5: ( 'COLUMNS' columns= IntegerPositiveLiteral ( reversedExpr )? -> ^( NODE_COLUMNS $columns ( reversedExpr )? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:430:7: 'COLUMNS' columns= IntegerPositiveLiteral ( reversedExpr )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:430:5: ( 'COLUMNS' columns= IntegerPositiveLiteral ( reversedExpr )? -> ^( NODE_COLUMNS $columns ( reversedExpr )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:430:7: 'COLUMNS' columns= IntegerPositiveLiteral ( reversedExpr )?
             {
             string_literal244=(Token)match(input,123,FOLLOW_123_in_columnLimitExpr3372); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_123.add(string_literal244);
@@ -6930,7 +6930,7 @@ public class CliParser extends Parser {
             columns=(Token)match(input,IntegerPositiveLiteral,FOLLOW_IntegerPositiveLiteral_in_columnLimitExpr3376); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IntegerPositiveLiteral.add(columns);
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:430:48: ( reversedExpr )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:430:48: ( reversedExpr )?
             int alt36=2;
             int LA36_0 = input.LA(1);
 
@@ -6939,7 +6939,7 @@ public class CliParser extends Parser {
             }
             switch (alt36) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: reversedExpr
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: reversedExpr
                     {
                     pushFollow(FOLLOW_reversedExpr_in_columnLimitExpr3378);
                     reversedExpr245=reversedExpr();
@@ -6956,7 +6956,7 @@ public class CliParser extends Parser {
 
 
             // AST REWRITE
-            // elements: reversedExpr, columns
+            // elements: columns, reversedExpr
             // token labels: columns
             // rule labels: retval
             // token list labels: 
@@ -6970,13 +6970,13 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 431:9: -> ^( NODE_COLUMNS $columns ( reversedExpr )? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:431:12: ^( NODE_COLUMNS $columns ( reversedExpr )? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:431:12: ^( NODE_COLUMNS $columns ( reversedExpr )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_COLUMNS, "NODE_COLUMNS"), root_1);
 
                 adaptor.addChild(root_1, stream_columns.nextNode());
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:431:36: ( reversedExpr )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:431:36: ( reversedExpr )?
                 if ( stream_reversedExpr.hasNext() ) {
                     adaptor.addChild(root_1, stream_reversedExpr.nextTree());
 
@@ -7017,7 +7017,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "reversedExpr"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:434:1: reversedExpr : 'REVERSED' -> ^( NODE_REVERSED ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:434:1: reversedExpr : 'REVERSED' -> ^( NODE_REVERSED ) ;
     public final CliParser.reversedExpr_return reversedExpr() throws RecognitionException {
         CliParser.reversedExpr_return retval = new CliParser.reversedExpr_return();
         retval.start = input.LT(1);
@@ -7030,8 +7030,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_124=new RewriteRuleTokenStream(adaptor,"token 124");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:435:5: ( 'REVERSED' -> ^( NODE_REVERSED ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:435:7: 'REVERSED'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:435:5: ( 'REVERSED' -> ^( NODE_REVERSED ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:435:7: 'REVERSED'
             {
             string_literal246=(Token)match(input,124,FOLLOW_124_in_reversedExpr3416); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_124.add(string_literal246);
@@ -7052,7 +7052,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 436:9: -> ^( NODE_REVERSED )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:436:12: ^( NODE_REVERSED )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:436:12: ^( NODE_REVERSED )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_REVERSED, "NODE_REVERSED"), root_1);
@@ -7091,7 +7091,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "columnName"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:439:1: columnName : entityName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:439:1: columnName : entityName ;
     public final CliParser.columnName_return columnName() throws RecognitionException {
         CliParser.columnName_return retval = new CliParser.columnName_return();
         retval.start = input.LT(1);
@@ -7103,8 +7103,8 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:440:2: ( entityName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:440:4: entityName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:440:2: ( entityName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:440:4: entityName
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7143,7 +7143,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "attr_name"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:443:1: attr_name : Identifier ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:443:1: attr_name : Identifier ;
     public final CliParser.attr_name_return attr_name() throws RecognitionException {
         CliParser.attr_name_return retval = new CliParser.attr_name_return();
         retval.start = input.LT(1);
@@ -7155,8 +7155,8 @@ public class CliParser extends Parser {
         CommonTree Identifier248_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:444:5: ( Identifier )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:444:7: Identifier
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:444:5: ( Identifier )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:444:7: Identifier
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7194,7 +7194,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "attrValueString"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:447:1: attrValueString : ( Identifier | StringLiteral ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:447:1: attrValueString : ( Identifier | StringLiteral ) ;
     public final CliParser.attrValueString_return attrValueString() throws RecognitionException {
         CliParser.attrValueString_return retval = new CliParser.attrValueString_return();
         retval.start = input.LT(1);
@@ -7206,8 +7206,8 @@ public class CliParser extends Parser {
         CommonTree set249_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:448:5: ( ( Identifier | StringLiteral ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:448:7: ( Identifier | StringLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:448:5: ( ( Identifier | StringLiteral ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:448:7: ( Identifier | StringLiteral )
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7252,7 +7252,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "attrValueInt"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:451:1: attrValueInt : ( IntegerPositiveLiteral | IntegerNegativeLiteral );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:451:1: attrValueInt : ( IntegerPositiveLiteral | IntegerNegativeLiteral );
     public final CliParser.attrValueInt_return attrValueInt() throws RecognitionException {
         CliParser.attrValueInt_return retval = new CliParser.attrValueInt_return();
         retval.start = input.LT(1);
@@ -7264,8 +7264,8 @@ public class CliParser extends Parser {
         CommonTree set250_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:452:5: ( IntegerPositiveLiteral | IntegerNegativeLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:452:5: ( IntegerPositiveLiteral | IntegerNegativeLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7310,7 +7310,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "attrValueDouble"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:456:1: attrValueDouble : DoubleLiteral ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:456:1: attrValueDouble : DoubleLiteral ;
     public final CliParser.attrValueDouble_return attrValueDouble() throws RecognitionException {
         CliParser.attrValueDouble_return retval = new CliParser.attrValueDouble_return();
         retval.start = input.LT(1);
@@ -7322,8 +7322,8 @@ public class CliParser extends Parser {
         CommonTree DoubleLiteral251_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:457:5: ( DoubleLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:457:7: DoubleLiteral
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:457:5: ( DoubleLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:457:7: DoubleLiteral
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7361,7 +7361,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "keyspace"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:460:1: keyspace : entityName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:460:1: keyspace : entityName ;
     public final CliParser.keyspace_return keyspace() throws RecognitionException {
         CliParser.keyspace_return retval = new CliParser.keyspace_return();
         retval.start = input.LT(1);
@@ -7373,8 +7373,8 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:461:2: ( entityName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:461:4: entityName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:461:2: ( entityName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:461:4: entityName
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7413,7 +7413,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "replica_placement_strategy"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:464:1: replica_placement_strategy : StringLiteral ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:464:1: replica_placement_strategy : StringLiteral ;
     public final CliParser.replica_placement_strategy_return replica_placement_strategy() throws RecognitionException {
         CliParser.replica_placement_strategy_return retval = new CliParser.replica_placement_strategy_return();
         retval.start = input.LT(1);
@@ -7425,8 +7425,8 @@ public class CliParser extends Parser {
         CommonTree StringLiteral253_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:465:5: ( StringLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:465:7: StringLiteral
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:465:5: ( StringLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:465:7: StringLiteral
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7464,7 +7464,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "keyspaceNewName"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:468:1: keyspaceNewName : entityName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:468:1: keyspaceNewName : entityName ;
     public final CliParser.keyspaceNewName_return keyspaceNewName() throws RecognitionException {
         CliParser.keyspaceNewName_return retval = new CliParser.keyspaceNewName_return();
         retval.start = input.LT(1);
@@ -7476,8 +7476,8 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:469:2: ( entityName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:469:4: entityName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:469:2: ( entityName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:469:4: entityName
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7516,7 +7516,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "comparator"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:472:1: comparator : StringLiteral ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:472:1: comparator : StringLiteral ;
     public final CliParser.comparator_return comparator() throws RecognitionException {
         CliParser.comparator_return retval = new CliParser.comparator_return();
         retval.start = input.LT(1);
@@ -7528,8 +7528,8 @@ public class CliParser extends Parser {
         CommonTree StringLiteral255_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:473:5: ( StringLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:473:7: StringLiteral
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:473:5: ( StringLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:473:7: StringLiteral
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7567,7 +7567,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "command"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:476:1: command : Identifier ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:476:1: command : Identifier ;
     public final CliParser.command_return command() throws RecognitionException {
         CliParser.command_return retval = new CliParser.command_return();
         retval.start = input.LT(1);
@@ -7579,8 +7579,8 @@ public class CliParser extends Parser {
         CommonTree Identifier256_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:476:9: ( Identifier )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:476:11: Identifier
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:476:9: ( Identifier )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:476:11: Identifier
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7618,7 +7618,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "newColumnFamily"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:479:1: newColumnFamily : entityName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:479:1: newColumnFamily : entityName ;
     public final CliParser.newColumnFamily_return newColumnFamily() throws RecognitionException {
         CliParser.newColumnFamily_return retval = new CliParser.newColumnFamily_return();
         retval.start = input.LT(1);
@@ -7630,8 +7630,8 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:480:2: ( entityName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:480:4: entityName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:480:2: ( entityName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:480:4: entityName
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7670,7 +7670,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "username"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:483:1: username : Identifier ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:483:1: username : Identifier ;
     public final CliParser.username_return username() throws RecognitionException {
         CliParser.username_return retval = new CliParser.username_return();
         retval.start = input.LT(1);
@@ -7682,8 +7682,8 @@ public class CliParser extends Parser {
         CommonTree Identifier258_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:483:9: ( Identifier )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:483:11: Identifier
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:483:9: ( Identifier )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:483:11: Identifier
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7721,7 +7721,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "password"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:486:1: password : StringLiteral ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:486:1: password : StringLiteral ;
     public final CliParser.password_return password() throws RecognitionException {
         CliParser.password_return retval = new CliParser.password_return();
         retval.start = input.LT(1);
@@ -7733,8 +7733,8 @@ public class CliParser extends Parser {
         CommonTree StringLiteral259_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:486:9: ( StringLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:486:11: StringLiteral
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:486:9: ( StringLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:486:11: StringLiteral
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7772,7 +7772,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "columnFamily"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:489:1: columnFamily : entityName ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:489:1: columnFamily : entityName ;
     public final CliParser.columnFamily_return columnFamily() throws RecognitionException {
         CliParser.columnFamily_return retval = new CliParser.columnFamily_return();
         retval.start = input.LT(1);
@@ -7784,8 +7784,8 @@ public class CliParser extends Parser {
 
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:490:3: ( entityName )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:490:5: entityName
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:490:3: ( entityName )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:490:5: entityName
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7824,7 +7824,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "entityName"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:493:1: entityName : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:493:1: entityName : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral ) ;
     public final CliParser.entityName_return entityName() throws RecognitionException {
         CliParser.entityName_return retval = new CliParser.entityName_return();
         retval.start = input.LT(1);
@@ -7836,8 +7836,8 @@ public class CliParser extends Parser {
         CommonTree set261_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:494:3: ( ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:494:5: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:494:3: ( ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:494:5: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral )
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -7882,7 +7882,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "rowKey"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:497:1: rowKey : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:497:1: rowKey : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall ) ;
     public final CliParser.rowKey_return rowKey() throws RecognitionException {
         CliParser.rowKey_return retval = new CliParser.rowKey_return();
         retval.start = input.LT(1);
@@ -7902,12 +7902,12 @@ public class CliParser extends Parser {
         CommonTree IntegerNegativeLiteral265_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:5: ( ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:5: ( ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall )
             {
             root_0 = (CommonTree)adaptor.nil();
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall )
             int alt37=5;
             switch ( input.LA(1) ) {
             case Identifier:
@@ -7954,7 +7954,7 @@ public class CliParser extends Parser {
 
             switch (alt37) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:9: Identifier
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:9: Identifier
                     {
                     Identifier262=(Token)match(input,Identifier,FOLLOW_Identifier_in_rowKey3699); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -7965,7 +7965,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:22: StringLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:22: StringLiteral
                     {
                     StringLiteral263=(Token)match(input,StringLiteral,FOLLOW_StringLiteral_in_rowKey3703); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -7976,7 +7976,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:38: IntegerPositiveLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:38: IntegerPositiveLiteral
                     {
                     IntegerPositiveLiteral264=(Token)match(input,IntegerPositiveLiteral,FOLLOW_IntegerPositiveLiteral_in_rowKey3707); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -7987,7 +7987,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:63: IntegerNegativeLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:63: IntegerNegativeLiteral
                     {
                     IntegerNegativeLiteral265=(Token)match(input,IntegerNegativeLiteral,FOLLOW_IntegerNegativeLiteral_in_rowKey3711); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -7998,7 +7998,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:88: functionCall
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:498:88: functionCall
                     {
                     pushFollow(FOLLOW_functionCall_in_rowKey3715);
                     functionCall266=functionCall();
@@ -8041,7 +8041,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "rowValue"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:501:1: rowValue : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:501:1: rowValue : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct ) ;
     public final CliParser.rowValue_return rowValue() throws RecognitionException {
         CliParser.rowValue_return retval = new CliParser.rowValue_return();
         retval.start = input.LT(1);
@@ -8063,12 +8063,12 @@ public class CliParser extends Parser {
         CommonTree IntegerNegativeLiteral270_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:5: ( ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:5: ( ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct )
             {
             root_0 = (CommonTree)adaptor.nil();
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:8: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral | functionCall | hashConstruct )
             int alt38=6;
             switch ( input.LA(1) ) {
             case Identifier:
@@ -8120,7 +8120,7 @@ public class CliParser extends Parser {
 
             switch (alt38) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:9: Identifier
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:9: Identifier
                     {
                     Identifier267=(Token)match(input,Identifier,FOLLOW_Identifier_in_rowValue3737); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8131,7 +8131,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:22: StringLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:22: StringLiteral
                     {
                     StringLiteral268=(Token)match(input,StringLiteral,FOLLOW_StringLiteral_in_rowValue3741); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8142,7 +8142,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:38: IntegerPositiveLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:38: IntegerPositiveLiteral
                     {
                     IntegerPositiveLiteral269=(Token)match(input,IntegerPositiveLiteral,FOLLOW_IntegerPositiveLiteral_in_rowValue3745); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8153,7 +8153,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:63: IntegerNegativeLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:63: IntegerNegativeLiteral
                     {
                     IntegerNegativeLiteral270=(Token)match(input,IntegerNegativeLiteral,FOLLOW_IntegerNegativeLiteral_in_rowValue3749); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8164,7 +8164,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:88: functionCall
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:88: functionCall
                     {
                     pushFollow(FOLLOW_functionCall_in_rowValue3753);
                     functionCall271=functionCall();
@@ -8176,7 +8176,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 6 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:103: hashConstruct
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:502:103: hashConstruct
                     {
                     pushFollow(FOLLOW_hashConstruct_in_rowValue3757);
                     hashConstruct272=hashConstruct();
@@ -8219,7 +8219,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "value"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:505:1: value : ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:505:1: value : ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) ;
     public final CliParser.value_return value() throws RecognitionException {
         CliParser.value_return retval = new CliParser.value_return();
         retval.start = input.LT(1);
@@ -8239,12 +8239,12 @@ public class CliParser extends Parser {
         CommonTree StringLiteral276_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:5: ( ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:5: ( ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
             {
             root_0 = (CommonTree)adaptor.nil();
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
             int alt39=5;
             switch ( input.LA(1) ) {
             case Identifier:
@@ -8291,7 +8291,7 @@ public class CliParser extends Parser {
 
             switch (alt39) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:8: Identifier
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:8: Identifier
                     {
                     Identifier273=(Token)match(input,Identifier,FOLLOW_Identifier_in_value3779); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8302,7 +8302,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:21: IntegerPositiveLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:21: IntegerPositiveLiteral
                     {
                     IntegerPositiveLiteral274=(Token)match(input,IntegerPositiveLiteral,FOLLOW_IntegerPositiveLiteral_in_value3783); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8313,7 +8313,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:46: IntegerNegativeLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:46: IntegerNegativeLiteral
                     {
                     IntegerNegativeLiteral275=(Token)match(input,IntegerNegativeLiteral,FOLLOW_IntegerNegativeLiteral_in_value3787); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8324,7 +8324,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:71: StringLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:71: StringLiteral
                     {
                     StringLiteral276=(Token)match(input,StringLiteral,FOLLOW_StringLiteral_in_value3791); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8335,7 +8335,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:87: functionCall
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:506:87: functionCall
                     {
                     pushFollow(FOLLOW_functionCall_in_value3795);
                     functionCall277=functionCall();
@@ -8378,7 +8378,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "functionCall"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:509:1: functionCall : functionName= Identifier '(' ( functionArgument )? ')' -> ^( FUNCTION_CALL $functionName ( functionArgument )? ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:509:1: functionCall : functionName= Identifier '(' ( functionArgument )? ')' -> ^( FUNCTION_CALL $functionName ( functionArgument )? ) ;
     public final CliParser.functionCall_return functionCall() throws RecognitionException {
         CliParser.functionCall_return retval = new CliParser.functionCall_return();
         retval.start = input.LT(1);
@@ -8399,8 +8399,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_Identifier=new RewriteRuleTokenStream(adaptor,"token Identifier");
         RewriteRuleSubtreeStream stream_functionArgument=new RewriteRuleSubtreeStream(adaptor,"rule functionArgument");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:510:5: (functionName= Identifier '(' ( functionArgument )? ')' -> ^( FUNCTION_CALL $functionName ( functionArgument )? ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:510:7: functionName= Identifier '(' ( functionArgument )? ')'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:510:5: (functionName= Identifier '(' ( functionArgument )? ')' -> ^( FUNCTION_CALL $functionName ( functionArgument )? ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:510:7: functionName= Identifier '(' ( functionArgument )? ')'
             {
             functionName=(Token)match(input,Identifier,FOLLOW_Identifier_in_functionCall3816); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_Identifier.add(functionName);
@@ -8408,7 +8408,7 @@ public class CliParser extends Parser {
             char_literal278=(Token)match(input,125,FOLLOW_125_in_functionCall3818); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_125.add(char_literal278);
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:510:35: ( functionArgument )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:510:35: ( functionArgument )?
             int alt40=2;
             int LA40_0 = input.LA(1);
 
@@ -8417,7 +8417,7 @@ public class CliParser extends Parser {
             }
             switch (alt40) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: functionArgument
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:0:0: functionArgument
                     {
                     pushFollow(FOLLOW_functionArgument_in_functionCall3820);
                     functionArgument279=functionArgument();
@@ -8451,13 +8451,13 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 511:9: -> ^( FUNCTION_CALL $functionName ( functionArgument )? )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:511:12: ^( FUNCTION_CALL $functionName ( functionArgument )? )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:511:12: ^( FUNCTION_CALL $functionName ( functionArgument )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(FUNCTION_CALL, "FUNCTION_CALL"), root_1);
 
                 adaptor.addChild(root_1, stream_functionName.nextNode());
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:511:42: ( functionArgument )?
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:511:42: ( functionArgument )?
                 if ( stream_functionArgument.hasNext() ) {
                     adaptor.addChild(root_1, stream_functionArgument.nextTree());
 
@@ -8498,7 +8498,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "functionArgument"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:514:1: functionArgument : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:514:1: functionArgument : ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral );
     public final CliParser.functionArgument_return functionArgument() throws RecognitionException {
         CliParser.functionArgument_return retval = new CliParser.functionArgument_return();
         retval.start = input.LT(1);
@@ -8510,8 +8510,8 @@ public class CliParser extends Parser {
         CommonTree set281_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:515:5: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:515:5: ( Identifier | StringLiteral | IntegerPositiveLiteral | IntegerNegativeLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -8556,7 +8556,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "columnOrSuperColumn"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:518:1: columnOrSuperColumn : ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:518:1: columnOrSuperColumn : ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) ;
     public final CliParser.columnOrSuperColumn_return columnOrSuperColumn() throws RecognitionException {
         CliParser.columnOrSuperColumn_return retval = new CliParser.columnOrSuperColumn_return();
         retval.start = input.LT(1);
@@ -8576,12 +8576,12 @@ public class CliParser extends Parser {
         CommonTree StringLiteral285_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:5: ( ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:5: ( ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
             {
             root_0 = (CommonTree)adaptor.nil();
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:7: ( Identifier | IntegerPositiveLiteral | IntegerNegativeLiteral | StringLiteral | functionCall )
             int alt41=5;
             switch ( input.LA(1) ) {
             case Identifier:
@@ -8628,7 +8628,7 @@ public class CliParser extends Parser {
 
             switch (alt41) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:8: Identifier
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:8: Identifier
                     {
                     Identifier282=(Token)match(input,Identifier,FOLLOW_Identifier_in_columnOrSuperColumn3891); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8639,7 +8639,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:21: IntegerPositiveLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:21: IntegerPositiveLiteral
                     {
                     IntegerPositiveLiteral283=(Token)match(input,IntegerPositiveLiteral,FOLLOW_IntegerPositiveLiteral_in_columnOrSuperColumn3895); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8650,7 +8650,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:46: IntegerNegativeLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:46: IntegerNegativeLiteral
                     {
                     IntegerNegativeLiteral284=(Token)match(input,IntegerNegativeLiteral,FOLLOW_IntegerNegativeLiteral_in_columnOrSuperColumn3899); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8661,7 +8661,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:71: StringLiteral
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:71: StringLiteral
                     {
                     StringLiteral285=(Token)match(input,StringLiteral,FOLLOW_StringLiteral_in_columnOrSuperColumn3903); if (state.failed) return retval;
                     if ( state.backtracking==0 ) {
@@ -8672,7 +8672,7 @@ public class CliParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:87: functionCall
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:519:87: functionCall
                     {
                     pushFollow(FOLLOW_functionCall_in_columnOrSuperColumn3907);
                     functionCall286=functionCall();
@@ -8715,7 +8715,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "host"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:522:1: host : host_name -> ^( NODE_ID_LIST host_name ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:522:1: host : host_name -> ^( NODE_ID_LIST host_name ) ;
     public final CliParser.host_return host() throws RecognitionException {
         CliParser.host_return retval = new CliParser.host_return();
         retval.start = input.LT(1);
@@ -8727,8 +8727,8 @@ public class CliParser extends Parser {
 
         RewriteRuleSubtreeStream stream_host_name=new RewriteRuleSubtreeStream(adaptor,"rule host_name");
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:523:5: ( host_name -> ^( NODE_ID_LIST host_name ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:523:7: host_name
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:523:5: ( host_name -> ^( NODE_ID_LIST host_name ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:523:7: host_name
             {
             pushFollow(FOLLOW_host_name_in_host3929);
             host_name287=host_name();
@@ -8752,7 +8752,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 524:9: -> ^( NODE_ID_LIST host_name )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:524:12: ^( NODE_ID_LIST host_name )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:524:12: ^( NODE_ID_LIST host_name )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_ID_LIST, "NODE_ID_LIST"), root_1);
@@ -8793,7 +8793,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "host_name"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:527:1: host_name : Identifier ( '.' Identifier )* ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:527:1: host_name : Identifier ( '.' Identifier )* ;
     public final CliParser.host_name_return host_name() throws RecognitionException {
         CliParser.host_name_return retval = new CliParser.host_name_return();
         retval.start = input.LT(1);
@@ -8809,8 +8809,8 @@ public class CliParser extends Parser {
         CommonTree Identifier290_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:5: ( Identifier ( '.' Identifier )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:7: Identifier ( '.' Identifier )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:5: ( Identifier ( '.' Identifier )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:7: Identifier ( '.' Identifier )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -8819,7 +8819,7 @@ public class CliParser extends Parser {
             Identifier288_tree = (CommonTree)adaptor.create(Identifier288);
             adaptor.addChild(root_0, Identifier288_tree);
             }
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:18: ( '.' Identifier )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:18: ( '.' Identifier )*
             loop42:
             do {
                 int alt42=2;
@@ -8832,7 +8832,7 @@ public class CliParser extends Parser {
 
                 switch (alt42) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:19: '.' Identifier
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:528:19: '.' Identifier
             	    {
             	    char_literal289=(Token)match(input,116,FOLLOW_116_in_host_name3965); if (state.failed) return retval;
             	    if ( state.backtracking==0 ) {
@@ -8882,7 +8882,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "ip_address"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:531:1: ip_address : IP_ADDRESS -> ^( NODE_ID_LIST IP_ADDRESS ) ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:531:1: ip_address : IP_ADDRESS -> ^( NODE_ID_LIST IP_ADDRESS ) ;
     public final CliParser.ip_address_return ip_address() throws RecognitionException {
         CliParser.ip_address_return retval = new CliParser.ip_address_return();
         retval.start = input.LT(1);
@@ -8895,8 +8895,8 @@ public class CliParser extends Parser {
         RewriteRuleTokenStream stream_IP_ADDRESS=new RewriteRuleTokenStream(adaptor,"token IP_ADDRESS");
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:532:5: ( IP_ADDRESS -> ^( NODE_ID_LIST IP_ADDRESS ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:532:7: IP_ADDRESS
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:532:5: ( IP_ADDRESS -> ^( NODE_ID_LIST IP_ADDRESS ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:532:7: IP_ADDRESS
             {
             IP_ADDRESS291=(Token)match(input,IP_ADDRESS,FOLLOW_IP_ADDRESS_in_ip_address3990); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_IP_ADDRESS.add(IP_ADDRESS291);
@@ -8917,7 +8917,7 @@ public class CliParser extends Parser {
             root_0 = (CommonTree)adaptor.nil();
             // 533:9: -> ^( NODE_ID_LIST IP_ADDRESS )
             {
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:533:12: ^( NODE_ID_LIST IP_ADDRESS )
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:533:12: ^( NODE_ID_LIST IP_ADDRESS )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot((CommonTree)adaptor.create(NODE_ID_LIST, "NODE_ID_LIST"), root_1);
@@ -8958,7 +8958,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "port"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:537:1: port : IntegerPositiveLiteral ;
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:537:1: port : IntegerPositiveLiteral ;
     public final CliParser.port_return port() throws RecognitionException {
         CliParser.port_return retval = new CliParser.port_return();
         retval.start = input.LT(1);
@@ -8970,8 +8970,8 @@ public class CliParser extends Parser {
         CommonTree IntegerPositiveLiteral292_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:538:5: ( IntegerPositiveLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:538:7: IntegerPositiveLiteral
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:538:5: ( IntegerPositiveLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:538:7: IntegerPositiveLiteral
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -9009,7 +9009,7 @@ public class CliParser extends Parser {
     };
 
     // $ANTLR start "incrementValue"
-    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:541:1: incrementValue : ( IntegerPositiveLiteral | IntegerNegativeLiteral );
+    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:541:1: incrementValue : ( IntegerPositiveLiteral | IntegerNegativeLiteral );
     public final CliParser.incrementValue_return incrementValue() throws RecognitionException {
         CliParser.incrementValue_return retval = new CliParser.incrementValue_return();
         retval.start = input.LT(1);
@@ -9021,8 +9021,8 @@ public class CliParser extends Parser {
         CommonTree set293_tree=null;
 
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:542:5: ( IntegerPositiveLiteral | IntegerNegativeLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:542:5: ( IntegerPositiveLiteral | IntegerNegativeLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
