@@ -83,4 +83,19 @@ public class LatencyTracker
     {
         return recentHistogram.getBuckets(true);
     }
+    
+    public long getPercentile(float percentile)
+    {
+    	long totalOps = opCount.get();
+    	long opsFromMax = (long) ((double) totalOps * (1 - (double) percentile));
+    	long[] offsets = totalHistogram.getBucketOffsets();
+    	int bucket = offsets.length + 1; // There is one more bucket than offset, and we do bucket-- first
+    	long opts = 0;
+    	while (opts < opsFromMax)
+    	{
+    		bucket--;
+    		opts += totalHistogram.get(bucket);
+    	}
+    	return offsets[bucket];
+    }
 }
