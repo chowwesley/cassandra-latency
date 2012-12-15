@@ -35,7 +35,7 @@ cassandra_bin=$cassandra_bin:$CASSANDRA_HOME/build/classes/thrift
 #cassandra_bin=$cassandra_home/build/cassandra.jar
 
 # JAVA_HOME can optionally be set here
-#JAVA_HOME=/usr/local/jdk6
+JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/jre
 
 # The java classpath (required)
 CLASSPATH=$CASSANDRA_CONF:$cassandra_bin

@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g 2012-10-19 20:50:37
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g 2012-12-09 01:29:57
 
     package org.apache.cassandra.cql3;
 
@@ -183,15 +183,15 @@ public class CqlLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g"; }
+    public String getGrammarFileName() { return "/home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g"; }
 
     // $ANTLR start "T__112"
     public final void mT__112() throws RecognitionException {
         try {
             int _type = T__112;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:50:8: ( ';' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:50:10: ';'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:50:8: ( ';' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:50:10: ';'
             {
             match(';'); 
 
@@ -210,8 +210,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__113;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:51:8: ( '(' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:51:10: '('
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:51:8: ( '(' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:51:10: '('
             {
             match('('); 
 
@@ -230,8 +230,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__114;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:52:8: ( ')' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:52:10: ')'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:52:8: ( ')' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:52:10: ')'
             {
             match(')'); 
 
@@ -250,8 +250,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__115;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:53:8: ( ',' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:53:10: ','
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:53:8: ( ',' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:53:10: ','
             {
             match(','); 
 
@@ -270,8 +270,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__116;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:54:8: ( '\\*' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:54:10: '\\*'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:54:8: ( '\\*' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:54:10: '\\*'
             {
             match('*'); 
 
@@ -290,8 +290,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__117;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:55:8: ( '=' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:55:10: '='
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:55:8: ( '=' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:55:10: '='
             {
             match('='); 
 
@@ -310,8 +310,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__118;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:56:8: ( '.' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:56:10: '.'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:56:8: ( '.' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:56:10: '.'
             {
             match('.'); 
 
@@ -330,8 +330,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__119;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:57:8: ( '+' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:57:10: '+'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:57:8: ( '+' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:57:10: '+'
             {
             match('+'); 
 
@@ -350,8 +350,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__120;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:58:8: ( '-' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:58:10: '-'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:58:8: ( '-' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:58:10: '-'
             {
             match('-'); 
 
@@ -370,8 +370,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__121;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:59:8: ( ':' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:59:10: ':'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:59:8: ( ':' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:59:10: ':'
             {
             match(':'); 
 
@@ -390,8 +390,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__122;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:60:8: ( '<' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:60:10: '<'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:60:8: ( '<' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:60:10: '<'
             {
             match('<'); 
 
@@ -410,8 +410,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__123;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:61:8: ( '<=' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:61:10: '<='
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:61:8: ( '<=' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:61:10: '<='
             {
             match("<="); 
 
@@ -431,8 +431,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__124;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:62:8: ( '>=' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:62:10: '>='
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:62:8: ( '>=' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:62:10: '>='
             {
             match(">="); 
 
@@ -452,8 +452,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = T__125;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:63:8: ( '>' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:63:10: '>'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:63:8: ( '>' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:63:10: '>'
             {
             match('>'); 
 
@@ -472,8 +472,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_SELECT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:627:9: ( S E L E C T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:627:16: S E L E C T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:627:9: ( S E L E C T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:627:16: S E L E C T
             {
             mS(); 
             mE(); 
@@ -497,8 +497,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_FROM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:628:7: ( F R O M )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:628:16: F R O M
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:628:7: ( F R O M )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:628:16: F R O M
             {
             mF(); 
             mR(); 
@@ -520,8 +520,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_WHERE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:629:8: ( W H E R E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:629:16: W H E R E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:629:8: ( W H E R E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:629:16: W H E R E
             {
             mW(); 
             mH(); 
@@ -544,8 +544,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:630:6: ( A N D )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:630:16: A N D
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:630:6: ( A N D )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:630:16: A N D
             {
             mA(); 
             mN(); 
@@ -566,8 +566,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_KEY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:631:6: ( K E Y )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:631:16: K E Y
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:631:6: ( K E Y )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:631:16: K E Y
             {
             mK(); 
             mE(); 
@@ -588,8 +588,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_INSERT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:632:9: ( I N S E R T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:632:16: I N S E R T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:632:9: ( I N S E R T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:632:16: I N S E R T
             {
             mI(); 
             mN(); 
@@ -613,8 +613,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_UPDATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:633:9: ( U P D A T E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:633:16: U P D A T E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:633:9: ( U P D A T E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:633:16: U P D A T E
             {
             mU(); 
             mP(); 
@@ -638,8 +638,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_WITH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:634:7: ( W I T H )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:634:16: W I T H
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:634:7: ( W I T H )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:634:16: W I T H
             {
             mW(); 
             mI(); 
@@ -661,8 +661,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_LIMIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:635:8: ( L I M I T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:635:16: L I M I T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:635:8: ( L I M I T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:635:16: L I M I T
             {
             mL(); 
             mI(); 
@@ -685,8 +685,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_USING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:636:8: ( U S I N G )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:636:16: U S I N G
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:636:8: ( U S I N G )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:636:16: U S I N G
             {
             mU(); 
             mS(); 
@@ -709,8 +709,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_ALL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:637:6: ( A L L )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:637:16: A L L
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:637:6: ( A L L )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:637:16: A L L
             {
             mA(); 
             mL(); 
@@ -731,8 +731,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_CONSISTENCY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:638:14: ( C O N S I S T E N C Y )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:638:16: C O N S I S T E N C Y
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:638:14: ( C O N S I S T E N C Y )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:638:16: C O N S I S T E N C Y
             {
             mC(); 
             mO(); 
@@ -761,15 +761,15 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_LEVEL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:8: ( ( O N E | Q U O R U M | K_ALL | A N Y | L O C A L '_' Q U O R U M | E A C H '_' Q U O R U M | T W O | T H R E E ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:16: ( O N E | Q U O R U M | K_ALL | A N Y | L O C A L '_' Q U O R U M | E A C H '_' Q U O R U M | T W O | T H R E E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:8: ( ( O N E | Q U O R U M | K_ALL | A N Y | L O C A L '_' Q U O R U M | E A C H '_' Q U O R U M | T W O | T H R E E ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:16: ( O N E | Q U O R U M | K_ALL | A N Y | L O C A L '_' Q U O R U M | E A C H '_' Q U O R U M | T W O | T H R E E )
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:16: ( O N E | Q U O R U M | K_ALL | A N Y | L O C A L '_' Q U O R U M | E A C H '_' Q U O R U M | T W O | T H R E E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:16: ( O N E | Q U O R U M | K_ALL | A N Y | L O C A L '_' Q U O R U M | E A C H '_' Q U O R U M | T W O | T H R E E )
             int alt1=8;
             alt1 = dfa1.predict(input);
             switch (alt1) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:18: O N E
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:639:18: O N E
                     {
                     mO(); 
                     mN(); 
@@ -778,7 +778,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:640:18: Q U O R U M
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:640:18: Q U O R U M
                     {
                     mQ(); 
                     mU(); 
@@ -790,14 +790,14 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:641:18: K_ALL
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:641:18: K_ALL
                     {
                     mK_ALL(); 
 
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:642:18: A N Y
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:642:18: A N Y
                     {
                     mA(); 
                     mN(); 
@@ -806,7 +806,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:643:18: L O C A L '_' Q U O R U M
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:643:18: L O C A L '_' Q U O R U M
                     {
                     mL(); 
                     mO(); 
@@ -824,7 +824,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 6 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:644:18: E A C H '_' Q U O R U M
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:644:18: E A C H '_' Q U O R U M
                     {
                     mE(); 
                     mA(); 
@@ -841,7 +841,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 7 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:645:18: T W O
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:645:18: T W O
                     {
                     mT(); 
                     mW(); 
@@ -850,7 +850,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 8 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:646:18: T H R E E
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:646:18: T H R E E
                     {
                     mT(); 
                     mH(); 
@@ -879,8 +879,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_USE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:649:6: ( U S E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:649:16: U S E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:649:6: ( U S E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:649:16: U S E
             {
             mU(); 
             mS(); 
@@ -901,8 +901,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_COUNT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:650:8: ( C O U N T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:650:16: C O U N T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:650:8: ( C O U N T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:650:16: C O U N T
             {
             mC(); 
             mO(); 
@@ -925,8 +925,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_SET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:651:6: ( S E T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:651:16: S E T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:651:6: ( S E T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:651:16: S E T
             {
             mS(); 
             mE(); 
@@ -947,8 +947,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_BEGIN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:652:8: ( B E G I N )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:652:16: B E G I N
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:652:8: ( B E G I N )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:652:16: B E G I N
             {
             mB(); 
             mE(); 
@@ -971,8 +971,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_APPLY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:653:8: ( A P P L Y )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:653:16: A P P L Y
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:653:8: ( A P P L Y )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:653:16: A P P L Y
             {
             mA(); 
             mP(); 
@@ -995,8 +995,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_BATCH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:654:8: ( B A T C H )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:654:16: B A T C H
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:654:8: ( B A T C H )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:654:16: B A T C H
             {
             mB(); 
             mA(); 
@@ -1019,8 +1019,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TRUNCATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:655:11: ( T R U N C A T E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:655:16: T R U N C A T E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:655:11: ( T R U N C A T E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:655:16: T R U N C A T E
             {
             mT(); 
             mR(); 
@@ -1046,8 +1046,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_DELETE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:656:9: ( D E L E T E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:656:16: D E L E T E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:656:9: ( D E L E T E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:656:16: D E L E T E
             {
             mD(); 
             mE(); 
@@ -1071,8 +1071,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_IN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:657:5: ( I N )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:657:16: I N
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:657:5: ( I N )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:657:16: I N
             {
             mI(); 
             mN(); 
@@ -1092,8 +1092,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_CREATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:658:9: ( C R E A T E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:658:16: C R E A T E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:658:9: ( C R E A T E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:658:16: C R E A T E
             {
             mC(); 
             mR(); 
@@ -1117,10 +1117,10 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_KEYSPACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:11: ( ( K E Y S P A C E | S C H E M A ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:16: ( K E Y S P A C E | S C H E M A )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:11: ( ( K E Y S P A C E | S C H E M A ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:16: ( K E Y S P A C E | S C H E M A )
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:16: ( K E Y S P A C E | S C H E M A )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:16: ( K E Y S P A C E | S C H E M A )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -1138,7 +1138,7 @@ public class CqlLexer extends Lexer {
             }
             switch (alt2) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:18: K E Y S P A C E
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:659:18: K E Y S P A C E
                     {
                     mK(); 
                     mE(); 
@@ -1152,7 +1152,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:660:20: S C H E M A
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:660:20: S C H E M A
                     {
                     mS(); 
                     mC(); 
@@ -1182,10 +1182,10 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_COLUMNFAMILY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:15: ( ( C O L U M N F A M I L Y | T A B L E ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:16: ( C O L U M N F A M I L Y | T A B L E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:15: ( ( C O L U M N F A M I L Y | T A B L E ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:16: ( C O L U M N F A M I L Y | T A B L E )
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:16: ( C O L U M N F A M I L Y | T A B L E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:16: ( C O L U M N F A M I L Y | T A B L E )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -1203,7 +1203,7 @@ public class CqlLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:18: C O L U M N F A M I L Y
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:661:18: C O L U M N F A M I L Y
                     {
                     mC(); 
                     mO(); 
@@ -1221,7 +1221,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:662:20: T A B L E
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:662:20: T A B L E
                     {
                     mT(); 
                     mA(); 
@@ -1250,8 +1250,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_INDEX;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:663:8: ( I N D E X )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:663:16: I N D E X
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:663:8: ( I N D E X )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:663:16: I N D E X
             {
             mI(); 
             mN(); 
@@ -1274,8 +1274,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_ON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:664:5: ( O N )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:664:16: O N
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:664:5: ( O N )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:664:16: O N
             {
             mO(); 
             mN(); 
@@ -1295,8 +1295,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TO;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:665:5: ( T O )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:665:16: T O
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:665:5: ( T O )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:665:16: T O
             {
             mT(); 
             mO(); 
@@ -1316,8 +1316,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_DROP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:666:7: ( D R O P )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:666:16: D R O P
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:666:7: ( D R O P )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:666:16: D R O P
             {
             mD(); 
             mR(); 
@@ -1339,8 +1339,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_PRIMARY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:667:10: ( P R I M A R Y )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:667:16: P R I M A R Y
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:667:10: ( P R I M A R Y )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:667:16: P R I M A R Y
             {
             mP(); 
             mR(); 
@@ -1365,8 +1365,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_INTO;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:668:7: ( I N T O )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:668:16: I N T O
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:668:7: ( I N T O )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:668:16: I N T O
             {
             mI(); 
             mN(); 
@@ -1388,8 +1388,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_VALUES;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:669:9: ( V A L U E S )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:669:16: V A L U E S
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:669:9: ( V A L U E S )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:669:16: V A L U E S
             {
             mV(); 
             mA(); 
@@ -1413,8 +1413,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TIMESTAMP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:670:12: ( T I M E S T A M P )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:670:16: T I M E S T A M P
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:670:12: ( T I M E S T A M P )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:670:16: T I M E S T A M P
             {
             mT(); 
             mI(); 
@@ -1441,8 +1441,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TTL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:671:6: ( T T L )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:671:16: T T L
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:671:6: ( T T L )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:671:16: T T L
             {
             mT(); 
             mT(); 
@@ -1463,8 +1463,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_ALTER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:672:8: ( A L T E R )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:672:16: A L T E R
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:672:8: ( A L T E R )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:672:16: A L T E R
             {
             mA(); 
             mL(); 
@@ -1487,8 +1487,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_ADD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:673:6: ( A D D )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:673:16: A D D
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:673:6: ( A D D )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:673:16: A D D
             {
             mA(); 
             mD(); 
@@ -1509,8 +1509,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TYPE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:674:7: ( T Y P E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:674:16: T Y P E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:674:7: ( T Y P E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:674:16: T Y P E
             {
             mT(); 
             mY(); 
@@ -1532,8 +1532,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_COMPACT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:675:10: ( C O M P A C T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:675:16: C O M P A C T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:675:10: ( C O M P A C T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:675:16: C O M P A C T
             {
             mC(); 
             mO(); 
@@ -1558,8 +1558,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_STORAGE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:676:10: ( S T O R A G E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:676:16: S T O R A G E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:676:10: ( S T O R A G E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:676:16: S T O R A G E
             {
             mS(); 
             mT(); 
@@ -1584,8 +1584,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_ORDER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:677:8: ( O R D E R )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:677:16: O R D E R
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:677:8: ( O R D E R )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:677:16: O R D E R
             {
             mO(); 
             mR(); 
@@ -1608,8 +1608,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_BY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:678:5: ( B Y )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:678:16: B Y
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:678:5: ( B Y )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:678:16: B Y
             {
             mB(); 
             mY(); 
@@ -1629,8 +1629,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_ASC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:679:6: ( A S C )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:679:16: A S C
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:679:6: ( A S C )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:679:16: A S C
             {
             mA(); 
             mS(); 
@@ -1651,8 +1651,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_DESC;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:680:7: ( D E S C )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:680:16: D E S C
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:680:7: ( D E S C )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:680:16: D E S C
             {
             mD(); 
             mE(); 
@@ -1674,8 +1674,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_GRANT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:681:8: ( G R A N T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:681:16: G R A N T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:681:8: ( G R A N T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:681:16: G R A N T
             {
             mG(); 
             mR(); 
@@ -1698,8 +1698,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_GRANTS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:682:9: ( G R A N T S )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:682:16: G R A N T S
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:682:9: ( G R A N T S )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:682:16: G R A N T S
             {
             mG(); 
             mR(); 
@@ -1723,8 +1723,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_REVOKE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:683:9: ( R E V O K E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:683:16: R E V O K E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:683:9: ( R E V O K E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:683:16: R E V O K E
             {
             mR(); 
             mE(); 
@@ -1748,8 +1748,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_OPTION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:684:9: ( O P T I O N )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:684:16: O P T I O N
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:684:9: ( O P T I O N )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:684:16: O P T I O N
             {
             mO(); 
             mP(); 
@@ -1773,8 +1773,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_DESCRIBE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:685:11: ( D E S C R I B E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:685:16: D E S C R I B E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:685:11: ( D E S C R I B E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:685:16: D E S C R I B E
             {
             mD(); 
             mE(); 
@@ -1800,8 +1800,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_FOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:686:6: ( F O R )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:686:16: F O R
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:686:6: ( F O R )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:686:16: F O R
             {
             mF(); 
             mO(); 
@@ -1822,8 +1822,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_LIST;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:687:7: ( L I S T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:687:16: L I S T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:687:7: ( L I S T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:687:16: L I S T
             {
             mL(); 
             mI(); 
@@ -1845,8 +1845,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_FULL_ACCESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:688:14: ( F U L L '_' A C C E S S )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:688:16: F U L L '_' A C C E S S
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:688:14: ( F U L L '_' A C C E S S )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:688:16: F U L L '_' A C C E S S
             {
             mF(); 
             mU(); 
@@ -1875,8 +1875,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_NO_ACCESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:689:12: ( N O '_' A C C E S S )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:689:16: N O '_' A C C E S S
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:689:12: ( N O '_' A C C E S S )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:689:16: N O '_' A C C E S S
             {
             mN(); 
             mO(); 
@@ -1903,8 +1903,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_CLUSTERING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:692:13: ( C L U S T E R I N G )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:692:16: C L U S T E R I N G
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:692:13: ( C L U S T E R I N G )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:692:16: C L U S T E R I N G
             {
             mC(); 
             mL(); 
@@ -1932,8 +1932,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_ASCII;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:693:8: ( A S C I I )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:693:16: A S C I I
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:693:8: ( A S C I I )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:693:16: A S C I I
             {
             mA(); 
             mS(); 
@@ -1956,8 +1956,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_BIGINT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:694:9: ( B I G I N T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:694:16: B I G I N T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:694:9: ( B I G I N T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:694:16: B I G I N T
             {
             mB(); 
             mI(); 
@@ -1981,8 +1981,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_BLOB;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:695:7: ( B L O B )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:695:16: B L O B
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:695:7: ( B L O B )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:695:16: B L O B
             {
             mB(); 
             mL(); 
@@ -2004,8 +2004,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_BOOLEAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:696:10: ( B O O L E A N )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:696:16: B O O L E A N
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:696:10: ( B O O L E A N )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:696:16: B O O L E A N
             {
             mB(); 
             mO(); 
@@ -2030,8 +2030,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_COUNTER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:697:10: ( C O U N T E R )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:697:16: C O U N T E R
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:697:10: ( C O U N T E R )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:697:16: C O U N T E R
             {
             mC(); 
             mO(); 
@@ -2056,8 +2056,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_DECIMAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:698:10: ( D E C I M A L )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:698:16: D E C I M A L
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:698:10: ( D E C I M A L )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:698:16: D E C I M A L
             {
             mD(); 
             mE(); 
@@ -2082,8 +2082,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_DOUBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:699:9: ( D O U B L E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:699:16: D O U B L E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:699:9: ( D O U B L E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:699:16: D O U B L E
             {
             mD(); 
             mO(); 
@@ -2107,8 +2107,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:700:8: ( F L O A T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:700:16: F L O A T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:700:8: ( F L O A T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:700:16: F L O A T
             {
             mF(); 
             mL(); 
@@ -2131,8 +2131,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:701:6: ( I N T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:701:16: I N T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:701:6: ( I N T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:701:16: I N T
             {
             mI(); 
             mN(); 
@@ -2153,8 +2153,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TEXT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:702:7: ( T E X T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:702:16: T E X T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:702:7: ( T E X T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:702:16: T E X T
             {
             mT(); 
             mE(); 
@@ -2176,8 +2176,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_UUID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:703:7: ( U U I D )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:703:16: U U I D
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:703:7: ( U U I D )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:703:16: U U I D
             {
             mU(); 
             mU(); 
@@ -2199,8 +2199,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_VARCHAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:704:10: ( V A R C H A R )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:704:16: V A R C H A R
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:704:10: ( V A R C H A R )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:704:16: V A R C H A R
             {
             mV(); 
             mA(); 
@@ -2225,8 +2225,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_VARINT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:705:9: ( V A R I N T )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:705:16: V A R I N T
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:705:9: ( V A R I N T )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:705:16: V A R I N T
             {
             mV(); 
             mA(); 
@@ -2250,8 +2250,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TIMEUUID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:706:11: ( T I M E U U I D )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:706:16: T I M E U U I D
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:706:11: ( T I M E U U I D )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:706:16: T I M E U U I D
             {
             mT(); 
             mI(); 
@@ -2277,8 +2277,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_TOKEN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:707:8: ( T O K E N )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:707:16: T O K E N
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:707:8: ( T O K E N )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:707:16: T O K E N
             {
             mT(); 
             mO(); 
@@ -2301,8 +2301,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = K_WRITETIME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:708:12: ( W R I T E T I M E )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:708:16: W R I T E T I M E
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:708:12: ( W R I T E T I M E )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:708:16: W R I T E T I M E
             {
             mW(); 
             mR(); 
@@ -2327,8 +2327,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "A"
     public final void mA() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:711:11: ( ( 'a' | 'A' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:711:13: ( 'a' | 'A' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:711:11: ( ( 'a' | 'A' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:711:13: ( 'a' | 'A' )
             {
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
@@ -2351,8 +2351,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "B"
     public final void mB() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:712:11: ( ( 'b' | 'B' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:712:13: ( 'b' | 'B' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:712:11: ( ( 'b' | 'B' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:712:13: ( 'b' | 'B' )
             {
             if ( input.LA(1)=='B'||input.LA(1)=='b' ) {
                 input.consume();
@@ -2375,8 +2375,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "C"
     public final void mC() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:713:11: ( ( 'c' | 'C' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:713:13: ( 'c' | 'C' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:713:11: ( ( 'c' | 'C' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:713:13: ( 'c' | 'C' )
             {
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
@@ -2399,8 +2399,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "D"
     public final void mD() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:714:11: ( ( 'd' | 'D' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:714:13: ( 'd' | 'D' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:714:11: ( ( 'd' | 'D' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:714:13: ( 'd' | 'D' )
             {
             if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
                 input.consume();
@@ -2423,8 +2423,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "E"
     public final void mE() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:715:11: ( ( 'e' | 'E' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:715:13: ( 'e' | 'E' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:715:11: ( ( 'e' | 'E' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:715:13: ( 'e' | 'E' )
             {
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
@@ -2447,8 +2447,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "F"
     public final void mF() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:716:11: ( ( 'f' | 'F' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:716:13: ( 'f' | 'F' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:716:11: ( ( 'f' | 'F' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:716:13: ( 'f' | 'F' )
             {
             if ( input.LA(1)=='F'||input.LA(1)=='f' ) {
                 input.consume();
@@ -2471,8 +2471,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "G"
     public final void mG() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:717:11: ( ( 'g' | 'G' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:717:13: ( 'g' | 'G' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:717:11: ( ( 'g' | 'G' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:717:13: ( 'g' | 'G' )
             {
             if ( input.LA(1)=='G'||input.LA(1)=='g' ) {
                 input.consume();
@@ -2495,8 +2495,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "H"
     public final void mH() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:718:11: ( ( 'h' | 'H' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:718:13: ( 'h' | 'H' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:718:11: ( ( 'h' | 'H' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:718:13: ( 'h' | 'H' )
             {
             if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
                 input.consume();
@@ -2519,8 +2519,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "I"
     public final void mI() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:719:11: ( ( 'i' | 'I' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:719:13: ( 'i' | 'I' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:719:11: ( ( 'i' | 'I' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:719:13: ( 'i' | 'I' )
             {
             if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
                 input.consume();
@@ -2543,8 +2543,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "J"
     public final void mJ() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:720:11: ( ( 'j' | 'J' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:720:13: ( 'j' | 'J' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:720:11: ( ( 'j' | 'J' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:720:13: ( 'j' | 'J' )
             {
             if ( input.LA(1)=='J'||input.LA(1)=='j' ) {
                 input.consume();
@@ -2567,8 +2567,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "K"
     public final void mK() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:721:11: ( ( 'k' | 'K' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:721:13: ( 'k' | 'K' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:721:11: ( ( 'k' | 'K' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:721:13: ( 'k' | 'K' )
             {
             if ( input.LA(1)=='K'||input.LA(1)=='k' ) {
                 input.consume();
@@ -2591,8 +2591,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "L"
     public final void mL() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:722:11: ( ( 'l' | 'L' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:722:13: ( 'l' | 'L' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:722:11: ( ( 'l' | 'L' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:722:13: ( 'l' | 'L' )
             {
             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                 input.consume();
@@ -2615,8 +2615,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "M"
     public final void mM() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:723:11: ( ( 'm' | 'M' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:723:13: ( 'm' | 'M' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:723:11: ( ( 'm' | 'M' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:723:13: ( 'm' | 'M' )
             {
             if ( input.LA(1)=='M'||input.LA(1)=='m' ) {
                 input.consume();
@@ -2639,8 +2639,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "N"
     public final void mN() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:724:11: ( ( 'n' | 'N' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:724:13: ( 'n' | 'N' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:724:11: ( ( 'n' | 'N' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:724:13: ( 'n' | 'N' )
             {
             if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
                 input.consume();
@@ -2663,8 +2663,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "O"
     public final void mO() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:725:11: ( ( 'o' | 'O' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:725:13: ( 'o' | 'O' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:725:11: ( ( 'o' | 'O' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:725:13: ( 'o' | 'O' )
             {
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
@@ -2687,8 +2687,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "P"
     public final void mP() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:726:11: ( ( 'p' | 'P' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:726:13: ( 'p' | 'P' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:726:11: ( ( 'p' | 'P' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:726:13: ( 'p' | 'P' )
             {
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
@@ -2711,8 +2711,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "Q"
     public final void mQ() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:727:11: ( ( 'q' | 'Q' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:727:13: ( 'q' | 'Q' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:727:11: ( ( 'q' | 'Q' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:727:13: ( 'q' | 'Q' )
             {
             if ( input.LA(1)=='Q'||input.LA(1)=='q' ) {
                 input.consume();
@@ -2735,8 +2735,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "R"
     public final void mR() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:728:11: ( ( 'r' | 'R' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:728:13: ( 'r' | 'R' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:728:11: ( ( 'r' | 'R' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:728:13: ( 'r' | 'R' )
             {
             if ( input.LA(1)=='R'||input.LA(1)=='r' ) {
                 input.consume();
@@ -2759,8 +2759,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "S"
     public final void mS() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:729:11: ( ( 's' | 'S' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:729:13: ( 's' | 'S' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:729:11: ( ( 's' | 'S' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:729:13: ( 's' | 'S' )
             {
             if ( input.LA(1)=='S'||input.LA(1)=='s' ) {
                 input.consume();
@@ -2783,8 +2783,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "T"
     public final void mT() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:730:11: ( ( 't' | 'T' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:730:13: ( 't' | 'T' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:730:11: ( ( 't' | 'T' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:730:13: ( 't' | 'T' )
             {
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
@@ -2807,8 +2807,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "U"
     public final void mU() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:731:11: ( ( 'u' | 'U' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:731:13: ( 'u' | 'U' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:731:11: ( ( 'u' | 'U' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:731:13: ( 'u' | 'U' )
             {
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
@@ -2831,8 +2831,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "V"
     public final void mV() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:732:11: ( ( 'v' | 'V' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:732:13: ( 'v' | 'V' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:732:11: ( ( 'v' | 'V' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:732:13: ( 'v' | 'V' )
             {
             if ( input.LA(1)=='V'||input.LA(1)=='v' ) {
                 input.consume();
@@ -2855,8 +2855,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "W"
     public final void mW() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:733:11: ( ( 'w' | 'W' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:733:13: ( 'w' | 'W' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:733:11: ( ( 'w' | 'W' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:733:13: ( 'w' | 'W' )
             {
             if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
                 input.consume();
@@ -2879,8 +2879,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "X"
     public final void mX() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:734:11: ( ( 'x' | 'X' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:734:13: ( 'x' | 'X' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:734:11: ( ( 'x' | 'X' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:734:13: ( 'x' | 'X' )
             {
             if ( input.LA(1)=='X'||input.LA(1)=='x' ) {
                 input.consume();
@@ -2903,8 +2903,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "Y"
     public final void mY() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:735:11: ( ( 'y' | 'Y' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:735:13: ( 'y' | 'Y' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:735:11: ( ( 'y' | 'Y' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:735:13: ( 'y' | 'Y' )
             {
             if ( input.LA(1)=='Y'||input.LA(1)=='y' ) {
                 input.consume();
@@ -2927,8 +2927,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "Z"
     public final void mZ() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:736:11: ( ( 'z' | 'Z' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:736:13: ( 'z' | 'Z' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:736:11: ( ( 'z' | 'Z' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:736:13: ( 'z' | 'Z' )
             {
             if ( input.LA(1)=='Z'||input.LA(1)=='z' ) {
                 input.consume();
@@ -2956,11 +2956,11 @@ public class CqlLexer extends Lexer {
             int c;
 
              StringBuilder b = new StringBuilder(); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:5: ( '\\'' (c=~ ( '\\'' ) | '\\'' '\\'' )* '\\'' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:7: '\\'' (c=~ ( '\\'' ) | '\\'' '\\'' )* '\\''
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:5: ( '\\'' (c=~ ( '\\'' ) | '\\'' '\\'' )* '\\'' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:7: '\\'' (c=~ ( '\\'' ) | '\\'' '\\'' )* '\\''
             {
             match('\''); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:12: (c=~ ( '\\'' ) | '\\'' '\\'' )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:12: (c=~ ( '\\'' ) | '\\'' '\\'' )*
             loop4:
             do {
                 int alt4=3;
@@ -2982,7 +2982,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:13: c=~ ( '\\'' )
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:13: c=~ ( '\\'' )
             	    {
             	    c= input.LA(1);
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='\uFFFF') ) {
@@ -2999,7 +2999,7 @@ public class CqlLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:50: '\\'' '\\''
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:741:50: '\\'' '\\''
             	    {
             	    match('\''); 
             	    match('\''); 
@@ -3033,11 +3033,11 @@ public class CqlLexer extends Lexer {
             int c;
 
              StringBuilder b = new StringBuilder(); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:5: ( '\\\"' (c=~ ( '\\\"' ) | '\\\"' '\\\"' )* '\\\"' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:7: '\\\"' (c=~ ( '\\\"' ) | '\\\"' '\\\"' )* '\\\"'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:5: ( '\\\"' (c=~ ( '\\\"' ) | '\\\"' '\\\"' )* '\\\"' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:7: '\\\"' (c=~ ( '\\\"' ) | '\\\"' '\\\"' )* '\\\"'
             {
             match('\"'); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:12: (c=~ ( '\\\"' ) | '\\\"' '\\\"' )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:12: (c=~ ( '\\\"' ) | '\\\"' '\\\"' )*
             loop5:
             do {
                 int alt5=3;
@@ -3059,7 +3059,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:13: c=~ ( '\\\"' )
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:13: c=~ ( '\\\"' )
             	    {
             	    c= input.LA(1);
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='\uFFFF') ) {
@@ -3076,7 +3076,7 @@ public class CqlLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:51: '\\\"' '\\\"'
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:747:51: '\\\"' '\\\"'
             	    {
             	    match('\"'); 
             	    match('\"'); 
@@ -3105,8 +3105,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:751:5: ( '0' .. '9' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:751:7: '0' .. '9'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:751:5: ( '0' .. '9' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:751:7: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -3121,8 +3121,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:755:5: ( ( 'A' .. 'Z' | 'a' .. 'z' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:755:7: ( 'A' .. 'Z' | 'a' .. 'z' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:755:5: ( ( 'A' .. 'Z' | 'a' .. 'z' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:755:7: ( 'A' .. 'Z' | 'a' .. 'z' )
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -3145,8 +3145,8 @@ public class CqlLexer extends Lexer {
     // $ANTLR start "HEX"
     public final void mHEX() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:759:5: ( ( 'A' .. 'F' | 'a' .. 'f' | '0' .. '9' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:759:7: ( 'A' .. 'F' | 'a' .. 'f' | '0' .. '9' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:759:5: ( ( 'A' .. 'F' | 'a' .. 'f' | '0' .. '9' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:759:7: ( 'A' .. 'F' | 'a' .. 'f' | '0' .. '9' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f') ) {
                 input.consume();
@@ -3171,10 +3171,10 @@ public class CqlLexer extends Lexer {
         try {
             int _type = INTEGER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:5: ( ( '-' )? ( DIGIT )+ )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:7: ( '-' )? ( DIGIT )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:5: ( ( '-' )? ( DIGIT )+ )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:7: ( '-' )? ( DIGIT )+
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:7: ( '-' )?
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:7: ( '-' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -3183,7 +3183,7 @@ public class CqlLexer extends Lexer {
             }
             switch (alt6) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:7: '-'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:7: '-'
                     {
                     match('-'); 
 
@@ -3192,7 +3192,7 @@ public class CqlLexer extends Lexer {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:12: ( DIGIT )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:12: ( DIGIT )+
             int cnt7=0;
             loop7:
             do {
@@ -3206,7 +3206,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:12: DIGIT
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:763:12: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -3238,8 +3238,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = QMARK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:767:5: ( '?' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:767:7: '?'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:767:5: ( '?' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:767:7: '?'
             {
             match('?'); 
 
@@ -3258,12 +3258,12 @@ public class CqlLexer extends Lexer {
         try {
             int _type = FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:5: ( INTEGER '.' ( DIGIT )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:7: INTEGER '.' ( DIGIT )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:5: ( INTEGER '.' ( DIGIT )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:7: INTEGER '.' ( DIGIT )*
             {
             mINTEGER(); 
             match('.'); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:19: ( DIGIT )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:19: ( DIGIT )*
             loop8:
             do {
                 int alt8=2;
@@ -3276,7 +3276,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:19: DIGIT
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:775:19: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -3304,11 +3304,11 @@ public class CqlLexer extends Lexer {
         try {
             int _type = IDENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:779:5: ( LETTER ( LETTER | DIGIT | '_' )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:779:7: LETTER ( LETTER | DIGIT | '_' )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:779:5: ( LETTER ( LETTER | DIGIT | '_' )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:779:7: LETTER ( LETTER | DIGIT | '_' )*
             {
             mLETTER(); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:779:14: ( LETTER | DIGIT | '_' )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:779:14: ( LETTER | DIGIT | '_' )*
             loop9:
             do {
                 int alt9=2;
@@ -3321,7 +3321,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -3357,8 +3357,8 @@ public class CqlLexer extends Lexer {
         try {
             int _type = UUID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:783:5: ( HEX HEX HEX HEX HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:783:7: HEX HEX HEX HEX HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:783:5: ( HEX HEX HEX HEX HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:783:7: HEX HEX HEX HEX HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX '-' HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX HEX
             {
             mHEX(); 
             mHEX(); 
@@ -3412,10 +3412,10 @@ public class CqlLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:791:5: ( ( ' ' | '\\t' | '\\n' | '\\r' )+ )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:791:7: ( ' ' | '\\t' | '\\n' | '\\r' )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:791:5: ( ( ' ' | '\\t' | '\\n' | '\\r' )+ )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:791:7: ( ' ' | '\\t' | '\\n' | '\\r' )+
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:791:7: ( ' ' | '\\t' | '\\n' | '\\r' )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:791:7: ( ' ' | '\\t' | '\\n' | '\\r' )+
             int cnt10=0;
             loop10:
             do {
@@ -3429,7 +3429,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
             	        input.consume();
@@ -3470,10 +3470,10 @@ public class CqlLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:5: ( ( '--' | '//' ) ( . )* ( '\\n' | '\\r' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:7: ( '--' | '//' ) ( . )* ( '\\n' | '\\r' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:5: ( ( '--' | '//' ) ( . )* ( '\\n' | '\\r' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:7: ( '--' | '//' ) ( . )* ( '\\n' | '\\r' )
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:7: ( '--' | '//' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:7: ( '--' | '//' )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -3491,7 +3491,7 @@ public class CqlLexer extends Lexer {
             }
             switch (alt11) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:8: '--'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:8: '--'
                     {
                     match("--"); 
 
@@ -3499,7 +3499,7 @@ public class CqlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:15: '//'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:15: '//'
                     {
                     match("//"); 
 
@@ -3509,7 +3509,7 @@ public class CqlLexer extends Lexer {
 
             }
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:21: ( . )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:21: ( . )*
             loop12:
             do {
                 int alt12=2;
@@ -3525,7 +3525,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:21: .
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:795:21: .
             	    {
             	    matchAny(); 
 
@@ -3563,12 +3563,12 @@ public class CqlLexer extends Lexer {
         try {
             int _type = MULTILINE_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:5: ( '/*' ( . )* '*/' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:7: '/*' ( . )* '*/'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:5: ( '/*' ( . )* '*/' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:7: '/*' ( . )* '*/'
             {
             match("/*"); 
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:12: ( . )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:12: ( . )*
             loop13:
             do {
                 int alt13=2;
@@ -3593,7 +3593,7 @@ public class CqlLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:12: .
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:799:12: .
             	    {
             	    matchAny(); 
 
@@ -3620,656 +3620,656 @@ public class CqlLexer extends Lexer {
     // $ANTLR end "MULTILINE_COMMENT"
 
     public void mTokens() throws RecognitionException {
-        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:8: ( T__112 | T__113 | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | K_SELECT | K_FROM | K_WHERE | K_AND | K_KEY | K_INSERT | K_UPDATE | K_WITH | K_LIMIT | K_USING | K_ALL | K_CONSISTENCY | K_LEVEL | K_USE | K_COUNT | K_SET | K_BEGIN | K_APPLY | K_BATCH | K_TRUNCATE | K_DELETE | K_IN | K_CREATE | K_KEYSPACE | K_COLUMNFAMILY | K_INDEX | K_ON | K_TO | K_DROP | K_PRIMARY | K_INTO | K_VALUES | K_TIMESTAMP | K_TTL | K_ALTER | K_ADD | K_TYPE | K_COMPACT | K_STORAGE | K_ORDER | K_BY | K_ASC | K_DESC | K_GRANT | K_GRANTS | K_REVOKE | K_OPTION | K_DESCRIBE | K_FOR | K_LIST | K_FULL_ACCESS | K_NO_ACCESS | K_CLUSTERING | K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID | K_TOKEN | K_WRITETIME | STRING_LITERAL | QUOTED_NAME | INTEGER | QMARK | FLOAT | IDENT | UUID | WS | COMMENT | MULTILINE_COMMENT )
+        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:8: ( T__112 | T__113 | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | K_SELECT | K_FROM | K_WHERE | K_AND | K_KEY | K_INSERT | K_UPDATE | K_WITH | K_LIMIT | K_USING | K_ALL | K_CONSISTENCY | K_LEVEL | K_USE | K_COUNT | K_SET | K_BEGIN | K_APPLY | K_BATCH | K_TRUNCATE | K_DELETE | K_IN | K_CREATE | K_KEYSPACE | K_COLUMNFAMILY | K_INDEX | K_ON | K_TO | K_DROP | K_PRIMARY | K_INTO | K_VALUES | K_TIMESTAMP | K_TTL | K_ALTER | K_ADD | K_TYPE | K_COMPACT | K_STORAGE | K_ORDER | K_BY | K_ASC | K_DESC | K_GRANT | K_GRANTS | K_REVOKE | K_OPTION | K_DESCRIBE | K_FOR | K_LIST | K_FULL_ACCESS | K_NO_ACCESS | K_CLUSTERING | K_ASCII | K_BIGINT | K_BLOB | K_BOOLEAN | K_COUNTER | K_DECIMAL | K_DOUBLE | K_FLOAT | K_INT | K_TEXT | K_UUID | K_VARCHAR | K_VARINT | K_TIMEUUID | K_TOKEN | K_WRITETIME | STRING_LITERAL | QUOTED_NAME | INTEGER | QMARK | FLOAT | IDENT | UUID | WS | COMMENT | MULTILINE_COMMENT )
         int alt14=93;
         alt14 = dfa14.predict(input);
         switch (alt14) {
             case 1 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:10: T__112
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:10: T__112
                 {
                 mT__112(); 
 
                 }
                 break;
             case 2 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:17: T__113
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:17: T__113
                 {
                 mT__113(); 
 
                 }
                 break;
             case 3 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:24: T__114
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:24: T__114
                 {
                 mT__114(); 
 
                 }
                 break;
             case 4 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:31: T__115
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:31: T__115
                 {
                 mT__115(); 
 
                 }
                 break;
             case 5 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:38: T__116
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:38: T__116
                 {
                 mT__116(); 
 
                 }
                 break;
             case 6 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:45: T__117
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:45: T__117
                 {
                 mT__117(); 
 
                 }
                 break;
             case 7 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:52: T__118
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:52: T__118
                 {
                 mT__118(); 
 
                 }
                 break;
             case 8 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:59: T__119
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:59: T__119
                 {
                 mT__119(); 
 
                 }
                 break;
             case 9 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:66: T__120
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:66: T__120
                 {
                 mT__120(); 
 
                 }
                 break;
             case 10 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:73: T__121
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:73: T__121
                 {
                 mT__121(); 
 
                 }
                 break;
             case 11 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:80: T__122
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:80: T__122
                 {
                 mT__122(); 
 
                 }
                 break;
             case 12 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:87: T__123
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:87: T__123
                 {
                 mT__123(); 
 
                 }
                 break;
             case 13 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:94: T__124
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:94: T__124
                 {
                 mT__124(); 
 
                 }
                 break;
             case 14 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:101: T__125
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:101: T__125
                 {
                 mT__125(); 
 
                 }
                 break;
             case 15 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:108: K_SELECT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:108: K_SELECT
                 {
                 mK_SELECT(); 
 
                 }
                 break;
             case 16 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:117: K_FROM
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:117: K_FROM
                 {
                 mK_FROM(); 
 
                 }
                 break;
             case 17 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:124: K_WHERE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:124: K_WHERE
                 {
                 mK_WHERE(); 
 
                 }
                 break;
             case 18 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:132: K_AND
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:132: K_AND
                 {
                 mK_AND(); 
 
                 }
                 break;
             case 19 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:138: K_KEY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:138: K_KEY
                 {
                 mK_KEY(); 
 
                 }
                 break;
             case 20 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:144: K_INSERT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:144: K_INSERT
                 {
                 mK_INSERT(); 
 
                 }
                 break;
             case 21 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:153: K_UPDATE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:153: K_UPDATE
                 {
                 mK_UPDATE(); 
 
                 }
                 break;
             case 22 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:162: K_WITH
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:162: K_WITH
                 {
                 mK_WITH(); 
 
                 }
                 break;
             case 23 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:169: K_LIMIT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:169: K_LIMIT
                 {
                 mK_LIMIT(); 
 
                 }
                 break;
             case 24 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:177: K_USING
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:177: K_USING
                 {
                 mK_USING(); 
 
                 }
                 break;
             case 25 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:185: K_ALL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:185: K_ALL
                 {
                 mK_ALL(); 
 
                 }
                 break;
             case 26 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:191: K_CONSISTENCY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:191: K_CONSISTENCY
                 {
                 mK_CONSISTENCY(); 
 
                 }
                 break;
             case 27 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:205: K_LEVEL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:205: K_LEVEL
                 {
                 mK_LEVEL(); 
 
                 }
                 break;
             case 28 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:213: K_USE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:213: K_USE
                 {
                 mK_USE(); 
 
                 }
                 break;
             case 29 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:219: K_COUNT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:219: K_COUNT
                 {
                 mK_COUNT(); 
 
                 }
                 break;
             case 30 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:227: K_SET
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:227: K_SET
                 {
                 mK_SET(); 
 
                 }
                 break;
             case 31 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:233: K_BEGIN
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:233: K_BEGIN
                 {
                 mK_BEGIN(); 
 
                 }
                 break;
             case 32 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:241: K_APPLY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:241: K_APPLY
                 {
                 mK_APPLY(); 
 
                 }
                 break;
             case 33 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:249: K_BATCH
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:249: K_BATCH
                 {
                 mK_BATCH(); 
 
                 }
                 break;
             case 34 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:257: K_TRUNCATE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:257: K_TRUNCATE
                 {
                 mK_TRUNCATE(); 
 
                 }
                 break;
             case 35 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:268: K_DELETE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:268: K_DELETE
                 {
                 mK_DELETE(); 
 
                 }
                 break;
             case 36 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:277: K_IN
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:277: K_IN
                 {
                 mK_IN(); 
 
                 }
                 break;
             case 37 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:282: K_CREATE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:282: K_CREATE
                 {
                 mK_CREATE(); 
 
                 }
                 break;
             case 38 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:291: K_KEYSPACE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:291: K_KEYSPACE
                 {
                 mK_KEYSPACE(); 
 
                 }
                 break;
             case 39 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:302: K_COLUMNFAMILY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:302: K_COLUMNFAMILY
                 {
                 mK_COLUMNFAMILY(); 
 
                 }
                 break;
             case 40 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:317: K_INDEX
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:317: K_INDEX
                 {
                 mK_INDEX(); 
 
                 }
                 break;
             case 41 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:325: K_ON
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:325: K_ON
                 {
                 mK_ON(); 
 
                 }
                 break;
             case 42 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:330: K_TO
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:330: K_TO
                 {
                 mK_TO(); 
 
                 }
                 break;
             case 43 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:335: K_DROP
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:335: K_DROP
                 {
                 mK_DROP(); 
 
                 }
                 break;
             case 44 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:342: K_PRIMARY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:342: K_PRIMARY
                 {
                 mK_PRIMARY(); 
 
                 }
                 break;
             case 45 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:352: K_INTO
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:352: K_INTO
                 {
                 mK_INTO(); 
 
                 }
                 break;
             case 46 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:359: K_VALUES
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:359: K_VALUES
                 {
                 mK_VALUES(); 
 
                 }
                 break;
             case 47 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:368: K_TIMESTAMP
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:368: K_TIMESTAMP
                 {
                 mK_TIMESTAMP(); 
 
                 }
                 break;
             case 48 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:380: K_TTL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:380: K_TTL
                 {
                 mK_TTL(); 
 
                 }
                 break;
             case 49 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:386: K_ALTER
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:386: K_ALTER
                 {
                 mK_ALTER(); 
 
                 }
                 break;
             case 50 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:394: K_ADD
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:394: K_ADD
                 {
                 mK_ADD(); 
 
                 }
                 break;
             case 51 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:400: K_TYPE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:400: K_TYPE
                 {
                 mK_TYPE(); 
 
                 }
                 break;
             case 52 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:407: K_COMPACT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:407: K_COMPACT
                 {
                 mK_COMPACT(); 
 
                 }
                 break;
             case 53 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:417: K_STORAGE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:417: K_STORAGE
                 {
                 mK_STORAGE(); 
 
                 }
                 break;
             case 54 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:427: K_ORDER
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:427: K_ORDER
                 {
                 mK_ORDER(); 
 
                 }
                 break;
             case 55 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:435: K_BY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:435: K_BY
                 {
                 mK_BY(); 
 
                 }
                 break;
             case 56 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:440: K_ASC
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:440: K_ASC
                 {
                 mK_ASC(); 
 
                 }
                 break;
             case 57 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:446: K_DESC
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:446: K_DESC
                 {
                 mK_DESC(); 
 
                 }
                 break;
             case 58 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:453: K_GRANT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:453: K_GRANT
                 {
                 mK_GRANT(); 
 
                 }
                 break;
             case 59 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:461: K_GRANTS
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:461: K_GRANTS
                 {
                 mK_GRANTS(); 
 
                 }
                 break;
             case 60 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:470: K_REVOKE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:470: K_REVOKE
                 {
                 mK_REVOKE(); 
 
                 }
                 break;
             case 61 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:479: K_OPTION
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:479: K_OPTION
                 {
                 mK_OPTION(); 
 
                 }
                 break;
             case 62 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:488: K_DESCRIBE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:488: K_DESCRIBE
                 {
                 mK_DESCRIBE(); 
 
                 }
                 break;
             case 63 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:499: K_FOR
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:499: K_FOR
                 {
                 mK_FOR(); 
 
                 }
                 break;
             case 64 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:505: K_LIST
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:505: K_LIST
                 {
                 mK_LIST(); 
 
                 }
                 break;
             case 65 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:512: K_FULL_ACCESS
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:512: K_FULL_ACCESS
                 {
                 mK_FULL_ACCESS(); 
 
                 }
                 break;
             case 66 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:526: K_NO_ACCESS
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:526: K_NO_ACCESS
                 {
                 mK_NO_ACCESS(); 
 
                 }
                 break;
             case 67 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:538: K_CLUSTERING
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:538: K_CLUSTERING
                 {
                 mK_CLUSTERING(); 
 
                 }
                 break;
             case 68 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:551: K_ASCII
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:551: K_ASCII
                 {
                 mK_ASCII(); 
 
                 }
                 break;
             case 69 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:559: K_BIGINT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:559: K_BIGINT
                 {
                 mK_BIGINT(); 
 
                 }
                 break;
             case 70 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:568: K_BLOB
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:568: K_BLOB
                 {
                 mK_BLOB(); 
 
                 }
                 break;
             case 71 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:575: K_BOOLEAN
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:575: K_BOOLEAN
                 {
                 mK_BOOLEAN(); 
 
                 }
                 break;
             case 72 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:585: K_COUNTER
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:585: K_COUNTER
                 {
                 mK_COUNTER(); 
 
                 }
                 break;
             case 73 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:595: K_DECIMAL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:595: K_DECIMAL
                 {
                 mK_DECIMAL(); 
 
                 }
                 break;
             case 74 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:605: K_DOUBLE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:605: K_DOUBLE
                 {
                 mK_DOUBLE(); 
 
                 }
                 break;
             case 75 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:614: K_FLOAT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:614: K_FLOAT
                 {
                 mK_FLOAT(); 
 
                 }
                 break;
             case 76 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:622: K_INT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:622: K_INT
                 {
                 mK_INT(); 
 
                 }
                 break;
             case 77 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:628: K_TEXT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:628: K_TEXT
                 {
                 mK_TEXT(); 
 
                 }
                 break;
             case 78 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:635: K_UUID
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:635: K_UUID
                 {
                 mK_UUID(); 
 
                 }
                 break;
             case 79 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:642: K_VARCHAR
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:642: K_VARCHAR
                 {
                 mK_VARCHAR(); 
 
                 }
                 break;
             case 80 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:652: K_VARINT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:652: K_VARINT
                 {
                 mK_VARINT(); 
 
                 }
                 break;
             case 81 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:661: K_TIMEUUID
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:661: K_TIMEUUID
                 {
                 mK_TIMEUUID(); 
 
                 }
                 break;
             case 82 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:672: K_TOKEN
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:672: K_TOKEN
                 {
                 mK_TOKEN(); 
 
                 }
                 break;
             case 83 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:680: K_WRITETIME
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:680: K_WRITETIME
                 {
                 mK_WRITETIME(); 
 
                 }
                 break;
             case 84 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:692: STRING_LITERAL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:692: STRING_LITERAL
                 {
                 mSTRING_LITERAL(); 
 
                 }
                 break;
             case 85 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:707: QUOTED_NAME
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:707: QUOTED_NAME
                 {
                 mQUOTED_NAME(); 
 
                 }
                 break;
             case 86 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:719: INTEGER
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:719: INTEGER
                 {
                 mINTEGER(); 
 
                 }
                 break;
             case 87 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:727: QMARK
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:727: QMARK
                 {
                 mQMARK(); 
 
                 }
                 break;
             case 88 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:733: FLOAT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:733: FLOAT
                 {
                 mFLOAT(); 
 
                 }
                 break;
             case 89 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:739: IDENT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:739: IDENT
                 {
                 mIDENT(); 
 
                 }
                 break;
             case 90 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:745: UUID
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:745: UUID
                 {
                 mUUID(); 
 
                 }
                 break;
             case 91 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:750: WS
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:750: WS
                 {
                 mWS(); 
 
                 }
                 break;
             case 92 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:753: COMMENT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:753: COMMENT
                 {
                 mCOMMENT(); 
 
                 }
                 break;
             case 93 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:761: MULTILINE_COMMENT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cql3/Cql.g:1:761: MULTILINE_COMMENT
                 {
                 mMULTILINE_COMMENT(); 
 

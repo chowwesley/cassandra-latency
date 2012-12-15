@@ -69,6 +69,7 @@ public class FastRetryReadCallback<T> extends ReadCallback<T>
         }
         catch (InterruptedException ex)
         {
+            logger.debug("--- InterruptedException in fast retry callback");
             throw new AssertionError(ex);
         }
 
@@ -77,6 +78,7 @@ public class FastRetryReadCallback<T> extends ReadCallback<T>
             StringBuilder sb = new StringBuilder("");
             for (Message message : resolver.getMessages())
                 sb.append(message.getFrom()).append(", ");
+            logger.debug("--- TimeoutException in fast retry callback");
             throw new TimeoutException("Operation timed out - received only " + received.get() + " responses from " + sb.toString() + " .");
         }
 

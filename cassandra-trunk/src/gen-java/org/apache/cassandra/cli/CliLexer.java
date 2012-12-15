@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g 2012-10-19 20:50:33
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g 2012-12-09 01:29:52
 
 package org.apache.cassandra.cli;
 
@@ -166,15 +166,15 @@ public class CliLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g"; }
+    public String getGrammarFileName() { return "/home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g"; }
 
     // $ANTLR start "T__105"
     public final void mT__105() throws RecognitionException {
         try {
             int _type = T__105;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:28:8: ( '/' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:28:10: '/'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:28:8: ( '/' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:28:10: '/'
             {
             match('/'); 
 
@@ -193,8 +193,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__106;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:29:8: ( 'CLUSTER' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:29:10: 'CLUSTER'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:29:8: ( 'CLUSTER' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:29:10: 'CLUSTER'
             {
             match("CLUSTER"); 
 
@@ -214,8 +214,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__107;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:30:8: ( 'CLUSTER NAME' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:30:10: 'CLUSTER NAME'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:30:8: ( 'CLUSTER NAME' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:30:10: 'CLUSTER NAME'
             {
             match("CLUSTER NAME"); 
 
@@ -235,8 +235,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__108;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:31:8: ( '?' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:31:10: '?'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:31:8: ( '?' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:31:10: '?'
             {
             match('?'); 
 
@@ -255,8 +255,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__109;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:32:8: ( 'AS' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:32:10: 'AS'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:32:8: ( 'AS' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:32:10: 'AS'
             {
             match("AS"); 
 
@@ -276,8 +276,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__110;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:33:8: ( 'WHERE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:33:10: 'WHERE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:33:8: ( 'WHERE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:33:10: 'WHERE'
             {
             match("WHERE"); 
 
@@ -297,8 +297,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__111;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:34:8: ( '=' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:34:10: '='
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:34:8: ( '=' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:34:10: '='
             {
             match('='); 
 
@@ -317,8 +317,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__112;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:35:8: ( '>' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:35:10: '>'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:35:8: ( '>' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:35:10: '>'
             {
             match('>'); 
 
@@ -337,8 +337,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__113;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:36:8: ( '<' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:36:10: '<'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:36:8: ( '<' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:36:10: '<'
             {
             match('<'); 
 
@@ -357,8 +357,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__114;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:37:8: ( '>=' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:37:10: '>='
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:37:8: ( '>=' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:37:10: '>='
             {
             match(">="); 
 
@@ -378,8 +378,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__115;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:38:8: ( '<=' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:38:10: '<='
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:38:8: ( '<=' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:38:10: '<='
             {
             match("<="); 
 
@@ -399,8 +399,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__116;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:39:8: ( '.' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:39:10: '.'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:39:8: ( '.' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:39:10: '.'
             {
             match('.'); 
 
@@ -419,8 +419,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__117;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:40:8: ( '[' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:40:10: '['
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:40:8: ( '[' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:40:10: '['
             {
             match('['); 
 
@@ -439,8 +439,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__118;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:41:8: ( ',' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:41:10: ','
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:41:8: ( ',' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:41:10: ','
             {
             match(','); 
 
@@ -459,8 +459,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__119;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:42:8: ( ']' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:42:10: ']'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:42:8: ( ']' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:42:10: ']'
             {
             match(']'); 
 
@@ -479,8 +479,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__120;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:43:8: ( '{' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:43:10: '{'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:43:8: ( '{' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:43:10: '{'
             {
             match('{'); 
 
@@ -499,8 +499,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__121;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:44:8: ( '}' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:44:10: '}'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:44:8: ( '}' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:44:10: '}'
             {
             match('}'); 
 
@@ -519,8 +519,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__122;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:45:8: ( ':' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:45:10: ':'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:45:8: ( ':' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:45:10: ':'
             {
             match(':'); 
 
@@ -539,8 +539,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__123;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:46:8: ( 'COLUMNS' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:46:10: 'COLUMNS'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:46:8: ( 'COLUMNS' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:46:10: 'COLUMNS'
             {
             match("COLUMNS"); 
 
@@ -560,8 +560,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__124;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:47:8: ( 'REVERSED' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:47:10: 'REVERSED'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:47:8: ( 'REVERSED' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:47:10: 'REVERSED'
             {
             match("REVERSED"); 
 
@@ -581,8 +581,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__125;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:48:8: ( '(' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:48:10: '('
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:48:8: ( '(' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:48:10: '('
             {
             match('('); 
 
@@ -601,8 +601,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = T__126;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:49:8: ( ')' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:49:10: ')'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:49:8: ( ')' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:49:10: ')'
             {
             match(')'); 
 
@@ -621,8 +621,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = CONFIG;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:556:7: ( 'CONFIG' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:556:14: 'CONFIG'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:556:7: ( 'CONFIG' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:556:14: 'CONFIG'
             {
             match("CONFIG"); 
 
@@ -642,8 +642,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = CONNECT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:557:8: ( 'CONNECT' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:557:14: 'CONNECT'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:557:8: ( 'CONNECT' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:557:14: 'CONNECT'
             {
             match("CONNECT"); 
 
@@ -663,8 +663,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = COUNT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:558:6: ( 'COUNT' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:558:14: 'COUNT'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:558:6: ( 'COUNT' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:558:14: 'COUNT'
             {
             match("COUNT"); 
 
@@ -684,8 +684,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = DEL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:559:4: ( 'DEL' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:559:14: 'DEL'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:559:4: ( 'DEL' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:559:14: 'DEL'
             {
             match("DEL"); 
 
@@ -705,8 +705,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = DESCRIBE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:560:9: ( 'DESCRIBE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:560:14: 'DESCRIBE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:560:9: ( 'DESCRIBE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:560:14: 'DESCRIBE'
             {
             match("DESCRIBE"); 
 
@@ -726,8 +726,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = USE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:561:4: ( 'USE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:561:14: 'USE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:561:4: ( 'USE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:561:14: 'USE'
             {
             match("USE"); 
 
@@ -747,8 +747,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = GET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:562:4: ( 'GET' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:562:14: 'GET'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:562:4: ( 'GET' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:562:14: 'GET'
             {
             match("GET"); 
 
@@ -768,8 +768,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = HELP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:563:5: ( 'HELP' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:563:14: 'HELP'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:563:5: ( 'HELP' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:563:14: 'HELP'
             {
             match("HELP"); 
 
@@ -789,8 +789,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = EXIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:564:5: ( 'EXIT' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:564:14: 'EXIT'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:564:5: ( 'EXIT' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:564:14: 'EXIT'
             {
             match("EXIT"); 
 
@@ -810,8 +810,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = FILE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:565:5: ( 'FILE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:565:14: 'FILE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:565:5: ( 'FILE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:565:14: 'FILE'
             {
             match("FILE"); 
 
@@ -831,8 +831,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = QUIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:566:5: ( 'QUIT' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:566:14: 'QUIT'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:566:5: ( 'QUIT' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:566:14: 'QUIT'
             {
             match("QUIT"); 
 
@@ -852,8 +852,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = SET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:567:4: ( 'SET' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:567:14: 'SET'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:567:4: ( 'SET' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:567:14: 'SET'
             {
             match("SET"); 
 
@@ -873,8 +873,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = INCR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:568:5: ( 'INCR' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:568:14: 'INCR'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:568:5: ( 'INCR' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:568:14: 'INCR'
             {
             match("INCR"); 
 
@@ -894,8 +894,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = DECR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:569:5: ( 'DECR' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:569:14: 'DECR'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:569:5: ( 'DECR' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:569:14: 'DECR'
             {
             match("DECR"); 
 
@@ -915,8 +915,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = SHOW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:570:5: ( 'SHOW' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:570:14: 'SHOW'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:570:5: ( 'SHOW' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:570:14: 'SHOW'
             {
             match("SHOW"); 
 
@@ -936,8 +936,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = KEYSPACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:571:9: ( 'KEYSPACE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:571:14: 'KEYSPACE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:571:9: ( 'KEYSPACE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:571:14: 'KEYSPACE'
             {
             match("KEYSPACE"); 
 
@@ -957,8 +957,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = KEYSPACES;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:572:10: ( 'KEYSPACES' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:572:14: 'KEYSPACES'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:572:10: ( 'KEYSPACES' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:572:14: 'KEYSPACES'
             {
             match("KEYSPACES"); 
 
@@ -978,8 +978,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = API_VERSION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:573:12: ( 'API VERSION' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:573:14: 'API VERSION'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:573:12: ( 'API VERSION' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:573:14: 'API VERSION'
             {
             match("API VERSION"); 
 
@@ -999,8 +999,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = CREATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:574:7: ( 'CREATE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:574:14: 'CREATE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:574:7: ( 'CREATE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:574:14: 'CREATE'
             {
             match("CREATE"); 
 
@@ -1020,8 +1020,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = DROP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:575:5: ( 'DROP' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:575:14: 'DROP'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:575:5: ( 'DROP' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:575:14: 'DROP'
             {
             match("DROP"); 
 
@@ -1041,8 +1041,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = COLUMN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:576:7: ( 'COLUMN' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:576:14: 'COLUMN'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:576:7: ( 'COLUMN' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:576:14: 'COLUMN'
             {
             match("COLUMN"); 
 
@@ -1062,8 +1062,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = FAMILY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:577:7: ( 'FAMILY' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:577:14: 'FAMILY'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:577:7: ( 'FAMILY' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:577:14: 'FAMILY'
             {
             match("FAMILY"); 
 
@@ -1083,8 +1083,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = WITH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:578:5: ( 'WITH' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:578:14: 'WITH'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:578:5: ( 'WITH' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:578:14: 'WITH'
             {
             match("WITH"); 
 
@@ -1104,8 +1104,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = BY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:579:3: ( 'BY' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:579:14: 'BY'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:579:3: ( 'BY' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:579:14: 'BY'
             {
             match("BY"); 
 
@@ -1125,8 +1125,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:580:4: ( 'AND' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:580:14: 'AND'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:580:4: ( 'AND' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:580:14: 'AND'
             {
             match("AND"); 
 
@@ -1146,8 +1146,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = UPDATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:581:7: ( 'UPDATE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:581:14: 'UPDATE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:581:7: ( 'UPDATE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:581:14: 'UPDATE'
             {
             match("UPDATE"); 
 
@@ -1167,8 +1167,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = LIST;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:582:5: ( 'LIST' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:582:14: 'LIST'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:582:5: ( 'LIST' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:582:14: 'LIST'
             {
             match("LIST"); 
 
@@ -1188,8 +1188,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = LIMIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:583:6: ( 'LIMIT' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:583:14: 'LIMIT'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:583:6: ( 'LIMIT' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:583:14: 'LIMIT'
             {
             match("LIMIT"); 
 
@@ -1209,8 +1209,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = TRUNCATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:584:9: ( 'TRUNCATE' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:584:14: 'TRUNCATE'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:584:9: ( 'TRUNCATE' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:584:14: 'TRUNCATE'
             {
             match("TRUNCATE"); 
 
@@ -1230,8 +1230,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = ASSUME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:585:7: ( 'ASSUME' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:585:14: 'ASSUME'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:585:7: ( 'ASSUME' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:585:14: 'ASSUME'
             {
             match("ASSUME"); 
 
@@ -1251,8 +1251,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = TTL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:586:4: ( 'TTL' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:586:14: 'TTL'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:586:4: ( 'TTL' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:586:14: 'TTL'
             {
             match("TTL"); 
 
@@ -1272,8 +1272,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = CONSISTENCYLEVEL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:587:17: ( 'CONSISTENCYLEVEL' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:587:21: 'CONSISTENCYLEVEL'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:587:17: ( 'CONSISTENCYLEVEL' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:587:21: 'CONSISTENCYLEVEL'
             {
             match("CONSISTENCYLEVEL"); 
 
@@ -1293,8 +1293,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = INDEX;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:588:6: ( 'INDEX' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:588:14: 'INDEX'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:588:6: ( 'INDEX' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:588:14: 'INDEX'
             {
             match("INDEX"); 
 
@@ -1314,8 +1314,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = ON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:589:3: ( 'ON' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:589:14: 'ON'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:589:3: ( 'ON' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:589:14: 'ON'
             {
             match("ON"); 
 
@@ -1335,8 +1335,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = SCHEMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:590:7: ( 'SCHEMA' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:590:14: 'SCHEMA'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:590:7: ( 'SCHEMA' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:590:14: 'SCHEMA'
             {
             match("SCHEMA"); 
 
@@ -1356,8 +1356,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = IP_ADDRESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:593:5: ( IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:593:7: IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:593:5: ( IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:593:7: IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral '.' IntegerPositiveLiteral
             {
             mIntegerPositiveLiteral(); 
             match('.'); 
@@ -1380,8 +1380,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "Letter"
     public final void mLetter() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:599:5: ( 'a' .. 'z' | 'A' .. 'Z' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:599:5: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1404,8 +1404,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "Digit"
     public final void mDigit() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:605:5: ( '0' .. '9' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:605:7: '0' .. '9'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:605:5: ( '0' .. '9' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:605:7: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -1420,8 +1420,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "Alnum"
     public final void mAlnum() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:610:5: ( Letter | Digit )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:610:5: ( Letter | Digit )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1446,10 +1446,10 @@ public class CliLexer extends Lexer {
         try {
             int _type = IntegerPositiveLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:4: ( ( Digit )+ )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:6: ( Digit )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:4: ( ( Digit )+ )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:6: ( Digit )+
             {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:6: ( Digit )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:6: ( Digit )+
             int cnt1=0;
             loop1:
             do {
@@ -1463,7 +1463,7 @@ public class CliLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:6: Digit
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:616:6: Digit
             	    {
             	    mDigit(); 
 
@@ -1495,11 +1495,11 @@ public class CliLexer extends Lexer {
         try {
             int _type = IntegerNegativeLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:4: ( '-' ( Digit )+ )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:6: '-' ( Digit )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:4: ( '-' ( Digit )+ )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:6: '-' ( Digit )+
             {
             match('-'); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:10: ( Digit )+
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:10: ( Digit )+
             int cnt2=0;
             loop2:
             do {
@@ -1513,7 +1513,7 @@ public class CliLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:10: Digit
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:620:10: Digit
             	    {
             	    mDigit(); 
 
@@ -1545,7 +1545,7 @@ public class CliLexer extends Lexer {
         try {
             int _type = DoubleLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:4: ( ( Digit )+ ( '.' ( Digit )+ )? | ' ' '.' ( Digit )+ )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:4: ( ( Digit )+ ( '.' ( Digit )+ )? | ' ' '.' ( Digit )+ )
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -1563,9 +1563,9 @@ public class CliLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:6: ( Digit )+ ( '.' ( Digit )+ )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:6: ( Digit )+ ( '.' ( Digit )+ )?
                     {
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:6: ( Digit )+
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:6: ( Digit )+
                     int cnt3=0;
                     loop3:
                     do {
@@ -1579,7 +1579,7 @@ public class CliLexer extends Lexer {
 
                         switch (alt3) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:6: Digit
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:6: Digit
                     	    {
                     	    mDigit(); 
 
@@ -1595,7 +1595,7 @@ public class CliLexer extends Lexer {
                         cnt3++;
                     } while (true);
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:13: ( '.' ( Digit )+ )?
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:13: ( '.' ( Digit )+ )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -1604,10 +1604,10 @@ public class CliLexer extends Lexer {
                     }
                     switch (alt5) {
                         case 1 :
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:14: '.' ( Digit )+
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:14: '.' ( Digit )+
                             {
                             match('.'); 
-                            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:18: ( Digit )+
+                            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:18: ( Digit )+
                             int cnt4=0;
                             loop4:
                             do {
@@ -1621,7 +1621,7 @@ public class CliLexer extends Lexer {
 
                                 switch (alt4) {
                             	case 1 :
-                            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:18: Digit
+                            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:624:18: Digit
                             	    {
                             	    mDigit(); 
 
@@ -1647,11 +1647,11 @@ public class CliLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:625:6: ' ' '.' ( Digit )+
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:625:6: ' ' '.' ( Digit )+
                     {
                     match(' '); 
                     match('.'); 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:625:14: ( Digit )+
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:625:14: ( Digit )+
                     int cnt6=0;
                     loop6:
                     do {
@@ -1665,7 +1665,7 @@ public class CliLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:625:14: Digit
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:625:14: Digit
                     	    {
                     	    mDigit(); 
 
@@ -1699,8 +1699,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = Identifier;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:629:5: ( ( Letter | Alnum ) ( Alnum | '_' | '-' )* )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:629:7: ( Letter | Alnum ) ( Alnum | '_' | '-' )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:629:5: ( ( Letter | Alnum ) ( Alnum | '_' | '-' )* )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:629:7: ( Letter | Alnum ) ( Alnum | '_' | '-' )*
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1711,7 +1711,7 @@ public class CliLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:629:24: ( Alnum | '_' | '-' )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:629:24: ( Alnum | '_' | '-' )*
             loop8:
             do {
                 int alt8=2;
@@ -1724,7 +1724,7 @@ public class CliLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             	    {
             	    if ( input.LA(1)=='-'||(input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -1760,11 +1760,11 @@ public class CliLexer extends Lexer {
         try {
             int _type = StringLiteral;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:5: ( '\\'' ( SingleStringCharacter )* '\\'' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:7: '\\'' ( SingleStringCharacter )* '\\''
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:5: ( '\\'' ( SingleStringCharacter )* '\\'' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:7: '\\'' ( SingleStringCharacter )* '\\''
             {
             match('\''); 
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:12: ( SingleStringCharacter )*
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:12: ( SingleStringCharacter )*
             loop9:
             do {
                 int alt9=2;
@@ -1777,7 +1777,7 @@ public class CliLexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:12: SingleStringCharacter
+            	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:634:12: SingleStringCharacter
             	    {
             	    mSingleStringCharacter(); 
 
@@ -1804,7 +1804,7 @@ public class CliLexer extends Lexer {
     // $ANTLR start "SingleStringCharacter"
     public final void mSingleStringCharacter() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:638:5: (~ ( '\\'' | '\\\\' ) | '\\\\' EscapeSequence )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:638:5: (~ ( '\\'' | '\\\\' ) | '\\\\' EscapeSequence )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1822,7 +1822,7 @@ public class CliLexer extends Lexer {
             }
             switch (alt10) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:638:7: ~ ( '\\'' | '\\\\' )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:638:7: ~ ( '\\'' | '\\\\' )
                     {
                     if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                         input.consume();
@@ -1837,7 +1837,7 @@ public class CliLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:639:7: '\\\\' EscapeSequence
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:639:7: '\\\\' EscapeSequence
                     {
                     match('\\'); 
                     mEscapeSequence(); 
@@ -1855,7 +1855,7 @@ public class CliLexer extends Lexer {
     // $ANTLR start "EscapeSequence"
     public final void mEscapeSequence() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:643:5: ( CharacterEscapeSequence | '0' | HexEscapeSequence | UnicodeEscapeSequence )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:643:5: ( CharacterEscapeSequence | '0' | HexEscapeSequence | UnicodeEscapeSequence )
             int alt11=4;
             int LA11_0 = input.LA(1);
 
@@ -1879,28 +1879,28 @@ public class CliLexer extends Lexer {
             }
             switch (alt11) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:643:7: CharacterEscapeSequence
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:643:7: CharacterEscapeSequence
                     {
                     mCharacterEscapeSequence(); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:644:7: '0'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:644:7: '0'
                     {
                     match('0'); 
 
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:645:7: HexEscapeSequence
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:645:7: HexEscapeSequence
                     {
                     mHexEscapeSequence(); 
 
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:646:7: UnicodeEscapeSequence
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:646:7: UnicodeEscapeSequence
                     {
                     mUnicodeEscapeSequence(); 
 
@@ -1917,7 +1917,7 @@ public class CliLexer extends Lexer {
     // $ANTLR start "CharacterEscapeSequence"
     public final void mCharacterEscapeSequence() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:650:5: ( SingleEscapeCharacter | NonEscapeCharacter )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:650:5: ( SingleEscapeCharacter | NonEscapeCharacter )
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1935,14 +1935,14 @@ public class CliLexer extends Lexer {
             }
             switch (alt12) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:650:7: SingleEscapeCharacter
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:650:7: SingleEscapeCharacter
                     {
                     mSingleEscapeCharacter(); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:651:7: NonEscapeCharacter
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:651:7: NonEscapeCharacter
                     {
                     mNonEscapeCharacter(); 
 
@@ -1959,8 +1959,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "NonEscapeCharacter"
     public final void mNonEscapeCharacter() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:655:5: (~ ( EscapeCharacter ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:655:7: ~ ( EscapeCharacter )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:655:5: (~ ( EscapeCharacter ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:655:7: ~ ( EscapeCharacter )
             {
             if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='/')||(input.LA(1)>=':' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='a')||(input.LA(1)>='c' && input.LA(1)<='e')||(input.LA(1)>='g' && input.LA(1)<='m')||(input.LA(1)>='o' && input.LA(1)<='q')||input.LA(1)=='s'||input.LA(1)=='w'||(input.LA(1)>='y' && input.LA(1)<='\uFFFF') ) {
                 input.consume();
@@ -1983,8 +1983,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "SingleEscapeCharacter"
     public final void mSingleEscapeCharacter() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:659:5: ( '\\'' | '\"' | '\\\\' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:659:5: ( '\\'' | '\"' | '\\\\' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:
             {
             if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t'||input.LA(1)=='v' ) {
                 input.consume();
@@ -2007,7 +2007,7 @@ public class CliLexer extends Lexer {
     // $ANTLR start "EscapeCharacter"
     public final void mEscapeCharacter() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:663:5: ( SingleEscapeCharacter | DecimalDigit | 'x' | 'u' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:663:5: ( SingleEscapeCharacter | DecimalDigit | 'x' | 'u' )
             int alt13=4;
             switch ( input.LA(1) ) {
             case '\"':
@@ -2056,28 +2056,28 @@ public class CliLexer extends Lexer {
 
             switch (alt13) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:663:7: SingleEscapeCharacter
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:663:7: SingleEscapeCharacter
                     {
                     mSingleEscapeCharacter(); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:664:7: DecimalDigit
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:664:7: DecimalDigit
                     {
                     mDecimalDigit(); 
 
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:665:7: 'x'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:665:7: 'x'
                     {
                     match('x'); 
 
                     }
                     break;
                 case 4 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:666:7: 'u'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:666:7: 'u'
                     {
                     match('u'); 
 
@@ -2094,8 +2094,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "HexEscapeSequence"
     public final void mHexEscapeSequence() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:670:5: ( 'x' HexDigit HexDigit )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:670:7: 'x' HexDigit HexDigit
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:670:5: ( 'x' HexDigit HexDigit )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:670:7: 'x' HexDigit HexDigit
             {
             match('x'); 
             mHexDigit(); 
@@ -2112,8 +2112,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "UnicodeEscapeSequence"
     public final void mUnicodeEscapeSequence() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:674:5: ( 'u' HexDigit HexDigit HexDigit HexDigit )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:674:7: 'u' HexDigit HexDigit HexDigit HexDigit
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:674:5: ( 'u' HexDigit HexDigit HexDigit HexDigit )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:674:7: 'u' HexDigit HexDigit HexDigit HexDigit
             {
             match('u'); 
             mHexDigit(); 
@@ -2132,7 +2132,7 @@ public class CliLexer extends Lexer {
     // $ANTLR start "HexDigit"
     public final void mHexDigit() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:5: ( DecimalDigit | ( 'a' .. 'f' ) | ( 'A' .. 'F' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:5: ( DecimalDigit | ( 'a' .. 'f' ) | ( 'A' .. 'F' ) )
             int alt14=3;
             switch ( input.LA(1) ) {
             case '0':
@@ -2178,17 +2178,17 @@ public class CliLexer extends Lexer {
 
             switch (alt14) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:7: DecimalDigit
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:7: DecimalDigit
                     {
                     mDecimalDigit(); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:22: ( 'a' .. 'f' )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:22: ( 'a' .. 'f' )
                     {
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:22: ( 'a' .. 'f' )
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:23: 'a' .. 'f'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:22: ( 'a' .. 'f' )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:23: 'a' .. 'f'
                     {
                     matchRange('a','f'); 
 
@@ -2198,10 +2198,10 @@ public class CliLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:35: ( 'A' .. 'F' )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:35: ( 'A' .. 'F' )
                     {
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:35: ( 'A' .. 'F' )
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:36: 'A' .. 'F'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:35: ( 'A' .. 'F' )
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:678:36: 'A' .. 'F'
                     {
                     matchRange('A','F'); 
 
@@ -2221,8 +2221,8 @@ public class CliLexer extends Lexer {
     // $ANTLR start "DecimalDigit"
     public final void mDecimalDigit() throws RecognitionException {
         try {
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:682:5: ( ( '0' .. '9' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:682:7: ( '0' .. '9' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:682:5: ( ( '0' .. '9' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:682:7: ( '0' .. '9' )
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9') ) {
                 input.consume();
@@ -2247,8 +2247,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = SEMICOLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:690:5: ( ';' )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:690:7: ';'
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:690:5: ( ';' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:690:7: ';'
             {
             match(';'); 
 
@@ -2267,8 +2267,8 @@ public class CliLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:694:5: ( ( ' ' | '\\r' | '\\t' | '\\n' ) )
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:694:8: ( ' ' | '\\r' | '\\t' | '\\n' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:694:5: ( ( ' ' | '\\r' | '\\t' | '\\n' ) )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:694:8: ( ' ' | '\\r' | '\\t' | '\\n' )
             {
             if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
                 input.consume();
@@ -2296,7 +2296,7 @@ public class CliLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:5: ( '--' (~ ( '\\n' | '\\r' ) )* | '/*' ( options {greedy=false; } : . )* '*/' )
+            // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:5: ( '--' (~ ( '\\n' | '\\r' ) )* | '/*' ( options {greedy=false; } : . )* '*/' )
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -2314,11 +2314,11 @@ public class CliLexer extends Lexer {
             }
             switch (alt17) {
                 case 1 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:7: '--' (~ ( '\\n' | '\\r' ) )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:7: '--' (~ ( '\\n' | '\\r' ) )*
                     {
                     match("--"); 
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:12: (~ ( '\\n' | '\\r' ) )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:12: (~ ( '\\n' | '\\r' ) )*
                     loop15:
                     do {
                         int alt15=2;
@@ -2331,7 +2331,7 @@ public class CliLexer extends Lexer {
 
                         switch (alt15) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:13: ~ ( '\\n' | '\\r' )
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:698:13: ~ ( '\\n' | '\\r' )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2356,11 +2356,11 @@ public class CliLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:699:7: '/*' ( options {greedy=false; } : . )* '*/'
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:699:7: '/*' ( options {greedy=false; } : . )* '*/'
                     {
                     match("/*"); 
 
-                    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:699:12: ( options {greedy=false; } : . )*
+                    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:699:12: ( options {greedy=false; } : . )*
                     loop16:
                     do {
                         int alt16=2;
@@ -2385,7 +2385,7 @@ public class CliLexer extends Lexer {
 
                         switch (alt16) {
                     	case 1 :
-                    	    // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:699:39: .
+                    	    // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:699:39: .
                     	    {
                     	    matchAny(); 
 
@@ -2414,467 +2414,467 @@ public class CliLexer extends Lexer {
     // $ANTLR end "COMMENT"
 
     public void mTokens() throws RecognitionException {
-        // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:8: ( T__105 | T__106 | T__107 | T__108 | T__109 | T__110 | T__111 | T__112 | T__113 | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | CONFIG | CONNECT | COUNT | DEL | DESCRIBE | USE | GET | HELP | EXIT | FILE | QUIT | SET | INCR | DECR | SHOW | KEYSPACE | KEYSPACES | API_VERSION | CREATE | DROP | COLUMN | FAMILY | WITH | BY | AND | UPDATE | LIST | LIMIT | TRUNCATE | ASSUME | TTL | CONSISTENCYLEVEL | INDEX | ON | SCHEMA | IP_ADDRESS | IntegerPositiveLiteral | IntegerNegativeLiteral | DoubleLiteral | Identifier | StringLiteral | SEMICOLON | WS | COMMENT )
+        // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:8: ( T__105 | T__106 | T__107 | T__108 | T__109 | T__110 | T__111 | T__112 | T__113 | T__114 | T__115 | T__116 | T__117 | T__118 | T__119 | T__120 | T__121 | T__122 | T__123 | T__124 | T__125 | T__126 | CONFIG | CONNECT | COUNT | DEL | DESCRIBE | USE | GET | HELP | EXIT | FILE | QUIT | SET | INCR | DECR | SHOW | KEYSPACE | KEYSPACES | API_VERSION | CREATE | DROP | COLUMN | FAMILY | WITH | BY | AND | UPDATE | LIST | LIMIT | TRUNCATE | ASSUME | TTL | CONSISTENCYLEVEL | INDEX | ON | SCHEMA | IP_ADDRESS | IntegerPositiveLiteral | IntegerNegativeLiteral | DoubleLiteral | Identifier | StringLiteral | SEMICOLON | WS | COMMENT )
         int alt18=66;
         alt18 = dfa18.predict(input);
         switch (alt18) {
             case 1 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:10: T__105
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:10: T__105
                 {
                 mT__105(); 
 
                 }
                 break;
             case 2 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:17: T__106
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:17: T__106
                 {
                 mT__106(); 
 
                 }
                 break;
             case 3 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:24: T__107
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:24: T__107
                 {
                 mT__107(); 
 
                 }
                 break;
             case 4 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:31: T__108
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:31: T__108
                 {
                 mT__108(); 
 
                 }
                 break;
             case 5 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:38: T__109
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:38: T__109
                 {
                 mT__109(); 
 
                 }
                 break;
             case 6 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:45: T__110
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:45: T__110
                 {
                 mT__110(); 
 
                 }
                 break;
             case 7 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:52: T__111
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:52: T__111
                 {
                 mT__111(); 
 
                 }
                 break;
             case 8 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:59: T__112
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:59: T__112
                 {
                 mT__112(); 
 
                 }
                 break;
             case 9 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:66: T__113
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:66: T__113
                 {
                 mT__113(); 
 
                 }
                 break;
             case 10 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:73: T__114
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:73: T__114
                 {
                 mT__114(); 
 
                 }
                 break;
             case 11 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:80: T__115
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:80: T__115
                 {
                 mT__115(); 
 
                 }
                 break;
             case 12 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:87: T__116
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:87: T__116
                 {
                 mT__116(); 
 
                 }
                 break;
             case 13 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:94: T__117
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:94: T__117
                 {
                 mT__117(); 
 
                 }
                 break;
             case 14 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:101: T__118
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:101: T__118
                 {
                 mT__118(); 
 
                 }
                 break;
             case 15 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:108: T__119
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:108: T__119
                 {
                 mT__119(); 
 
                 }
                 break;
             case 16 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:115: T__120
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:115: T__120
                 {
                 mT__120(); 
 
                 }
                 break;
             case 17 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:122: T__121
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:122: T__121
                 {
                 mT__121(); 
 
                 }
                 break;
             case 18 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:129: T__122
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:129: T__122
                 {
                 mT__122(); 
 
                 }
                 break;
             case 19 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:136: T__123
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:136: T__123
                 {
                 mT__123(); 
 
                 }
                 break;
             case 20 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:143: T__124
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:143: T__124
                 {
                 mT__124(); 
 
                 }
                 break;
             case 21 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:150: T__125
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:150: T__125
                 {
                 mT__125(); 
 
                 }
                 break;
             case 22 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:157: T__126
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:157: T__126
                 {
                 mT__126(); 
 
                 }
                 break;
             case 23 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:164: CONFIG
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:164: CONFIG
                 {
                 mCONFIG(); 
 
                 }
                 break;
             case 24 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:171: CONNECT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:171: CONNECT
                 {
                 mCONNECT(); 
 
                 }
                 break;
             case 25 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:179: COUNT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:179: COUNT
                 {
                 mCOUNT(); 
 
                 }
                 break;
             case 26 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:185: DEL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:185: DEL
                 {
                 mDEL(); 
 
                 }
                 break;
             case 27 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:189: DESCRIBE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:189: DESCRIBE
                 {
                 mDESCRIBE(); 
 
                 }
                 break;
             case 28 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:198: USE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:198: USE
                 {
                 mUSE(); 
 
                 }
                 break;
             case 29 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:202: GET
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:202: GET
                 {
                 mGET(); 
 
                 }
                 break;
             case 30 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:206: HELP
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:206: HELP
                 {
                 mHELP(); 
 
                 }
                 break;
             case 31 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:211: EXIT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:211: EXIT
                 {
                 mEXIT(); 
 
                 }
                 break;
             case 32 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:216: FILE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:216: FILE
                 {
                 mFILE(); 
 
                 }
                 break;
             case 33 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:221: QUIT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:221: QUIT
                 {
                 mQUIT(); 
 
                 }
                 break;
             case 34 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:226: SET
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:226: SET
                 {
                 mSET(); 
 
                 }
                 break;
             case 35 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:230: INCR
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:230: INCR
                 {
                 mINCR(); 
 
                 }
                 break;
             case 36 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:235: DECR
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:235: DECR
                 {
                 mDECR(); 
 
                 }
                 break;
             case 37 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:240: SHOW
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:240: SHOW
                 {
                 mSHOW(); 
 
                 }
                 break;
             case 38 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:245: KEYSPACE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:245: KEYSPACE
                 {
                 mKEYSPACE(); 
 
                 }
                 break;
             case 39 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:254: KEYSPACES
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:254: KEYSPACES
                 {
                 mKEYSPACES(); 
 
                 }
                 break;
             case 40 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:264: API_VERSION
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:264: API_VERSION
                 {
                 mAPI_VERSION(); 
 
                 }
                 break;
             case 41 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:276: CREATE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:276: CREATE
                 {
                 mCREATE(); 
 
                 }
                 break;
             case 42 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:283: DROP
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:283: DROP
                 {
                 mDROP(); 
 
                 }
                 break;
             case 43 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:288: COLUMN
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:288: COLUMN
                 {
                 mCOLUMN(); 
 
                 }
                 break;
             case 44 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:295: FAMILY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:295: FAMILY
                 {
                 mFAMILY(); 
 
                 }
                 break;
             case 45 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:302: WITH
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:302: WITH
                 {
                 mWITH(); 
 
                 }
                 break;
             case 46 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:307: BY
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:307: BY
                 {
                 mBY(); 
 
                 }
                 break;
             case 47 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:310: AND
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:310: AND
                 {
                 mAND(); 
 
                 }
                 break;
             case 48 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:314: UPDATE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:314: UPDATE
                 {
                 mUPDATE(); 
 
                 }
                 break;
             case 49 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:321: LIST
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:321: LIST
                 {
                 mLIST(); 
 
                 }
                 break;
             case 50 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:326: LIMIT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:326: LIMIT
                 {
                 mLIMIT(); 
 
                 }
                 break;
             case 51 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:332: TRUNCATE
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:332: TRUNCATE
                 {
                 mTRUNCATE(); 
 
                 }
                 break;
             case 52 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:341: ASSUME
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:341: ASSUME
                 {
                 mASSUME(); 
 
                 }
                 break;
             case 53 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:348: TTL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:348: TTL
                 {
                 mTTL(); 
 
                 }
                 break;
             case 54 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:352: CONSISTENCYLEVEL
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:352: CONSISTENCYLEVEL
                 {
                 mCONSISTENCYLEVEL(); 
 
                 }
                 break;
             case 55 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:369: INDEX
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:369: INDEX
                 {
                 mINDEX(); 
 
                 }
                 break;
             case 56 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:375: ON
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:375: ON
                 {
                 mON(); 
 
                 }
                 break;
             case 57 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:378: SCHEMA
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:378: SCHEMA
                 {
                 mSCHEMA(); 
 
                 }
                 break;
             case 58 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:385: IP_ADDRESS
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:385: IP_ADDRESS
                 {
                 mIP_ADDRESS(); 
 
                 }
                 break;
             case 59 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:396: IntegerPositiveLiteral
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:396: IntegerPositiveLiteral
                 {
                 mIntegerPositiveLiteral(); 
 
                 }
                 break;
             case 60 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:419: IntegerNegativeLiteral
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:419: IntegerNegativeLiteral
                 {
                 mIntegerNegativeLiteral(); 
 
                 }
                 break;
             case 61 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:442: DoubleLiteral
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:442: DoubleLiteral
                 {
                 mDoubleLiteral(); 
 
                 }
                 break;
             case 62 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:456: Identifier
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:456: Identifier
                 {
                 mIdentifier(); 
 
                 }
                 break;
             case 63 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:467: StringLiteral
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:467: StringLiteral
                 {
                 mStringLiteral(); 
 
                 }
                 break;
             case 64 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:481: SEMICOLON
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:481: SEMICOLON
                 {
                 mSEMICOLON(); 
 
                 }
                 break;
             case 65 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:491: WS
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:491: WS
                 {
                 mWS(); 
 
                 }
                 break;
             case 66 :
-                // /Users/WesleyChow/Documents/Berkeley/Fall2012/CS262A/Project/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:494: COMMENT
+                // /home/eecs/ntan/cassandra-latency/cassandra-trunk/src/java/org/apache/cassandra/cli/Cli.g:1:494: COMMENT
                 {
                 mCOMMENT(); 
 

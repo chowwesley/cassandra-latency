@@ -36,7 +36,7 @@ import org.apache.cassandra.utils.FBUtilities;
 public class ReadVerbHandler implements IVerbHandler
 {
     private static Logger logger_ = LoggerFactory.getLogger( ReadVerbHandler.class );
-    public static Config conf;
+    public static Config conf = new Config();
 
     public void doVerb(Message message, String id)
     {
