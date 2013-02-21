@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,23 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.service;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.cassandra.config.ConfigurationException;
-import org.apache.cassandra.thrift.InvalidRequestException;
-import org.apache.cassandra.thrift.UnavailableException;
+import javax.management.NotificationEmitter;
 
-
-public interface StorageServiceMBean
+public interface StorageServiceMBean extends NotificationEmitter
 {
     /**
      * Retrieve the list of live nodes in the cluster, where "liveness" is
@@ -71,11 +69,19 @@ public interface StorageServiceMBean
     public List<String> getMovingNodes();
 
     /**
-     * Fetch a string representation of the token.
+     * Fetch string representations of the tokens for this node.
      *
-     * @return a string token
+     * @return a collection of tokens formatted as strings
      */
-    public String getToken();
+    public List<String> getTokens();
+
+    /**
+     * Fetch string representations of the tokens for a specified node.
+     *
+     * @param endpoint string representation of an node
+     * @return a collection of tokens formatted as strings
+     */
+    public List<String> getTokens(String endpoint) throws UnknownHostException;
 
     /**
      * Fetch a string representation of the Cassandra version.
@@ -130,10 +136,8 @@ public interface StorageServiceMBean
      * @param keyspace The keyspace to fetch information about
      *
      * @return a List of TokenRange(s) converted to String for the given keyspace
-     *
-     * @throws InvalidRequestException if there is no ring information available about keyspace
      */
-    public List <String> describeRingJMX(String keyspace) throws InvalidRequestException;
+    public List <String> describeRingJMX(String keyspace) throws IOException;
 
     /**
      * Returns the local node's primary range.
@@ -155,9 +159,17 @@ public interface StorageServiceMBean
      */
     public Map<String, String> getTokenToEndpointMap();
 
+    /** Retrieve this hosts unique ID */
+    public String getLocalHostId();
+
+    /** Retrieve the mapping of endpoint to host ID */
+    public Map<String, String> getHostIdMap();
+
     /**
      * Numeric load value.
+     * @see org.apache.cassandra.metrics.StorageMetrics#load
      */
+    @Deprecated
     public double getLoad();
 
     /** Human-readable load value */
@@ -242,18 +254,30 @@ public interface StorageServiceMBean
     public void forceTableFlush(String tableName, String... columnFamilies) throws IOException, ExecutionException, InterruptedException;
 
     /**
+     * Invoke repair asynchronously.
+     * You can track repair progress by subscribing JMX notification sent from this StorageServiceMBean.
+     * Notification format is:
+     *   type: "repair"
+     *   userObject: int array of length 2, [0]=command number, [1]=ordinal of AntiEntropyService.Status
+     *
+     * @return Repair command number, or 0 if nothing to repair
+     * @see #forceTableRepair(String, boolean, boolean, String...)
+     */
+    public int forceRepairAsync(String keyspace, boolean isSequential, boolean isLocal, boolean primaryRange, String... columnFamilies);
+
+    /**
      * Triggers proactive repair for given column families, or all columnfamilies for the given table
      * if none are explicitly listed.
      * @param tableName
      * @param columnFamilies
      * @throws IOException
      */
-    public void forceTableRepair(String tableName, boolean isSequential, String... columnFamilies) throws IOException;
+    public void forceTableRepair(String tableName, boolean isSequential, boolean  isLocal, String... columnFamilies) throws IOException;
 
     /**
      * Triggers proactive repair but only for the node primary range.
      */
-    public void forceTableRepairPrimaryRange(String tableName, boolean isSequential, String... columnFamilies) throws IOException;
+    public void forceTableRepairPrimaryRange(String tableName, boolean isSequential, boolean  isLocal, String... columnFamilies) throws IOException;
 
     /**
      * Perform repair of a specific range.
@@ -261,7 +285,7 @@ public interface StorageServiceMBean
      * This allows incremental repair to be performed by having an external controller submitting repair jobs.
      * Note that the provided range much be a subset of one of the node local range.
      */
-    public void forceTableRepairRange(String beginToken, String endToken, String tableName, boolean isSequential, String... columnFamilies) throws IOException;
+    public void forceTableRepairRange(String beginToken, String endToken, String tableName, boolean isSequential, boolean  isLocal, String... columnFamilies) throws IOException;
 
     public void forceTerminateAllRepairSessions();
 
@@ -274,13 +298,18 @@ public interface StorageServiceMBean
      * @param newToken token to move this node to.
      * This node will unload its data onto its neighbors, and bootstrap to the new token.
      */
-    public void move(String newToken) throws IOException, InterruptedException, ConfigurationException;
+    public void move(String newToken) throws IOException;
+
+    /**
+     * @param srcTokens tokens to move to this node
+     */
+    public void relocate(Collection<String> srcTokens) throws IOException;
 
     /**
      * removeToken removes token (and all data associated with
      * enpoint that had it) from the ring
      */
-    public void removeToken(String token);
+    public void removeNode(String token);
 
     /**
      * Get the status of a token removal.
@@ -313,16 +342,14 @@ public interface StorageServiceMBean
      *
      * @param keyspace The keyspace to delete from
      * @param columnFamily The column family to delete data from.
-     *
-     * @throws UnavailableException if some of the hosts in the ring are down.
      */
-    public void truncate(String keyspace, String columnFamily) throws UnavailableException, TimeoutException, IOException;
+    public void truncate(String keyspace, String columnFamily)throws TimeoutException, IOException;
 
     /**
      * given a list of tokens (representing the nodes in the cluster), returns
      *   a mapping from "token -> %age of cluster owned by that token"
      */
-    public Map<String, Float> getOwnership();
+    public Map<InetAddress, Float> getOwnership();
 
     /**
      * Effective ownership is % of the data each node owns given the keyspace
@@ -331,7 +358,7 @@ public interface StorageServiceMBean
      * in the cluster have the same replication strategies and if yes then we will
      * use the first else a empty Map is returned.
      */
-    public Map<String, Float> effectiveOwnership(String keyspace) throws ConfigurationException;
+    public Map<InetAddress, Float> effectiveOwnership(String keyspace) throws IllegalStateException;
 
     public List<String> getKeyspaces();
 
@@ -342,9 +369,8 @@ public interface StorageServiceMBean
      * @param dynamicUpdateInterval    integer, in ms (default 100)
      * @param dynamicResetInterval     integer, in ms (default 600,000)
      * @param dynamicBadnessThreshold  double, (default 0.0)
-     * @throws ConfigurationException  classname not found on classpath
      */
-    public void updateSnitch(String epSnitchClassName, Boolean dynamic, Integer dynamicUpdateInterval, Integer dynamicResetInterval, Double dynamicBadnessThreshold) throws ConfigurationException;
+    public void updateSnitch(String epSnitchClassName, Boolean dynamic, Integer dynamicUpdateInterval, Integer dynamicResetInterval, Double dynamicBadnessThreshold) throws ClassNotFoundException;
 
     // allows a user to forcibly 'kill' a sick node
     public void stopGossiping();
@@ -364,8 +390,12 @@ public interface StorageServiceMBean
     // to determine if thrift is running
     public boolean isRPCServerRunning();
 
+    public void stopNativeTransport();
+    public void startNativeTransport();
+    public boolean isNativeTransportRunning();
+
     // allows a node that have been started without joining the ring to join it
-    public void joinRing() throws IOException, org.apache.cassandra.config.ConfigurationException;
+    public void joinRing() throws IOException;
     public boolean isJoined();
 
     public int getExceptionCount();
@@ -416,4 +446,23 @@ public interface StorageServiceMBean
     public void rebuildSecondaryIndex(String ksName, String cfName, String... idxNames);
 
     public void resetLocalSchema() throws IOException;
+
+    /**
+     * Enables/Disables tracing for the whole system. Only thrift requests can start tracing currently.
+     * 
+     * @param probability
+     *            ]0,1[ will enable tracing on a partial number of requests with the provided probability. 0 will
+     *            disable tracing and 1 will enable tracing for all requests (which mich severely cripple the system)
+     */
+    public void setTraceProbability(double probability);
+
+    /**
+     * Returns the configured tracing probability.
+     */
+    public double getTracingProbability();
+
+    /** Begin processing of queued range transfers. */
+    public void enableScheduledRangeXfers();
+    /** Disable processing of queued range transfers. */
+    public void disableScheduledRangeXfers();
 }

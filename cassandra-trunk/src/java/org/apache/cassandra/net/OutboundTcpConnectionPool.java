@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,29 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.net;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.channels.SocketChannel;
 
 import org.apache.cassandra.concurrent.Stage;
 import org.apache.cassandra.config.Config;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.locator.IEndpointSnitch;
+import org.apache.cassandra.metrics.ConnectionMetrics;
 import org.apache.cassandra.security.SSLFactory;
 import org.apache.cassandra.utils.FBUtilities;
 
 public class OutboundTcpConnectionPool
 {
-    private IEndpointSnitch snitch = DatabaseDescriptor.getEndpointSnitch();
+    private final IEndpointSnitch snitch = DatabaseDescriptor.getEndpointSnitch();
     // pointer for the real Address.
     private final InetAddress id;
     public final OutboundTcpConnection cmdCon;
     public final OutboundTcpConnection ackCon;
     // pointer to the reseted Address.
     private InetAddress resetedEndpoint;
+    private ConnectionMetrics metrics;
 
     OutboundTcpConnectionPool(InetAddress remoteEp)
     {
@@ -46,24 +49,35 @@ public class OutboundTcpConnectionPool
         cmdCon.start();
         ackCon = new OutboundTcpConnection(this);
         ackCon.start();
+
+        metrics = new ConnectionMetrics(id, this);
     }
 
     /**
      * returns the appropriate connection based on message type.
      * returns null if a connection could not be established.
      */
-    OutboundTcpConnection getConnection(Message msg)
+    OutboundTcpConnection getConnection(MessageOut msg)
     {
-        Stage stage = msg.getMessageType();
+        Stage stage = msg.getStage();
         return stage == Stage.REQUEST_RESPONSE || stage == Stage.INTERNAL_RESPONSE || stage == Stage.GOSSIP
                ? ackCon
                : cmdCon;
     }
 
-    synchronized void reset()
+    void reset()
     {
-        for (OutboundTcpConnection con : new OutboundTcpConnection[] { cmdCon, ackCon })
-            con.closeSocket();
+        for (OutboundTcpConnection conn : new OutboundTcpConnection[] { cmdCon, ackCon })
+            conn.closeSocket(false);
+    }
+
+    public void resetToNewerVersion(int version)
+    {
+        for (OutboundTcpConnection conn : new OutboundTcpConnection[] { cmdCon, ackCon })
+        {
+            if (version > conn.getTargetVersion())
+                conn.softCloseSocket();
+        }
     }
 
     /**
@@ -74,8 +88,27 @@ public class OutboundTcpConnectionPool
     public void reset(InetAddress remoteEP)
     {
         resetedEndpoint = remoteEP;
-        for (OutboundTcpConnection con : new OutboundTcpConnection[] { cmdCon, ackCon })
-            con.softCloseSocket();
+        for (OutboundTcpConnection conn : new OutboundTcpConnection[] { cmdCon, ackCon })
+            conn.softCloseSocket();
+
+        // release previous metrics and create new one with reset address
+        metrics.release();
+        metrics = new ConnectionMetrics(resetedEndpoint, this);
+    }
+
+    public long getTimeouts()
+    {
+       return metrics.timeouts.count();
+    }
+
+    public long getRecentTimeouts()
+    {
+        return metrics.getRecentTimeout();
+    }
+
+    public void incrementTimeout()
+    {
+        metrics.timeouts.mark();
     }
 
     public Socket newSocket() throws IOException
@@ -84,16 +117,16 @@ public class OutboundTcpConnectionPool
         if (isEncryptedChannel())
         {
             if (Config.getOutboundBindAny())
-                return SSLFactory.getSocket(DatabaseDescriptor.getEncryptionOptions(), endPoint(), DatabaseDescriptor.getSSLStoragePort());
+                return SSLFactory.getSocket(DatabaseDescriptor.getServerEncryptionOptions(), endPoint(), DatabaseDescriptor.getSSLStoragePort());
             else
-                return SSLFactory.getSocket(DatabaseDescriptor.getEncryptionOptions(), endPoint(), DatabaseDescriptor.getSSLStoragePort(), FBUtilities.getLocalAddress(), 0);
+                return SSLFactory.getSocket(DatabaseDescriptor.getServerEncryptionOptions(), endPoint(), DatabaseDescriptor.getSSLStoragePort(), FBUtilities.getLocalAddress(), 0);
         }
         else
         {
-            if (Config.getOutboundBindAny())
-                return new Socket(endPoint(), DatabaseDescriptor.getStoragePort());
-            else
-                return new Socket(endPoint(), DatabaseDescriptor.getStoragePort(), FBUtilities.getLocalAddress(), 0);
+            Socket socket = SocketChannel.open(new InetSocketAddress(endPoint(), DatabaseDescriptor.getStoragePort())).socket();
+            if (Config.getOutboundBindAny() && !socket.isBound())
+                socket.bind(new InetSocketAddress(FBUtilities.getLocalAddress(), 0));
+            return socket;
         }
     }
 
@@ -104,7 +137,7 @@ public class OutboundTcpConnectionPool
 
     boolean isEncryptedChannel()
     {
-        switch (DatabaseDescriptor.getEncryptionOptions().internode_encryption)
+        switch (DatabaseDescriptor.getServerEncryptionOptions().internode_encryption)
         {
             case none:
                 return false; // if nothing needs to be encrypted then return immediately.
@@ -122,5 +155,15 @@ public class OutboundTcpConnectionPool
                 break;
         }
         return true;
+    }
+
+   public void close()
+    {
+        // these null guards are simply for tests
+        if (ackCon != null)
+            ackCon.closeSocket(true);
+        if (cmdCon != null)
+            cmdCon.closeSocket(true);
+        metrics.release();
     }
 }

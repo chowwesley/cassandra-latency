@@ -18,18 +18,17 @@
 package org.apache.cassandra.cql3.statements;
 
 import org.apache.cassandra.auth.Permission;
-import org.apache.cassandra.config.ConfigurationException;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.config.KSMetaData;
 import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.cql3.KSPropDefs;
 import org.apache.cassandra.db.Table;
+import org.apache.cassandra.exceptions.*;
 import org.apache.cassandra.locator.AbstractReplicationStrategy;
 import org.apache.cassandra.service.ClientState;
 import org.apache.cassandra.service.MigrationManager;
 import org.apache.cassandra.service.StorageService;
-import org.apache.cassandra.thrift.InvalidRequestException;
-import org.apache.cassandra.thrift.SchemaDisagreementException;
+import org.apache.cassandra.transport.messages.ResultMessage;
 
 public class AlterKeyspaceStatement extends SchemaAlteringStatement
 {
@@ -43,47 +42,46 @@ public class AlterKeyspaceStatement extends SchemaAlteringStatement
         this.attrs = attrs;
     }
 
-    public void checkAccess(ClientState state) throws InvalidRequestException
+    @Override
+    public String keyspace()
+    {
+        return name;
+    }
+
+    public void checkAccess(ClientState state) throws UnauthorizedException, InvalidRequestException
     {
         state.hasKeyspaceAccess(name, Permission.ALTER);
     }
 
     @Override
-    public void validate(ClientState state) throws InvalidRequestException, SchemaDisagreementException
+    public void validate(ClientState state) throws RequestValidationException
     {
         super.validate(state);
 
         KSMetaData ksm = Schema.instance.getKSMetaData(name);
         if (ksm == null)
             throw new InvalidRequestException("Unknown keyspace " + name);
-        if (ksm.name.equalsIgnoreCase(Table.SYSTEM_TABLE))
+        if (ksm.name.equalsIgnoreCase(Table.SYSTEM_KS))
             throw new InvalidRequestException("Cannot alter system keyspace");
 
-        try
-        {
-            attrs.validate();
+        attrs.validate();
 
-            if (attrs.getReplicationStrategyClass() == null && !attrs.getReplicationOptions().isEmpty())
-            {
-                throw new InvalidRequestException("Missing replication strategy class");
-            }
-            else if (attrs.getReplicationStrategyClass() != null)
-            {
-                // trial run to let ARS validate class + per-class options
-                AbstractReplicationStrategy.createReplicationStrategy(name,
-                                                                      AbstractReplicationStrategy.getClass(attrs.getReplicationStrategyClass()),
-                                                                      StorageService.instance.getTokenMetadata(),
-                                                                      DatabaseDescriptor.getEndpointSnitch(),
-                                                                      attrs.getReplicationOptions());
-            }
-        }
-        catch (ConfigurationException e)
+        if (attrs.getReplicationStrategyClass() == null && !attrs.getReplicationOptions().isEmpty())
         {
-            throw new InvalidRequestException(e.getMessage());
+            throw new ConfigurationException("Missing replication strategy class");
+        }
+        else if (attrs.getReplicationStrategyClass() != null)
+        {
+            // trial run to let ARS validate class + per-class options
+            AbstractReplicationStrategy.createReplicationStrategy(name,
+                                                                  AbstractReplicationStrategy.getClass(attrs.getReplicationStrategyClass()),
+                                                                  StorageService.instance.getTokenMetadata(),
+                                                                  DatabaseDescriptor.getEndpointSnitch(),
+                                                                  attrs.getReplicationOptions());
         }
     }
 
-    public void announceMigration() throws InvalidRequestException, ConfigurationException
+    public void announceMigration() throws RequestValidationException
     {
         KSMetaData ksm = Schema.instance.getKSMetaData(name);
         // In the (very) unlikely case the keyspace was dropped since validate()
@@ -91,5 +89,10 @@ public class AlterKeyspaceStatement extends SchemaAlteringStatement
             throw new InvalidRequestException("Unknown keyspace " + name);
 
         MigrationManager.announceKeyspaceUpdate(attrs.asKSMetadataUpdate(ksm));
+    }
+
+    public ResultMessage.SchemaChange.Change changeType()
+    {
+        return ResultMessage.SchemaChange.Change.UPDATED;
     }
 }

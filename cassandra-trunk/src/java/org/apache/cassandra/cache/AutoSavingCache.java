@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,22 +7,19 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cache;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -33,16 +30,18 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.config.CFMetaData;
 import org.apache.cassandra.config.DatabaseDescriptor;
+import org.apache.cassandra.db.Table;
 import org.apache.cassandra.db.compaction.CompactionInfo;
 import org.apache.cassandra.db.compaction.CompactionManager;
 import org.apache.cassandra.db.compaction.OperationType;
-import org.apache.cassandra.db.DecoratedKey;
-import org.apache.cassandra.dht.IPartitioner;
+import org.apache.cassandra.db.ColumnFamilyStore;
+import org.apache.cassandra.io.FSWriteError;
 import org.apache.cassandra.io.util.FileUtils;
+import org.apache.cassandra.io.util.LengthAvailableInputStream;
 import org.apache.cassandra.io.util.SequentialWriter;
 import org.apache.cassandra.service.CacheService;
 import org.apache.cassandra.service.StorageService;
-import org.apache.cassandra.utils.WrappedRunnable;
+import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.utils.Pair;
 
 public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K, V>
@@ -55,15 +54,19 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
     protected volatile ScheduledFuture<?> saveTask;
     protected final CacheService.CacheType cacheType;
 
-    public AutoSavingCache(ICache<K, V> cache, CacheService.CacheType cacheType)
+    private CacheSerializer<K, V> cacheLoader;
+    private static final String CURRENT_VERSION = "b";
+
+    public AutoSavingCache(ICache<K, V> cache, CacheService.CacheType cacheType, CacheSerializer<K, V> cacheloader)
     {
-        super(cache);
+        super(cacheType.toString(), cache);
         this.cacheType = cacheType;
+        this.cacheLoader = cacheloader;
     }
 
-    public File getCachePath(String ksName, String cfName)
+    public File getCachePath(String ksName, String cfName, String version)
     {
-        return DatabaseDescriptor.getSerializedCachePath(ksName, cfName, cacheType);
+        return DatabaseDescriptor.getSerializedCachePath(ksName, cfName, cacheType, version);
     }
 
     public Writer getWriter(int keysToSave)
@@ -80,9 +83,9 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
         }
         if (savePeriodInSeconds > 0)
         {
-            Runnable runnable = new WrappedRunnable()
+            Runnable runnable = new Runnable()
             {
-                public void runMayThrow()
+                public void run()
                 {
                     submitWrite(keysToSave);
                 }
@@ -94,52 +97,78 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
         }
     }
 
-    public Set<DecoratedKey> readSaved(String ksName, String cfName, IPartitioner partitioner)
+    public int loadSaved(ColumnFamilyStore cfs)
     {
-        File path = getCachePath(ksName, cfName);
-        Set<DecoratedKey> keys = new TreeSet<DecoratedKey>();
+        int count = 0;
+        long start = System.currentTimeMillis();
+
+        // old cache format that only saves keys
+        File path = getCachePath(cfs.table.getName(), cfs.name, null);
         if (path.exists())
         {
             DataInputStream in = null;
             try
             {
-                long start = System.currentTimeMillis();
-
                 logger.info(String.format("reading saved cache %s", path));
-                in = new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
+                in = new DataInputStream(new LengthAvailableInputStream(new BufferedInputStream(new FileInputStream(path)), path.length()));
+                Set<ByteBuffer> keys = new HashSet<ByteBuffer>();
                 while (in.available() > 0)
                 {
-                    int size = in.readInt();
-                    byte[] bytes = new byte[size];
-                    in.readFully(bytes);
-                    ByteBuffer buffer = ByteBuffer.wrap(bytes);
-                    DecoratedKey key;
-                    try
-                    {
-                        key = partitioner.decorateKey(buffer);
-                    }
-                    catch (Exception e)
-                    {
-                        logger.info(String.format("unable to read entry #%s from saved cache %s; skipping remaining entries",
-                                keys.size(), path.getAbsolutePath()), e);
-                        break;
-                    }
-                    keys.add(key);
+                    keys.add(ByteBufferUtil.readWithLength(in));
+                    count++;
                 }
-                if (logger.isDebugEnabled())
-                    logger.debug(String.format("completed reading (%d ms; %d keys) saved cache %s",
-                            System.currentTimeMillis() - start, keys.size(), path));
+                cacheLoader.load(keys, cfs);
             }
             catch (Exception e)
             {
-                logger.warn(String.format("error reading saved cache %s", path.getAbsolutePath()), e);
+                logger.debug(String.format("harmless error reading saved cache %s fully, keys loaded so far: %d", path.getAbsolutePath(), count), e);
+                return count;
             }
             finally
             {
                 FileUtils.closeQuietly(in);
             }
         }
-        return keys;
+
+        // modern format, allows both key and value (so key cache load can be purely sequential)
+        path = getCachePath(cfs.table.getName(), cfs.name, CURRENT_VERSION);
+        if (path.exists())
+        {
+            DataInputStream in = null;
+            try
+            {
+                logger.info(String.format("reading saved cache %s", path));
+                in = new DataInputStream(new LengthAvailableInputStream(new BufferedInputStream(new FileInputStream(path)), path.length()));
+                List<Future<Pair<K, V>>> futures = new ArrayList<Future<Pair<K, V>>>();
+                while (in.available() > 0)
+                {
+                    Future<Pair<K, V>> entry = cacheLoader.deserialize(in, cfs);
+                    // Key cache entry can return null, if the SSTable doesn't exist.
+                    if (entry == null)
+                        continue;
+                    futures.add(entry);
+                    count++;
+                }
+
+                for (Future<Pair<K, V>> future : futures)
+                {
+                    Pair<K, V> entry = future.get();
+                    put(entry.left, entry.right);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.debug(String.format("harmless error reading saved cache %s", path.getAbsolutePath()), e);
+            }
+            finally
+            {
+                FileUtils.closeQuietly(in);
+            }
+        }
+        if (logger.isDebugEnabled())
+            logger.debug(String.format("completed reading (%d ms; %d keys) saved cache %s",
+                    System.currentTimeMillis() - start, count, path));
+        return count;
     }
 
     public Future<?> submitWrite(int keysToSave)
@@ -160,22 +189,11 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
         }
     }
 
-    public int estimateSizeToSave(Set<K> keys)
-    {
-        int bytes = 0;
-
-        for (K key : keys)
-            bytes += key.serializedSize();
-
-        return bytes;
-    }
-
     public class Writer extends CompactionInfo.Holder
     {
         private final Set<K> keys;
         private final CompactionInfo info;
-        private final long estimatedTotalBytes;
-        private long bytesWritten;
+        private long keysWritten;
 
         protected Writer(int keysToSave)
         {
@@ -183,9 +201,6 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
                 keys = getKeySet();
             else
                 keys = hotKeySet(keysToSave);
-
-            // an approximation -- the keyset can change while saving
-            estimatedTotalBytes = estimateSizeToSave(keys);
 
             OperationType type;
             if (cacheType == CacheService.CacheType.KEY_CACHE)
@@ -195,10 +210,11 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
             else
                 type = OperationType.UNKNOWN;
 
-            info = new CompactionInfo(new CFMetaData("system", cacheType.toString(), null, null, null),
+            info = new CompactionInfo(new CFMetaData(Table.SYSTEM_KS, cacheType.toString(), null, null, null),
                                       type,
                                       0,
-                                      estimatedTotalBytes);
+                                      keys.size(),
+                                      "keys");
         }
 
         public CacheService.CacheType cacheType()
@@ -208,18 +224,16 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
 
         public CompactionInfo getCompactionInfo()
         {
-            long bytesWritten = this.bytesWritten;
-            // keyset can change in size, thus totalBytes can too
-            return info.forProgress(bytesWritten,
-                                    Math.max(bytesWritten, estimatedTotalBytes));
+            // keyset can change in size, thus total can too
+            return info.forProgress(keysWritten, Math.max(keysWritten, keys.size()));
         }
 
-        public void saveCache() throws IOException
+        public void saveCache()
         {
             logger.debug("Deleting old {} files.", cacheType);
             deleteOldCacheFiles();
 
-            if (keys.size() == 0 || estimatedTotalBytes == 0)
+            if (keys.isEmpty())
             {
                 logger.debug("Skipping {} save, cache is empty.", cacheType);
                 return;
@@ -231,19 +245,26 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
 
             try
             {
-                for (CacheKey key : keys)
+                for (K key : keys)
                 {
                     Pair<String, String> path = key.getPathInfo();
                     SequentialWriter writer = writers.get(path);
-
                     if (writer == null)
                     {
                         writer = tempCacheFile(path);
                         writers.put(path, writer);
                     }
 
-                    key.write(writer.stream);
-                    bytesWritten += key.serializedSize();
+                    try
+                    {
+                        cacheLoader.serialize(key, writer.stream);
+                    }
+                    catch (IOException e)
+                    {
+                        throw new FSWriteError(e, writer.getPath());
+                    }
+
+                    keysWritten++;
                 }
             }
             finally
@@ -258,7 +279,7 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
                 SequentialWriter writer = info.getValue();
 
                 File tmpFile = new File(writer.getPath());
-                File cacheFile = getCachePath(path.left, path.right);
+                File cacheFile = getCachePath(path.left, path.right, CURRENT_VERSION);
 
                 cacheFile.delete(); // ignore error if it didn't exist
                 if (!tmpFile.renameTo(cacheFile))
@@ -268,14 +289,12 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
             logger.info(String.format("Saved %s (%d items) in %d ms", cacheType, keys.size(), System.currentTimeMillis() - start));
         }
 
-        private SequentialWriter tempCacheFile(Pair<String, String> pathInfo) throws IOException
+        private SequentialWriter tempCacheFile(Pair<String, String> pathInfo)
         {
-            File path = getCachePath(pathInfo.left, pathInfo.right);
-            File tmpFile = File.createTempFile(path.getName(), null, path.getParentFile());
-
+            File path = getCachePath(pathInfo.left, pathInfo.right, CURRENT_VERSION);
+            File tmpFile = FileUtils.createTempFile(path.getName(), null, path.getParentFile());
             return SequentialWriter.open(tmpFile, true);
         }
-
 
         private void deleteOldCacheFiles()
         {
@@ -290,8 +309,24 @@ public class AutoSavingCache<K extends CacheKey, V> extends InstrumentingCache<K
                         if (!file.delete())
                             logger.warn("Failed to delete {}", file.getAbsolutePath());
                     }
+
+                    if (file.isFile() && file.getName().endsWith(CURRENT_VERSION + ".db"))
+                    {
+                        if (!file.delete())
+                            logger.warn("Failed to delete {}", file.getAbsolutePath());
+                    }
                 }
             }
         }
+    }
+
+    public interface CacheSerializer<K extends CacheKey, V>
+    {
+        void serialize(K key, DataOutput out) throws IOException;
+
+        Future<Pair<K, V>> deserialize(DataInputStream in, ColumnFamilyStore cfs) throws IOException;
+
+        @Deprecated
+        void load(Set<ByteBuffer> buffer, ColumnFamilyStore cfs);
     }
 }

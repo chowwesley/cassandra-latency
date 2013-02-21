@@ -1,6 +1,4 @@
-package org.apache.cassandra.db.filter;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,17 +7,15 @@ package org.apache.cassandra.db.filter;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.db.filter;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -30,8 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.config.DatabaseDescriptor;
+import org.apache.cassandra.cql3.ColumnNameBuilder;
 import org.apache.cassandra.db.*;
-import org.apache.cassandra.db.columniterator.IColumnIterator;
+import org.apache.cassandra.db.marshal.CompositeType;
+import org.apache.cassandra.db.columniterator.OnDiskAtomIterator;
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
 import org.apache.cassandra.utils.ByteBufferUtil;
@@ -41,51 +39,53 @@ import org.apache.cassandra.utils.ByteBufferUtil;
  */
 public abstract class ExtendedFilter
 {
-    private static Logger logger = LoggerFactory.getLogger(ExtendedFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExtendedFilter.class);
 
     public final ColumnFamilyStore cfs;
-    protected final IFilter originalFilter;
+    protected final IDiskAtomFilter originalFilter;
     private final int maxResults;
-    private final boolean maxIsColumns;
+    private final boolean countCQL3Rows;
     private final boolean isPaging;
 
-    public static ExtendedFilter create(ColumnFamilyStore cfs, IFilter filter, List<IndexExpression> clause, int maxResults, boolean maxIsColumns, boolean isPaging)
+    public static ExtendedFilter create(ColumnFamilyStore cfs, IDiskAtomFilter filter, List<IndexExpression> clause, int maxResults, boolean countCQL3Rows, boolean isPaging)
     {
         if (clause == null || clause.isEmpty())
         {
-            return new EmptyClauseFilter(cfs, filter, maxResults, maxIsColumns, isPaging);
+            return new EmptyClauseFilter(cfs, filter, maxResults, countCQL3Rows, isPaging);
         }
         else
         {
             if (isPaging)
                 throw new IllegalArgumentException("Cross-row paging is not supported along with index clauses");
-            return new FilterWithClauses(cfs, filter, clause, maxResults, maxIsColumns);
+            return cfs.getComparator() instanceof CompositeType
+                 ? new FilterWithCompositeClauses(cfs, filter, clause, maxResults, countCQL3Rows)
+                 : new FilterWithClauses(cfs, filter, clause, maxResults, countCQL3Rows);
         }
     }
 
-    protected ExtendedFilter(ColumnFamilyStore cfs, IFilter filter, int maxResults, boolean maxIsColumns, boolean isPaging)
+    protected ExtendedFilter(ColumnFamilyStore cfs, IDiskAtomFilter filter, int maxResults, boolean countCQL3Rows, boolean isPaging)
     {
         assert cfs != null;
         assert filter != null;
         this.cfs = cfs;
         this.originalFilter = filter;
         this.maxResults = maxResults;
-        this.maxIsColumns = maxIsColumns;
+        this.countCQL3Rows = countCQL3Rows;
         this.isPaging = isPaging;
-        if (maxIsColumns)
+        if (countCQL3Rows)
             originalFilter.updateColumnsLimit(maxResults);
-        if (isPaging && (!(originalFilter instanceof SliceQueryFilter) || ((SliceQueryFilter)originalFilter).finish.remaining() != 0))
+        if (isPaging && (!(originalFilter instanceof SliceQueryFilter) || ((SliceQueryFilter)originalFilter).finish().remaining() != 0))
             throw new IllegalArgumentException("Cross-row paging is only supported for SliceQueryFilter having an empty finish column");
     }
 
     public int maxRows()
     {
-        return maxIsColumns ? Integer.MAX_VALUE : maxResults;
+        return countCQL3Rows ? Integer.MAX_VALUE : maxResults;
     }
 
     public int maxColumns()
     {
-        return maxIsColumns ? maxResults : Integer.MAX_VALUE;
+        return countCQL3Rows ? maxResults : Integer.MAX_VALUE;
     }
 
     /**
@@ -96,17 +96,30 @@ public abstract class ExtendedFilter
     {
         // As soon as we'd done our first call, we want to reset the start column if we're paging
         if (isPaging)
-            ((SliceQueryFilter)initialFilter()).start = ByteBufferUtil.EMPTY_BYTE_BUFFER;
+            ((SliceQueryFilter)initialFilter()).setStart(ByteBufferUtil.EMPTY_BYTE_BUFFER);
 
-        if (!maxIsColumns)
+        if (!countCQL3Rows)
             return;
 
         int remaining = maxResults - currentColumnsCount;
         initialFilter().updateColumnsLimit(remaining);
     }
 
+    public int lastCounted(ColumnFamily data)
+    {
+        if (initialFilter() instanceof SliceQueryFilter)
+            return ((SliceQueryFilter)initialFilter()).lastCounted();
+        else
+            return initialFilter().getLiveCount(data);
+    }
+
     /** The initial filter we'll do our first slice with (either the original or a superset of it) */
-    public abstract IFilter initialFilter();
+    public abstract IDiskAtomFilter initialFilter();
+
+    public IDiskAtomFilter originalFilter()
+    {
+        return originalFilter;
+    }
 
     public abstract List<IndexExpression> getClause();
 
@@ -115,7 +128,7 @@ public abstract class ExtendedFilter
      * @param data the data retrieve by the initial filter
      * @return a filter or null if there can't be any columns we missed with our initial filter (typically if it was a names query, or a slice of the entire row)
      */
-    public abstract IFilter getExtraFilter(ColumnFamily data);
+    public abstract IDiskAtomFilter getExtraFilter(ColumnFamily data);
 
     /**
      * @return data pruned down to the columns originally asked for
@@ -126,7 +139,7 @@ public abstract class ExtendedFilter
      * @return true if the provided data satisfies all the expressions from
      * the clause of this filter.
      */
-    public abstract boolean isSatisfiedBy(ColumnFamily data);
+    public abstract boolean isSatisfiedBy(ColumnFamily data, ColumnNameBuilder builder);
 
     public static boolean satisfies(int comparison, IndexOperator op)
     {
@@ -150,18 +163,18 @@ public abstract class ExtendedFilter
     private static class FilterWithClauses extends ExtendedFilter
     {
         protected final List<IndexExpression> clause;
-        protected final IFilter initialFilter;
+        protected final IDiskAtomFilter initialFilter;
 
-        public FilterWithClauses(ColumnFamilyStore cfs, IFilter filter, List<IndexExpression> clause, int maxResults, boolean maxIsColumns)
+        public FilterWithClauses(ColumnFamilyStore cfs, IDiskAtomFilter filter, List<IndexExpression> clause, int maxResults, boolean countCQL3Rows)
         {
-            super(cfs, filter, maxResults, maxIsColumns, false);
+            super(cfs, filter, maxResults, countCQL3Rows, false);
             assert clause != null;
             this.clause = clause;
             this.initialFilter = computeInitialFilter();
         }
 
         /** Sets up the initial filter. */
-        private IFilter computeInitialFilter()
+        protected IDiskAtomFilter computeInitialFilter()
         {
             if (originalFilter instanceof SliceQueryFilter)
             {
@@ -169,7 +182,7 @@ public abstract class ExtendedFilter
                 // otherwise, the extraFilter (lazily created) will fetch by name the columns referenced by the additional expressions.
                 if (cfs.getMaxRowSize() < DatabaseDescriptor.getColumnIndexSize())
                 {
-                    logger.debug("Expanding slice filter to entire row to cover additional expressions");
+                    logger.trace("Expanding slice filter to entire row to cover additional expressions");
                     return new SliceQueryFilter(ByteBufferUtil.EMPTY_BYTE_BUFFER,
                                                 ByteBufferUtil.EMPTY_BYTE_BUFFER,
                                                 ((SliceQueryFilter) originalFilter).reversed,
@@ -178,23 +191,23 @@ public abstract class ExtendedFilter
             }
             else
             {
-                logger.debug("adding columns to original Filter to cover additional expressions");
+                logger.trace("adding columns to original Filter to cover additional expressions");
                 assert originalFilter instanceof NamesQueryFilter;
-                SortedSet<ByteBuffer> columns = new TreeSet<ByteBuffer>(cfs.getComparator());
-                for (IndexExpression expr : clause)
+                if (!clause.isEmpty())
                 {
-                    columns.add(expr.column_name);
-                }
-                if (columns.size() > 0)
-                {
+                    SortedSet<ByteBuffer> columns = new TreeSet<ByteBuffer>(cfs.getComparator());
+                    for (IndexExpression expr : clause)
+                    {
+                        columns.add(expr.column_name);
+                    }
                     columns.addAll(((NamesQueryFilter) originalFilter).columns);
-                    return new NamesQueryFilter(columns);
+                    return ((NamesQueryFilter)originalFilter).withUpdatedColumns(columns);
                 }
             }
             return originalFilter;
         }
 
-        public IFilter initialFilter()
+        public IDiskAtomFilter initialFilter()
         {
             return initialFilter;
         }
@@ -216,8 +229,9 @@ public abstract class ExtendedFilter
 
             SliceQueryFilter filter = (SliceQueryFilter)originalFilter;
             // Check if we've fetch the whole row
-            if (filter.start.equals(ByteBufferUtil.EMPTY_BYTE_BUFFER)
-             && filter.finish.equals(ByteBufferUtil.EMPTY_BYTE_BUFFER)
+            if (filter.slices.length == 1
+             && filter.start().equals(ByteBufferUtil.EMPTY_BYTE_BUFFER)
+             && filter.finish().equals(ByteBufferUtil.EMPTY_BYTE_BUFFER)
              && filter.count == Integer.MAX_VALUE)
                 return false;
 
@@ -232,7 +246,7 @@ public abstract class ExtendedFilter
             return false;
         }
 
-        public IFilter getExtraFilter(ColumnFamily data)
+        public IDiskAtomFilter getExtraFilter(ColumnFamily data)
         {
             if (!needsExtraQuery(data))
                 return null;
@@ -254,19 +268,20 @@ public abstract class ExtendedFilter
             if (initialFilter == originalFilter)
                 return data;
             ColumnFamily pruned = data.cloneMeShallow();
-            IColumnIterator iter = originalFilter.getMemtableColumnIterator(data, null);
-            originalFilter.collectReducedColumns(pruned, iter, cfs.gcBefore());
+            OnDiskAtomIterator iter = originalFilter.getMemtableColumnIterator(data, null);
+            originalFilter.collectReducedColumns(pruned, QueryFilter.gatherTombstones(pruned, iter), cfs.gcBefore());
             return pruned;
         }
 
-        public boolean isSatisfiedBy(ColumnFamily data)
+        public boolean isSatisfiedBy(ColumnFamily data, ColumnNameBuilder builder)
         {
             // We enforces even the primary clause because reads are not synchronized with writes and it is thus possible to have a race
             // where the index returned a row which doesn't have the primary column when we actually read it
             for (IndexExpression expression : clause)
             {
                 // check column data vs expression
-                IColumn column = data.getColumn(expression.column_name);
+                ByteBuffer colName = builder == null ? expression.column_name : builder.copy().add(expression.column_name).build();
+                Column column = data.getColumn(colName);
                 if (column == null)
                     return false;
                 int v = data.metadata().getValueValidator(expression.column_name).compare(column.value(), expression.value);
@@ -277,14 +292,38 @@ public abstract class ExtendedFilter
         }
     }
 
-    private static class EmptyClauseFilter extends ExtendedFilter
+    private static class FilterWithCompositeClauses extends FilterWithClauses
     {
-        public EmptyClauseFilter(ColumnFamilyStore cfs, IFilter filter, int maxResults, boolean maxIsColumns, boolean isPaging)
+        public FilterWithCompositeClauses(ColumnFamilyStore cfs, IDiskAtomFilter filter, List<IndexExpression> clause, int maxResults, boolean countCQL3Rows)
         {
-            super(cfs, filter, maxResults, maxIsColumns, isPaging);
+            super(cfs, filter, clause, maxResults, countCQL3Rows);
         }
 
-        public IFilter initialFilter()
+        /*
+         * For composites, the index name is not a valid column name (it's only
+         * one of the component), which means we should not do the
+         * NamesQueryFilter part of FilterWithClauses in particular.
+         * Besides, CompositesSearcher doesn't really use the initial filter
+         * expect to know the limit set by the user, so create a fake filter
+         * with only the count information.
+         */
+        protected IDiskAtomFilter computeInitialFilter()
+        {
+            int limit = originalFilter instanceof SliceQueryFilter
+                      ? ((SliceQueryFilter)originalFilter).count
+                      : Integer.MAX_VALUE;
+            return new SliceQueryFilter(ColumnSlice.ALL_COLUMNS_ARRAY, false, limit);
+        }
+    }
+
+    private static class EmptyClauseFilter extends ExtendedFilter
+    {
+        public EmptyClauseFilter(ColumnFamilyStore cfs, IDiskAtomFilter filter, int maxResults, boolean countCQL3Rows, boolean isPaging)
+        {
+            super(cfs, filter, maxResults, countCQL3Rows, isPaging);
+        }
+
+        public IDiskAtomFilter initialFilter()
         {
             return originalFilter;
         }
@@ -294,7 +333,7 @@ public abstract class ExtendedFilter
             throw new UnsupportedOperationException();
         }
 
-        public IFilter getExtraFilter(ColumnFamily data)
+        public IDiskAtomFilter getExtraFilter(ColumnFamily data)
         {
             return null;
         }
@@ -304,7 +343,7 @@ public abstract class ExtendedFilter
             return data;
         }
 
-        public boolean isSatisfiedBy(ColumnFamily data)
+        public boolean isSatisfiedBy(ColumnFamily data, ColumnNameBuilder builder)
         {
             return true;
         }

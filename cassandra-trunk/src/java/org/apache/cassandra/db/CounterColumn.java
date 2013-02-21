@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.net.InetAddress;
 import java.security.MessageDigest;
-import java.util.concurrent.TimeoutException;
-import java.util.Collection;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,13 +34,12 @@ import org.apache.cassandra.db.context.CounterContext;
 import org.apache.cassandra.db.context.IContext.ContextRelationship;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.db.marshal.MarshalException;
-import org.apache.cassandra.io.IColumnSerializer;
+import org.apache.cassandra.exceptions.OverloadedException;
+import org.apache.cassandra.exceptions.RequestExecutionException;
 import org.apache.cassandra.io.util.DataOutputBuffer;
 import org.apache.cassandra.utils.Allocator;
-import org.apache.cassandra.service.IWriteResponseHandler;
+import org.apache.cassandra.service.AbstractWriteResponseHandler;
 import org.apache.cassandra.service.StorageProxy;
-import org.apache.cassandra.thrift.ConsistencyLevel;
-import org.apache.cassandra.thrift.UnavailableException;
 import org.apache.cassandra.utils.*;
 
 /**
@@ -75,13 +74,19 @@ public class CounterColumn extends Column
         this.timestampOfLastDelete = timestampOfLastDelete;
     }
 
-    public static CounterColumn create(ByteBuffer name, ByteBuffer value, long timestamp, long timestampOfLastDelete, IColumnSerializer.Flag flag)
+    public static CounterColumn create(ByteBuffer name, ByteBuffer value, long timestamp, long timestampOfLastDelete, ColumnSerializer.Flag flag)
     {
         // #elt being negative means we have to clean delta
         short count = value.getShort(value.position());
-        if (flag == IColumnSerializer.Flag.FROM_REMOTE || (flag == IColumnSerializer.Flag.LOCAL && count < 0))
+        if (flag == ColumnSerializer.Flag.FROM_REMOTE || (flag == ColumnSerializer.Flag.LOCAL && count < 0))
             value = CounterContext.instance().clearAllDelta(value);
         return new CounterColumn(name, value, timestamp, timestampOfLastDelete);
+    }
+
+    @Override
+    public Column withUpdatedName(ByteBuffer newName)
+    {
+        return new CounterColumn(newName, value, timestamp, timestampOfLastDelete);
     }
 
     public long timestampOfLastDelete()
@@ -95,22 +100,36 @@ public class CounterColumn extends Column
     }
 
     @Override
-    public int size()
+    public int dataSize()
     {
         /*
          * A counter column adds to a Column :
          *  + 8 bytes for timestampOfLastDelete
          */
-        return super.size() + DBConstants.tsSize;
+        return super.dataSize() + TypeSizes.NATIVE.sizeof(timestampOfLastDelete);
     }
 
     @Override
-    public IColumn diff(IColumn column)
+    public int serializedSize(TypeSizes typeSizes)
     {
-        assert column instanceof CounterColumn : "Wrong class type.";
+        return super.serializedSize(typeSizes) + typeSizes.sizeof(timestampOfLastDelete);
+    }
+
+    @Override
+    public Column diff(Column column)
+    {
+        assert (column instanceof CounterColumn) || (column instanceof DeletedColumn) : "Wrong class type: " + column.getClass();
 
         if (timestamp() < column.timestamp())
             return column;
+
+        // Note that if at that point, column can't be a tombstone. Indeed,
+        // column is the result of merging us with other nodes results, and
+        // merging a CounterColumn with a tombstone never return a tombstone
+        // unless that tombstone timestamp is greater that the CounterColumn
+        // one.
+        assert !(column instanceof DeletedColumn) : "Wrong class type: " + column.getClass();
+
         if (timestampOfLastDelete() < ((CounterColumn)column).timestampOfLastDelete())
             return column;
         ContextRelationship rel = contextManager.diff(column.value(), value());
@@ -146,9 +165,9 @@ public class CounterColumn extends Column
     }
 
     @Override
-    public IColumn reconcile(IColumn column, Allocator allocator)
+    public Column reconcile(Column column, Allocator allocator)
     {
-        assert (column instanceof CounterColumn) || (column instanceof DeletedColumn) : "Wrong class type.";
+        assert (column instanceof CounterColumn) || (column instanceof DeletedColumn) : "Wrong class type: " + column.getClass();
 
         if (column.isMarkedForDelete()) // live + tombstone: track last tombstone
         {
@@ -194,13 +213,13 @@ public class CounterColumn extends Column
     }
 
     @Override
-    public IColumn localCopy(ColumnFamilyStore cfs)
+    public Column localCopy(ColumnFamilyStore cfs)
     {
         return new CounterColumn(cfs.internOrCopy(name, HeapAllocator.instance), ByteBufferUtil.clone(value), timestamp, timestampOfLastDelete);
     }
 
     @Override
-    public IColumn localCopy(ColumnFamilyStore cfs, Allocator allocator)
+    public Column localCopy(ColumnFamilyStore cfs, Allocator allocator)
     {
         return new CounterColumn(cfs.internOrCopy(name, allocator), allocator.clone(value), timestamp, timestampOfLastDelete);
     }
@@ -237,16 +256,16 @@ public class CounterColumn extends Column
     }
 
     /**
-     * Check if a given nodeId is found in this CounterColumn context.
+     * Check if a given counterId is found in this CounterColumn context.
      */
-    public boolean hasNodeId(NodeId id)
+    public boolean hasCounterId(CounterId id)
     {
-        return contextManager.hasNodeId(value(), id);
+        return contextManager.hasCounterId(value(), id);
     }
 
     private CounterColumn computeOldShardMerger(int mergeBefore)
     {
-        ByteBuffer bb = contextManager.computeOldShardMerger(value(), NodeId.getOldLocalNodeIds(), mergeBefore);
+        ByteBuffer bb = contextManager.computeOldShardMerger(value(), CounterId.getOldLocalCounterIds(), mergeBefore);
         if (bb == null)
             return null;
         else
@@ -285,52 +304,25 @@ public class CounterColumn extends Column
     public static void mergeAndRemoveOldShards(DecoratedKey key, ColumnFamily cf, int gcBefore, int mergeBefore, boolean sendToOtherReplica)
     {
         ColumnFamily remoteMerger = null;
-        if (!cf.isSuper())
+
+        for (Column c : cf)
         {
-            for (IColumn c : cf)
+            if (!(c instanceof CounterColumn))
+                continue;
+            CounterColumn cc = (CounterColumn) c;
+            CounterColumn shardMerger = cc.computeOldShardMerger(mergeBefore);
+            CounterColumn merged = cc;
+            if (shardMerger != null)
             {
-                if (!(c instanceof CounterColumn))
-                    continue;
-                CounterColumn cc = (CounterColumn) c;
-                CounterColumn shardMerger = cc.computeOldShardMerger(mergeBefore);
-                CounterColumn merged = cc;
-                if (shardMerger != null)
-                {
-                    merged = (CounterColumn) cc.reconcile(shardMerger);
-                    if (remoteMerger == null)
-                        remoteMerger = cf.cloneMeShallow();
-                    remoteMerger.addColumn(merged);
-                }
-                CounterColumn cleaned = merged.removeOldShards(gcBefore);
-                if (cleaned != cc)
-                {
-                    cf.replace(cc, cleaned);
-                }
+                merged = (CounterColumn) cc.reconcile(shardMerger);
+                if (remoteMerger == null)
+                    remoteMerger = cf.cloneMeShallow();
+                remoteMerger.addColumn(merged);
             }
-        }
-        else
-        {
-            for (IColumn col : cf)
+            CounterColumn cleaned = merged.removeOldShards(gcBefore);
+            if (cleaned != cc)
             {
-                SuperColumn c = (SuperColumn)col;
-                for (IColumn subColumn : c.getSubColumns())
-                {
-                    if (!(subColumn instanceof CounterColumn))
-                        continue;
-                    CounterColumn cc = (CounterColumn) subColumn;
-                    CounterColumn shardMerger = cc.computeOldShardMerger(mergeBefore);
-                    CounterColumn merged = cc;
-                    if (shardMerger != null)
-                    {
-                        merged = (CounterColumn) cc.reconcile(shardMerger);
-                        if (remoteMerger == null)
-                            remoteMerger = cf.cloneMeShallow();
-                        remoteMerger.addColumn(c.name(), merged);
-                    }
-                    CounterColumn cleaned = merged.removeOldShards(gcBefore);
-                    if (cleaned != subColumn)
-                        c.replace(subColumn, cleaned);
-                }
+                cf.replace(cc, cleaned);
             }
         }
 
@@ -347,12 +339,12 @@ public class CounterColumn extends Column
         }
     }
 
-    public IColumn markDeltaToBeCleared()
+    public Column markDeltaToBeCleared()
     {
         return new CounterColumn(name, contextManager.markDeltaToBeCleared(value), timestamp, timestampOfLastDelete);
     }
 
-    private static void sendToOtherReplica(DecoratedKey key, ColumnFamily cf) throws UnavailableException, TimeoutException, IOException
+    private static void sendToOtherReplica(DecoratedKey key, ColumnFamily cf) throws RequestExecutionException, IOException
     {
         RowMutation rm = new RowMutation(cf.metadata().ksName, key.key);
         rm.add(cf);
@@ -362,15 +354,16 @@ public class CounterColumn extends Column
 
         StorageProxy.performWrite(rm, ConsistencyLevel.ANY, localDataCenter, new StorageProxy.WritePerformer()
         {
-            public void apply(IMutation mutation, Collection<InetAddress> targets, IWriteResponseHandler responseHandler, String localDataCenter, ConsistencyLevel consistency_level) throws IOException, TimeoutException
+            public void apply(IMutation mutation, Iterable<InetAddress> targets, AbstractWriteResponseHandler responseHandler, String localDataCenter, ConsistencyLevel consistency_level)
+            throws IOException, OverloadedException
             {
                 // We should only send to the remote replica, not the local one
-                targets.remove(local);
+                Set<InetAddress> remotes = Sets.difference(ImmutableSet.copyOf(targets), ImmutableSet.of(local));
                 // Fake local response to be a good lad but we won't wait on the responseHandler
                 responseHandler.response(null);
-                StorageProxy.sendToHintedEndpoints((RowMutation) mutation, targets, responseHandler, localDataCenter, consistency_level);
+                StorageProxy.sendToHintedEndpoints((RowMutation) mutation, remotes, responseHandler, localDataCenter, consistency_level);
             }
-        }, null);
+        }, null, WriteType.SIMPLE);
 
         // we don't wait for answers
     }

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.service.StorageService;
 import org.junit.Test;
 
@@ -37,7 +37,8 @@ public class DynamicEndpointSnitchTest
         // do this because SS needs to be initialized before DES can work properly.
         StorageService.instance.initClient(0);
         int sleeptime = 150;
-        DynamicEndpointSnitch dsnitch = new DynamicEndpointSnitch(new SimpleSnitch());
+        SimpleSnitch ss = new SimpleSnitch();
+        DynamicEndpointSnitch dsnitch = new DynamicEndpointSnitch(ss, String.valueOf(ss.hashCode()));
         InetAddress self = FBUtilities.getBroadcastAddress();
         ArrayList<InetAddress> order = new ArrayList<InetAddress>();
         InetAddress host1 = InetAddress.getByName("127.0.0.1");
@@ -47,9 +48,9 @@ public class DynamicEndpointSnitchTest
         // first, make all hosts equal
         for (int i = 0; i < 5; i++)
         {
-            dsnitch.receiveTiming(host1, 1.0);
-            dsnitch.receiveTiming(host2, 1.0);
-            dsnitch.receiveTiming(host3, 1.0);
+            dsnitch.receiveTiming(host1, 1L);
+            dsnitch.receiveTiming(host2, 1L);
+            dsnitch.receiveTiming(host3, 1L);
         }
 
         Thread.sleep(sleeptime);
@@ -60,7 +61,9 @@ public class DynamicEndpointSnitchTest
         assert dsnitch.getSortedListByProximity(self, order).equals(order);
 
         // make host1 a little worse
-        dsnitch.receiveTiming(host1, 2.0);
+        dsnitch.receiveTiming(host1, 2L);
+        dsnitch.receiveTiming(host2, 1L);
+        dsnitch.receiveTiming(host3, 1L);
         Thread.sleep(sleeptime);
 
         order.clear();
@@ -70,7 +73,9 @@ public class DynamicEndpointSnitchTest
         assert dsnitch.getSortedListByProximity(self, order).equals(order);
 
         // make host2 as bad as host1
-        dsnitch.receiveTiming(host2, 2.0);
+        dsnitch.receiveTiming(host2, 2L);
+        dsnitch.receiveTiming(host1, 1L);
+        dsnitch.receiveTiming(host3, 1L);
         Thread.sleep(sleeptime);
 
         order.clear();
@@ -82,7 +87,9 @@ public class DynamicEndpointSnitchTest
         // make host3 the worst
         for (int i = 0; i < 2; i++)
         {
-            dsnitch.receiveTiming(host3, 2.0);
+            dsnitch.receiveTiming(host1, 1L);
+            dsnitch.receiveTiming(host2, 1L);
+            dsnitch.receiveTiming(host3, 2L);
         }
         Thread.sleep(sleeptime);
 
@@ -95,7 +102,9 @@ public class DynamicEndpointSnitchTest
         // make host3 equal to the others
         for (int i = 0; i < 2; i++)
         {
-            dsnitch.receiveTiming(host3, 1.0);
+            dsnitch.receiveTiming(host1, 1L);
+            dsnitch.receiveTiming(host2, 1L);
+            dsnitch.receiveTiming(host3, 1L);
         }
         Thread.sleep(sleeptime);
 

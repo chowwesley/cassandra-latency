@@ -19,9 +19,14 @@
 
 import re
 import traceback
-from . import pylexotron, util
+from . import pylexotron, util, helptopics
+from cql import cqltypes
 
 Hint = pylexotron.Hint
+
+SYSTEM_KEYSPACES = ('system',)
+
+cqldocs = helptopics.CQL2HelpTopics()
 
 class CqlParsingRuleSet(pylexotron.ParsingRuleSet):
     keywords = set((
@@ -45,6 +50,8 @@ class CqlParsingRuleSet(pylexotron.ParsingRuleSet):
         ('max_compaction_threshold', None),
         ('replicate_on_write', None),
         ('compaction_strategy_class', 'compaction_strategy'),
+        ('default_time_to_live', None),
+        ('populate_io_cache_on_flush', None),
     )
 
     obsolete_cf_options = (
@@ -77,31 +84,17 @@ class CqlParsingRuleSet(pylexotron.ParsingRuleSet):
         'SizeTieredCompactionStrategy'
     )
 
-    cql_type_to_apache_class = {
-        'ascii': 'AsciiType',
-        'bigint': 'LongType',
-        'blob': 'BytesType',
-        'boolean': 'BooleanType',
-        'counter': 'CounterColumnType',
-        'decimal': 'DecimalType',
-        'double': 'DoubleType',
-        'float': 'FloatType',
-        'int': 'Int32Type',
-        'text': 'UTF8Type',
-        'timestamp': 'DateType',
-        'uuid': 'UUIDType',
-        'varchar': 'UTF8Type',
-        'varint': 'IntegerType'
-    }
-
-    apache_class_to_cql_type = dict((v,k) for (k,v) in cql_type_to_apache_class.items())
-
-    cql_types = sorted(cql_type_to_apache_class.keys())
-
     replication_strategies = (
         'SimpleStrategy',
         'OldNetworkTopologyStrategy',
         'NetworkTopologyStrategy'
+    )
+
+    replication_factor_strategies = (
+        'SimpleStrategy',
+        'org.apache.cassandra.locator.SimpleStrategy',
+        'OldNetworkTopologyStrategy',
+        'org.apache.cassandra.locator.OldNetworkTopologyStrategy'
     )
 
     consistency_levels = (
@@ -364,20 +357,6 @@ class CqlParsingRuleSet(pylexotron.ParsingRuleSet):
         return self.cql_complete_multiple(text, first, init_bindings, startsymbol=startsymbol)
 
     @classmethod
-    def cql_typename(cls, classname):
-        fq_classname = 'org.apache.cassandra.db.marshal.'
-        if classname.startswith(fq_classname):
-            classname = classname[len(fq_classname):]
-        try:
-            return cls.apache_class_to_cql_type[classname]
-        except KeyError:
-            return cls.escape_value(classname)
-
-    @classmethod
-    def find_validator_class(cls, cqlname):
-        return cls.cql_type_to_apache_class[cqlname]
-
-    @classmethod
     def is_valid_cql_word(cls, s):
         return cls.valid_cql_word_re.match(s) is not None and s.lower() not in cls.keywords
 
@@ -412,14 +391,14 @@ class CqlParsingRuleSet(pylexotron.ParsingRuleSet):
     @classmethod
     def is_counter_col(cls, cfdef, colname):
         col_info = [cm for cm in cfdef.column_metadata if cm.name == colname]
-        return bool(col_info and cls.cql_typename(col_info[0].validation_class) == 'counter')
+        return bool(col_info and cqltypes.is_counter_type(col_info[0].validation_class))
 
     @staticmethod
     def cql2_dequote_value(cqlword):
         cqlword = cqlword.strip()
         if cqlword == '':
             return cqlword
-        if cqlword[0] == "'":
+        if cqlword[0] == "'" and cqlword[-1] == "'":
             cqlword = cqlword[1:-1].replace("''", "'")
         return cqlword
 
@@ -545,7 +524,7 @@ def cl_completer(ctxt, cass):
 
 @completer_for('storageType', 'typename')
 def storagetype_completer(ctxt, cass):
-    return CqlRuleSet.cql_types
+    return cqltypes.cql_types
 
 @completer_for('keyspaceName', 'ksname')
 def ks_name_completer(ctxt, cass):
@@ -580,7 +559,7 @@ syntax_rules += r'''
                         "FROM" cf=<columnFamilyName>
                           ("USING" "CONSISTENCY" selcl=<consistencylevel>)?
                           ("WHERE" <selectWhereClause>)?
-                          ("LIMIT" <integer>)?
+                          ("LIMIT" limit=<integer>)?
                     ;
 <selectWhereClause> ::= <relation> ("AND" <relation>)*
                       | keyname=<colname> "IN" "(" <term> ("," <term>)* ")"
@@ -770,10 +749,7 @@ def create_ks_opt_completer(ctxt, cass):
         return ['strategy_class =']
     vals = ctxt.get_binding('optval')
     stratclass = dequote_value(vals[stratopt])
-    if stratclass in ('SimpleStrategy',
-                      'org.apache.cassandra.locator.SimpleStrategy',
-                      'OldNetworkTopologyStrategy',
-                      'org.apache.cassandra.locator.OldNetworkTopologyStrategy'):
+    if stratclass in CqlRuleSet.replication_factor_strategies:
         return ['strategy_options:replication_factor =']
     return [Hint('<strategy_option_name>')]
 
@@ -855,12 +831,12 @@ def create_cf_option_val_completer(ctxt, cass):
     if any(this_opt == opt[0] for opt in CqlRuleSet.obsolete_cf_options):
         return ["'<obsolete_option>'"]
     if this_opt in ('comparator', 'default_validation'):
-        return CqlRuleSet.cql_types
+        return cqltypes.cql_types
     if this_opt == 'read_repair_chance':
         return [Hint('<float_between_0_and_1>')]
-    if this_opt == 'replicate_on_write':
+    if this_opt in ('replicate_on_write', 'populate_io_cache_on_flush'):
         return [Hint('<yes_or_no>')]
-    if this_opt in ('min_compaction_threshold', 'max_compaction_threshold', 'gc_grace_seconds'):
+    if this_opt in ('min_compaction_threshold', 'max_compaction_threshold', 'gc_grace_seconds', 'default_time_to_live'):
         return [Hint('<integer>')]
     return [Hint('<option_value>')]
 

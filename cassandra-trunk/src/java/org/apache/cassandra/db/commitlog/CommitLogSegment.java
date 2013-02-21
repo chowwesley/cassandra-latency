@@ -7,31 +7,28 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apache.cassandra.db.commitlog;
 
+import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.Checksum;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.Checksum;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +38,12 @@ import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.db.ColumnFamily;
 import org.apache.cassandra.db.RowMutation;
+import org.apache.cassandra.io.FSWriteError;
+import org.apache.cassandra.io.util.ByteBufferOutputStream;
+import org.apache.cassandra.io.util.ChecksummedOutputStream;
 import org.apache.cassandra.io.util.FileUtils;
 import org.apache.cassandra.net.MessagingService;
+import org.apache.cassandra.utils.FBUtilities;
 import org.apache.cassandra.utils.PureJavaCrc32;
 
 /*
@@ -54,9 +55,6 @@ public class CommitLogSegment
 {
     private static final Logger logger = LoggerFactory.getLogger(CommitLogSegment.class);
 
-    static final String FILENAME_PREFIX = "CommitLog-";
-    static final String FILENAME_EXTENSION = ".log";
-    private static final Pattern COMMIT_LOG_FILE_PATTERN = Pattern.compile(FILENAME_PREFIX + "(\\d+)" + FILENAME_EXTENSION);
     private final static long idBase = System.currentTimeMillis();
     private final static AtomicInteger nextId = new AtomicInteger(1);
 
@@ -64,17 +62,21 @@ public class CommitLogSegment
     static final int ENTRY_OVERHEAD_SIZE = 4 + 8 + 8;
 
     // cache which cf is dirty in this segment to avoid having to lookup all ReplayPositions to decide if we can delete this segment
-    private final HashMap<Integer, Integer> cfLastWrite = new HashMap<Integer, Integer>();
+    private final HashMap<UUID, Integer> cfLastWrite = new HashMap<UUID, Integer>();
 
     public final long id;
 
     private final File logFile;
-    private RandomAccessFile logFileAccessor;
+    private final RandomAccessFile logFileAccessor;
 
     private boolean needsSync = false;
 
     private final MappedByteBuffer buffer;
+    private final Checksum checksum;
+    private final DataOutputStream bufferStream;
     private boolean closed;
+
+    public final CommitLogDescriptor descriptor;
 
     /**
      * @return a newly minted segment file
@@ -96,7 +98,8 @@ public class CommitLogSegment
     CommitLogSegment(String filePath)
     {
         id = getNextId();
-        logFile = new File(DatabaseDescriptor.getCommitLogLocation(), FILENAME_PREFIX + id + FILENAME_EXTENSION);
+        descriptor = new CommitLogDescriptor(id);
+        logFile = new File(DatabaseDescriptor.getCommitLogLocation(), descriptor.fileName());
         boolean isCreating = true;
 
         try
@@ -124,6 +127,8 @@ public class CommitLogSegment
             logFileAccessor.setLength(DatabaseDescriptor.getCommitLogSegmentSize());
 
             buffer = logFileAccessor.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, DatabaseDescriptor.getCommitLogSegmentSize());
+            checksum = new PureJavaCrc32();
+            bufferStream = new DataOutputStream(new ChecksummedOutputStream(new ByteBufferOutputStream(buffer), checksum));
             buffer.putInt(CommitLog.END_OF_SEGMENT_MARKER);
             buffer.position(0);
 
@@ -131,39 +136,8 @@ public class CommitLogSegment
         }
         catch (IOException e)
         {
-            throw new IOError(e);
+            throw new FSWriteError(e, logFile);
         }
-    }
-
-    /**
-     * Extracts the commit log ID from filename
-     *
-     * @param   filename  the filename of the commit log file
-     * @return the extracted commit log ID
-     */
-    public static long idFromFilename(String filename)
-    {
-        Matcher matcher = COMMIT_LOG_FILE_PATTERN.matcher(filename);
-        try
-        {
-            if (matcher.matches())
-                return Long.valueOf(matcher.group(1));
-            else
-                return -1L;
-        }
-        catch (NumberFormatException e)
-        {
-            return -1L;
-        }
-    }
-
-    /**
-     * @param   filename  the filename to check
-     * @return true if filename could be a commit log based on it's filename
-     */
-    public static boolean possibleCommitLogFile(String filename)
-    {
-        return COMMIT_LOG_FILE_PATTERN.matcher(filename).matches();
     }
 
     /**
@@ -173,15 +147,8 @@ public class CommitLogSegment
     {
         // TODO shouldn't we close the file when we're done writing to it, which comes (potentially) much earlier than it's eligible for recyling?
         close();
-        try
-        {
-            if (deleteFile)
-                FileUtils.deleteWithConfirm(logFile);
-        }
-        catch (IOException e)
-        {
-            throw new IOError(e);
-        }
+        if (deleteFile)
+            FileUtils.deleteWithConfirm(logFile);
     }
 
     /**
@@ -200,10 +167,10 @@ public class CommitLogSegment
         {
             sync();
         }
-        catch (IOException e)
+        catch (FSWriteError e)
         {
-            // This is a best effort thing anyway
-            logger.warn("I/O error flushing " + this + " " + e);
+            logger.error("I/O error flushing " + this + " " + e);
+            throw e;
         }
 
         close();
@@ -216,7 +183,7 @@ public class CommitLogSegment
      */
     public boolean hasCapacityFor(RowMutation mutation)
     {
-        long totalSize = RowMutation.serializer().serializedSize(mutation, MessagingService.version_) + ENTRY_OVERHEAD_SIZE;
+        long totalSize = RowMutation.serializer.serializedSize(mutation, MessagingService.current_version) + ENTRY_OVERHEAD_SIZE;
         return totalSize <= buffer.remaining();
     }
 
@@ -244,24 +211,24 @@ public class CommitLogSegment
    /**
      * Appends a row mutation onto the commit log.  Requres that hasCapacityFor has already been checked.
      *
-     * @param   rowMutation   the mutation to append to the commit log.
+     * @param   mutation   the mutation to append to the commit log.
      * @return  the position of the appended mutation
      */
-    public ReplayPosition write(RowMutation rowMutation) throws IOException
+    public ReplayPosition write(RowMutation mutation) throws IOException
     {
         assert !closed;
         ReplayPosition repPos = getContext();
-        markDirty(rowMutation, repPos);
+        markDirty(mutation, repPos);
 
-        Checksum checksum = new PureJavaCrc32();
-        byte[] serializedRow = rowMutation.getSerializedBuffer(MessagingService.version_);
+        checksum.reset();
 
-        checksum.update(serializedRow.length);
-        buffer.putInt(serializedRow.length);
+        // checksummed length
+        int length = (int) RowMutation.serializer.serializedSize(mutation, MessagingService.current_version);
+        bufferStream.writeInt(length);
         buffer.putLong(checksum.getValue());
 
-        buffer.put(serializedRow);
-        checksum.update(serializedRow, 0, serializedRow.length);
+        // checksummed mutation
+        RowMutation.serializer.serialize(mutation, bufferStream, MessagingService.current_version);
         buffer.putLong(checksum.getValue());
 
         if (buffer.remaining() >= 4)
@@ -278,11 +245,18 @@ public class CommitLogSegment
     /**
      * Forces a disk flush for this segment file.
      */
-    public void sync() throws IOException
+    public void sync()
     {
         if (needsSync)
         {
-            buffer.force();
+            try
+            {
+                buffer.force();
+            }
+            catch (Exception e) // MappedByteBuffer.force() does not declare IOException but can actually throw it
+            {
+                throw new FSWriteError(e, getPath());
+            }
             needsSync = false;
         }
     }
@@ -327,7 +301,7 @@ public class CommitLogSegment
         }
         catch (IOException e)
         {
-            throw new IOError(e);
+            throw new FSWriteError(e, getPath());
         }
     }
 
@@ -337,7 +311,7 @@ public class CommitLogSegment
      * @param cfId      the column family ID that is now dirty
      * @param position  the position the last write for this CF was written at
      */
-    private void markCFDirty(Integer cfId, Integer position)
+    private void markCFDirty(UUID cfId, Integer position)
     {
         cfLastWrite.put(cfId, position);
     }
@@ -350,7 +324,7 @@ public class CommitLogSegment
      * @param cfId    the column family ID that is now clean
      * @param context the optional clean offset
      */
-    public void markClean(Integer cfId, ReplayPosition context)
+    public void markClean(UUID cfId, ReplayPosition context)
     {
         Integer lastWritten = cfLastWrite.get(cfId);
 
@@ -363,7 +337,7 @@ public class CommitLogSegment
     /**
      * @return a collection of dirty CFIDs for this segment file.
      */
-    public Collection<Integer> getDirtyCFIDs()
+    public Collection<UUID> getDirtyCFIDs()
     {
         return cfLastWrite.keySet();
     }
@@ -391,7 +365,7 @@ public class CommitLogSegment
     public String dirtyString()
     {
         StringBuilder sb = new StringBuilder();
-        for (Integer cfId : cfLastWrite.keySet())
+        for (UUID cfId : cfLastWrite.keySet())
         {
             CFMetaData m = Schema.instance.getCFMetaData(cfId);
             sb.append(m == null ? "<deleted>" : m.cfName).append(" (").append(cfId).append("), ");
@@ -408,5 +382,16 @@ public class CommitLogSegment
     public int position()
     {
         return buffer.position();
+    }
+
+    
+    public static class CommitLogSegmentFileComparator implements Comparator<File>
+    {
+        public int compare(File f, File f2)
+        {
+            CommitLogDescriptor desc = CommitLogDescriptor.fromFileName(f.getName());
+            CommitLogDescriptor desc2 = CommitLogDescriptor.fromFileName(f2.getName());
+            return (int) (desc.id - desc2.id);        
+        }
     }
 }

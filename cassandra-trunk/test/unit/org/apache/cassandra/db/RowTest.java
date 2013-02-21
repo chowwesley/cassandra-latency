@@ -39,25 +39,12 @@ public class RowTest extends SchemaLoader
         cf1.addColumn(column("one", "onev", 0));
 
         ColumnFamily cf2 = ColumnFamily.create("Keyspace1", "Standard1");
-        cf2.delete(0, 0);
+        DeletionInfo delInfo = new DeletionInfo(0, 0);
+        cf2.delete(delInfo);
 
         ColumnFamily cfDiff = cf1.diff(cf2);
         assertEquals(cfDiff.getColumnCount(), 0);
-        assertEquals(cfDiff.getMarkedForDeleteAt(), 0);
-    }
-
-    @Test
-    public void testDiffSuperColumn()
-    {
-        SuperColumn sc1 = new SuperColumn(ByteBufferUtil.bytes("one"), AsciiType.instance);
-        sc1.addColumn(column("subcolumn", "A", 0));
-
-        SuperColumn sc2 = new SuperColumn(ByteBufferUtil.bytes("one"), AsciiType.instance);
-        sc2.delete(0, 0);
-
-        SuperColumn scDiff = (SuperColumn)sc1.diff(sc2);
-        assertEquals(scDiff.getSubColumns().size(), 0);
-        assertEquals(scDiff.getMarkedForDeleteAt(), 0);
+        assertEquals(cfDiff.deletionInfo(), delInfo);
     }
 
     @Test

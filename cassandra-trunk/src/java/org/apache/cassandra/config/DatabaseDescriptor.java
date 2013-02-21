@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.config;
 
 import java.io.File;
@@ -27,26 +26,32 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
 
+import com.google.common.primitives.Longs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.auth.*;
 import org.apache.cassandra.cache.IRowCacheProvider;
 import org.apache.cassandra.config.Config.RequestSchedulerId;
+import org.apache.cassandra.config.EncryptionOptions.ClientEncryptionOptions;
+import org.apache.cassandra.config.EncryptionOptions.ServerEncryptionOptions;
 import org.apache.cassandra.db.ColumnFamilyStore;
 import org.apache.cassandra.db.DefsTable;
 import org.apache.cassandra.db.SystemTable;
 import org.apache.cassandra.dht.IPartitioner;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.io.FSWriteError;
 import org.apache.cassandra.io.util.FileUtils;
+import org.apache.cassandra.io.util.IAllocator;
 import org.apache.cassandra.locator.DynamicEndpointSnitch;
 import org.apache.cassandra.locator.EndpointSnitchInfo;
 import org.apache.cassandra.locator.IEndpointSnitch;
 import org.apache.cassandra.locator.SeedProvider;
+import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.scheduler.IRequestScheduler;
 import org.apache.cassandra.scheduler.NoScheduler;
 import org.apache.cassandra.service.CacheService;
 import org.apache.cassandra.service.MigrationManager;
-import org.apache.cassandra.thrift.CassandraDaemon;
 import org.apache.cassandra.utils.FBUtilities;
 import org.yaml.snakeyaml.Loader;
 import org.yaml.snakeyaml.TypeDescription;
@@ -55,7 +60,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 
 public class DatabaseDescriptor
 {
-    private static Logger logger = LoggerFactory.getLogger(DatabaseDescriptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseDescriptor.class);
 
     private static IEndpointSnitch snitch;
     private static InetAddress listenAddress; // leave null so we can fall through to getLocalHost
@@ -64,15 +69,15 @@ public class DatabaseDescriptor
     private static SeedProvider seedProvider;
 
     /* Hashing strategy Random or OPHF */
-    private static IPartitioner partitioner;
+    private static IPartitioner<?> partitioner;
+    private static String paritionerName;
 
     private static Config.DiskAccessMode indexAccessMode;
 
     private static Config conf;
 
     private static IAuthenticator authenticator = new AllowAllAuthenticator();
-    private static IAuthority authority = new AllowAllAuthority();
-    private static IAuthorityContainer authorityContainer;
+    private static IAuthorizer authorizer = new AllowAllAuthorizer();
 
     private final static String DEFAULT_CONFIGURATION = "cassandra.yaml";
 
@@ -82,6 +87,10 @@ public class DatabaseDescriptor
 
     private static long keyCacheSizeInMB;
     private static IRowCacheProvider rowCacheProvider;
+    private static IAllocator memoryAllocator;
+
+    private static String localDC;
+    private static Comparator<InetAddress> localComparator;
 
     /**
      * Inspect the classpath to find storage configuration file
@@ -122,7 +131,7 @@ public class DatabaseDescriptor
         {
             URL url = getStorageConfigURL();
             logger.info("Loading settings from " + url);
-            InputStream input = null;
+            InputStream input;
             try
             {
                 input = url.openStream();
@@ -194,17 +203,25 @@ public class DatabaseDescriptor
                 logger.info("DiskAccessMode is " + conf.disk_access_mode + ", indexAccessMode is " + indexAccessMode );
             }
 
-	        logger.debug("page_cache_hinting is " + conf.populate_io_cache_on_flush);
+            logger.info("disk_failure_policy is " + conf.disk_failure_policy);
 
-            /* Authentication and authorization backend, implementing IAuthenticator and IAuthority */
+            /* Authentication and authorization backend, implementing IAuthenticator and IAuthorizer */
             if (conf.authenticator != null)
-                authenticator = FBUtilities.<IAuthenticator>construct(conf.authenticator, "authenticator");
-            if (conf.authority != null)
-                authority = FBUtilities.<IAuthority>construct(conf.authority, "authority");
-            authenticator.validateConfiguration();
-            authority.validateConfiguration();
+                authenticator = FBUtilities.construct(conf.authenticator, "authenticator");
 
-            authorityContainer = new IAuthorityContainer(authority);
+            if (conf.authority != null)
+            {
+                logger.warn("Please rename 'authority' to 'authorizer' in cassandra.yaml");
+                if (!conf.authority.equals("org.apache.cassandra.auth.AllowAllAuthority"))
+                    throw new ConfigurationException("IAuthority interface has been deprecated,"
+                                                     + " please implement IAuthorizer instead.");
+            }
+
+            if (conf.authorizer != null)
+                authorizer = FBUtilities.construct(conf.authorizer, "authorizer");
+
+            authenticator.validateConfiguration();
+            authorizer.validateConfiguration();
 
             /* Hashing strategy */
             if (conf.partitioner == null)
@@ -219,6 +236,7 @@ public class DatabaseDescriptor
             {
                 throw new ConfigurationException("Invalid partitioner class " + conf.partitioner);
             }
+            paritionerName = partitioner.getClass().getCanonicalName();
 
             /* phi convict threshold for FailureDetector */
             if (conf.phi_convict_threshold < 5 || conf.phi_convict_threshold > 16)
@@ -309,10 +327,8 @@ public class DatabaseDescriptor
             if (conf.thrift_framed_transport_size_in_mb <= 0)
                 throw new ConfigurationException("thrift_framed_transport_size_in_mb must be positive");
 
-            if (conf.thrift_framed_transport_size_in_mb > 0 && conf.thrift_max_message_length_in_mb < conf.thrift_framed_transport_size_in_mb)
-            {
-                throw new ConfigurationException("thrift_max_message_length_in_mb must be greater than thrift_framed_transport_size_in_mb when using TFramedTransport");
-            }
+            if (conf.thrift_max_message_length_in_mb < conf.thrift_framed_transport_size_in_mb)
+                throw new ConfigurationException("thrift_max_message_length_in_mb must be greater than thrift_framed_transport_size_in_mb");
 
             /* end point snitch */
             if (conf.endpoint_snitch == null)
@@ -321,6 +337,21 @@ public class DatabaseDescriptor
             }
             snitch = createEndpointSnitch(conf.endpoint_snitch);
             EndpointSnitchInfo.create();
+
+            localDC = snitch.getDatacenter(FBUtilities.getBroadcastAddress());
+            localComparator = new Comparator<InetAddress>()
+            {
+                public int compare(InetAddress endpoint1, InetAddress endpoint2)
+                {
+                    boolean local1 = localDC.equals(snitch.getDatacenter(endpoint1));
+                    boolean local2 = localDC.equals(snitch.getDatacenter(endpoint2));
+                    if (local1 && !local2)
+                        return -1;
+                    if (local2 && !local1)
+                        return 1;
+                    return 0;
+                }
+            };
 
             /* Request Scheduler setup */
             requestSchedulerOptions = conf.request_scheduler_options;
@@ -332,7 +363,7 @@ public class DatabaseDescriptor
                     {
                         requestSchedulerOptions = new RequestSchedulerOptions();
                     }
-                    Class cls = Class.forName(conf.request_scheduler);
+                    Class<?> cls = Class.forName(conf.request_scheduler);
                     requestScheduler = (IRequestScheduler) cls.getConstructor(RequestSchedulerOptions.class).newInstance(requestSchedulerOptions);
                 }
                 catch (ClassNotFoundException e)
@@ -370,7 +401,7 @@ public class DatabaseDescriptor
             }
 
             if (conf.concurrent_compactors == null)
-                conf.concurrent_compactors = Runtime.getRuntime().availableProcessors();
+                conf.concurrent_compactors = FBUtilities.getAvailableProcessors();
 
             if (conf.concurrent_compactors <= 0)
                 throw new ConfigurationException("concurrent_compactors should be strictly greater than 0");
@@ -381,16 +412,11 @@ public class DatabaseDescriptor
             if (conf.stream_throughput_outbound_megabits_per_sec == null)
                 conf.stream_throughput_outbound_megabits_per_sec = 400;
 
-            if (!CassandraDaemon.rpc_server_types.contains(conf.rpc_server_type.toLowerCase()))
-                throw new ConfigurationException("Unknown rpc_server_type: " + conf.rpc_server_type);
             if (conf.rpc_min_threads == null)
-                conf.rpc_min_threads = conf.rpc_server_type.toLowerCase().equals("hsha")
-                                     ? Runtime.getRuntime().availableProcessors() * 4
-                                     : 16;
+                conf.rpc_min_threads = 16;
+
             if (conf.rpc_max_threads == null)
-                conf.rpc_max_threads = conf.rpc_server_type.toLowerCase().equals("hsha")
-                                     ? Runtime.getRuntime().availableProcessors() * 4
-                                     : Integer.MAX_VALUE;
+                conf.rpc_max_threads = Integer.MAX_VALUE;
 
             /* data file and commit log directories. they get created later, when they're needed. */
             if (conf.commitlog_directory != null && conf.data_file_directories != null && conf.saved_caches_directory != null)
@@ -417,7 +443,8 @@ public class DatabaseDescriptor
             }
 
             if (conf.initial_token != null)
-                partitioner.getTokenFactory().validate(conf.initial_token);
+                for (String token : tokensFromString(conf.initial_token))
+                    partitioner.getTokenFactory().validate(token);
 
             try
             {
@@ -436,24 +463,25 @@ public class DatabaseDescriptor
             }
 
             rowCacheProvider = FBUtilities.newCacheProvider(conf.row_cache_provider);
+            memoryAllocator = FBUtilities.newOffHeapAllocator(conf.memory_allocator);
+
+            if(conf.encryption_options != null)
+            {
+                logger.warn("Please rename encryption_options as server_encryption_options in the yaml");
+                //operate under the assumption that server_encryption_options is not set in yaml rather than both
+                conf.server_encryption_options = conf.encryption_options;
+            }
 
             // Hardcoded system tables
-            KSMetaData systemMeta = KSMetaData.systemKeyspace();
-            Schema.instance.load(CFMetaData.StatusCf);
-            Schema.instance.load(CFMetaData.HintsCf);
-            Schema.instance.load(CFMetaData.MigrationsCf);
-            Schema.instance.load(CFMetaData.SchemaCf);
-            Schema.instance.load(CFMetaData.IndexCf);
-            Schema.instance.load(CFMetaData.NodeIdCf);
-            Schema.instance.load(CFMetaData.VersionCf);
-            Schema.instance.load(CFMetaData.SchemaKeyspacesCf);
-            Schema.instance.load(CFMetaData.SchemaColumnFamiliesCf);
-            Schema.instance.load(CFMetaData.SchemaColumnsCf);
-
-            Schema.instance.addSystemTable(systemMeta);
-
-            // setup schema required for authorization
-            authorityContainer.setup();
+            List<KSMetaData> systemKeyspaces = Arrays.asList(KSMetaData.systemKeyspace(), KSMetaData.traceKeyspace());
+            assert systemKeyspaces.size() == Schema.systemKeyspaceNames.size();
+            for (KSMetaData ksmd : systemKeyspaces)
+            {
+                // install the definition
+                for (CFMetaData cfm : ksmd.cfMetaData().values())
+                    Schema.instance.load(cfm);
+                Schema.instance.setTableDefinition(ksmd);
+            }
 
             /* Load the seeds for node contact points */
             if (conf.seed_provider == null)
@@ -462,7 +490,7 @@ public class DatabaseDescriptor
             }
             try
             {
-                Class seedProviderClass = Class.forName(conf.seed_provider.class_name);
+                Class<?> seedProviderClass = Class.forName(conf.seed_provider.class_name);
                 seedProvider = (SeedProvider)seedProviderClass.getConstructor(Map.class).newInstance(conf.seed_provider.parameters);
             }
             // there are about 5 checked exceptions that could be thrown here.
@@ -541,7 +569,6 @@ public class DatabaseDescriptor
         }
 
         Schema.instance.updateVersion();
-        Schema.instance.fixCFMaxId();
     }
 
     private static boolean hasExistingNoSystemTables()
@@ -573,14 +600,14 @@ public class DatabaseDescriptor
         return authenticator;
     }
 
-    public static IAuthority getAuthority()
+    public static IAuthorizer getAuthorizer()
     {
-        return authority;
+        return authorizer;
     }
 
-    public static IAuthorityContainer getAuthorityContainer()
+    public static int getPermissionsValidity()
     {
-        return authorityContainer;
+        return conf.permissions_validity_in_ms;
     }
 
     public static int getThriftMaxMessageLength()
@@ -595,42 +622,55 @@ public class DatabaseDescriptor
 
     /**
      * Creates all storage-related directories.
-     * @throws IOException when a disk problem is encountered.
      */
-    public static void createAllDirectories() throws IOException
+    public static void createAllDirectories()
     {
-        try {
+        try
+        {
             if (conf.data_file_directories.length == 0)
-            {
                 throw new ConfigurationException("At least one DataFileDirectory must be specified");
-            }
-            for ( String dataFileDirectory : conf.data_file_directories )
+
+            for (String dataFileDirectory : conf.data_file_directories)
+            {
                 FileUtils.createDirectory(dataFileDirectory);
+            }
+
             if (conf.commitlog_directory == null)
-            {
                 throw new ConfigurationException("commitlog_directory must be specified");
-            }
+
             FileUtils.createDirectory(conf.commitlog_directory);
+
             if (conf.saved_caches_directory == null)
-            {
                 throw new ConfigurationException("saved_caches_directory must be specified");
-            }
+
             FileUtils.createDirectory(conf.saved_caches_directory);
         }
-        catch (ConfigurationException ex) {
-            logger.error("Fatal error: " + ex.getMessage());
+        catch (ConfigurationException e)
+        {
+            logger.error("Fatal error: " + e.getMessage());
             System.err.println("Bad configuration; unable to start server");
+            System.exit(1);
+        }
+        catch (FSWriteError e)
+        {
+            logger.error("Fatal error: " + e.getMessage());
+            System.err.println(e.getCause().getMessage() + "; unable to start server");
             System.exit(1);
         }
     }
 
-    public static IPartitioner getPartitioner()
+    public static IPartitioner<?> getPartitioner()
     {
         return partitioner;
     }
 
+    public static String getPartitionerName()
+    {
+        return paritionerName;
+    }
+
     /* For tests ONLY, don't use otherwise or all hell will break loose */
-    public static void setPartitioner(IPartitioner newPartitioner)
+    public static void setPartitioner(IPartitioner<?> newPartitioner)
     {
         partitioner = newPartitioner;
     }
@@ -659,24 +699,33 @@ public class DatabaseDescriptor
         return requestSchedulerId;
     }
 
-    public static String getJobTrackerAddress()
-    {
-        return conf.job_tracker_host;
-    }
-
     public static int getColumnIndexSize()
     {
-    	return conf.column_index_size_in_kb * 1024;
+        return conf.column_index_size_in_kb * 1024;
     }
 
-    public static String getInitialToken()
+    public static Collection<String> getInitialTokens()
     {
-        return System.getProperty("cassandra.initial_token", conf.initial_token);
+        return tokensFromString(System.getProperty("cassandra.initial_token", conf.initial_token));
     }
 
-    public static String getReplaceToken()
+    public static Collection<String> tokensFromString(String tokenString)
     {
-        return System.getProperty("cassandra.replace_token", null);
+        List<String> tokens = new ArrayList<String>();
+        if (tokenString != null)
+            for (String token : tokenString.split(","))
+                tokens.add(token.replaceAll("^\\s+", "").replaceAll("\\s+$", ""));
+        return tokens;
+    }
+
+    public static Integer getNumTokens()
+    {
+        return conf.num_tokens;
+    }
+
+    public static Collection<String> getReplaceTokens()
+    {
+        return tokensFromString(System.getProperty("cassandra.replace_token", null));
     }
 
     public static String getClusterName()
@@ -687,11 +736,6 @@ public class DatabaseDescriptor
     public static int getMaxStreamingRetries()
     {
         return conf.max_streaming_retries;
-    }
-
-    public static String getJobJarLocation()
-    {
-        return conf.job_jar_file_location;
     }
 
     public static int getStoragePort()
@@ -711,12 +755,76 @@ public class DatabaseDescriptor
 
     public static long getRpcTimeout()
     {
-        return conf.rpc_timeout_in_ms;
+        return conf.request_timeout_in_ms;
     }
 
     public static void setRpcTimeout(Long timeOutInMillis)
     {
-        conf.rpc_timeout_in_ms = timeOutInMillis;
+        conf.request_timeout_in_ms = timeOutInMillis;
+    }
+
+    public static long getReadRpcTimeout()
+    {
+        return conf.read_request_timeout_in_ms;
+    }
+
+    public static void setReadRpcTimeout(Long timeOutInMillis)
+    {
+        conf.read_request_timeout_in_ms = timeOutInMillis;
+    }
+
+    public static long getRangeRpcTimeout()
+    {
+        return conf.range_request_timeout_in_ms;
+    }
+
+    public static void setRangeRpcTimeout(Long timeOutInMillis)
+    {
+        conf.range_request_timeout_in_ms = timeOutInMillis;
+    }
+
+    public static long getWriteRpcTimeout()
+    {
+        return conf.write_request_timeout_in_ms;
+    }
+
+    public static void setWriteRpcTimeout(Long timeOutInMillis)
+    {
+        conf.write_request_timeout_in_ms = timeOutInMillis;
+    }
+
+    public static long getTruncateRpcTimeout()
+    {
+        return conf.truncate_request_timeout_in_ms;
+    }
+
+    public static void setTruncateRpcTimeout(Long timeOutInMillis)
+    {
+        conf.truncate_request_timeout_in_ms = timeOutInMillis;
+    }
+
+    public static boolean hasCrossNodeTimeout()
+    {
+        return conf.cross_node_timeout;
+    }
+
+    // not part of the Verb enum so we can change timeouts easily via JMX
+    public static long getTimeout(MessagingService.Verb verb)
+    {
+        switch (verb)
+        {
+            case READ:
+                return getReadRpcTimeout();
+            case RANGE_SLICE:
+                return getRangeRpcTimeout();
+            case TRUNCATE:
+                return getTruncateRpcTimeout();
+            case READ_REPAIR:
+            case MUTATION:
+                return getWriteRpcTimeout();
+            default:
+                return getRpcTimeout();
+        }
     }
     
     public static long getFastRetryTimeout()
@@ -724,9 +832,22 @@ public class DatabaseDescriptor
     	return conf.fast_retry_timeout_in_ms;
     }
 
-    public static int getPhiConvictThreshold()
+    /**
+     * @return the minimum configured {read, write, range, truncate, misc} timeout
+     */
+    public static long getMinRpcTimeout()
+    {
+        return Longs.min(getRpcTimeout(), getReadRpcTimeout(), getRangeRpcTimeout(), getWriteRpcTimeout(), getTruncateRpcTimeout());
+    }
+
+    public static double getPhiConvictThreshold()
     {
         return conf.phi_convict_threshold;
+    }
+
+    public static void setPhiConvictThreshold(double phiConvictThreshold)
+    {
+        conf.phi_convict_threshold = phiConvictThreshold;
     }
 
     public static int getConcurrentReaders()
@@ -800,7 +921,7 @@ public class DatabaseDescriptor
     }
 
     /**
-     * size of commitlog segments to allocate 
+     * size of commitlog segments to allocate
      */
     public static int getCommitLogSegmentSize()
     {
@@ -814,7 +935,7 @@ public class DatabaseDescriptor
 
     public static Set<InetAddress> getSeeds()
     {
-        return Collections.unmodifiableSet(new HashSet(seedProvider.getSeeds()));
+        return Collections.unmodifiableSet(new HashSet<InetAddress>(seedProvider.getSeeds()));
     }
 
     public static InetAddress getListenAddress()
@@ -830,6 +951,11 @@ public class DatabaseDescriptor
     public static void setBroadcastAddress(InetAddress broadcastAdd)
     {
         broadcastAddress = broadcastAdd;
+    }
+
+    public static boolean startRpc()
+    {
+        return conf.start_rpc;
     }
 
     public static InetAddress getRpcAddress()
@@ -867,6 +993,41 @@ public class DatabaseDescriptor
         return conf.rpc_recv_buff_size_in_bytes;
     }
 
+    public static Integer getInternodeSendBufferSize()
+    {
+        return conf.internode_send_buff_size_in_bytes;
+    }
+
+    public static Integer getInternodeRecvBufferSize()
+    {
+        return conf.internode_recv_buff_size_in_bytes;
+    }
+
+    public static boolean startNativeTransport()
+    {
+        return conf.start_native_transport;
+    }
+
+    public static InetAddress getNativeTransportAddress()
+    {
+        return getRpcAddress();
+    }
+
+    public static int getNativeTransportPort()
+    {
+        return Integer.parseInt(System.getProperty("cassandra.native_transport_port", conf.native_transport_port.toString()));
+    }
+
+    public static Integer getNativeTransportMinThreads()
+    {
+        return conf.native_transport_min_threads;
+    }
+
+    public static Integer getNativeTransportMaxThreads()
+    {
+        return conf.native_transport_max_threads;
+    }
+
     public static double getCommitLogSyncBatchWindow()
     {
         return conf.commitlog_sync_batch_window_in_ms;
@@ -891,6 +1052,16 @@ public class DatabaseDescriptor
         return indexAccessMode;
     }
 
+    public static void setDiskFailurePolicy(Config.DiskFailurePolicy policy)
+    {
+        conf.disk_failure_policy = policy;
+    }
+
+    public static Config.DiskFailurePolicy getDiskFailurePolicy()
+    {
+        return conf.disk_failure_policy;
+    }
+
     public static boolean isSnapshotBeforeCompaction()
     {
         return conf.snapshot_before_compaction;
@@ -905,9 +1076,19 @@ public class DatabaseDescriptor
         return conf.auto_bootstrap;
     }
 
+    public static void setHintedHandoffEnabled(boolean hintedHandoffEnabled)
+    {
+        conf.hinted_handoff_enabled = hintedHandoffEnabled;
+    }
+
     public static boolean hintedHandoffEnabled()
     {
         return conf.hinted_handoff_enabled;
+    }
+
+    public static void setMaxHintWindow(int ms)
+    {
+        conf.max_hint_window_in_ms = ms;
     }
 
     public static int getMaxHintWindow()
@@ -915,14 +1096,9 @@ public class DatabaseDescriptor
         return conf.max_hint_window_in_ms;
     }
 
-    public static Integer getIndexInterval()
+    public static File getSerializedCachePath(String ksName, String cfName, CacheService.CacheType cacheType, String version)
     {
-        return conf.index_interval;
-    }
-
-    public static File getSerializedCachePath(String ksName, String cfName, CacheService.CacheType cacheType)
-    {
-        return new File(conf.saved_caches_directory + File.separator + ksName + "-" + cfName + "-" + cacheType);
+        return new File(conf.saved_caches_directory + File.separator + ksName + "-" + cfName + "-" + cacheType + (version == null ? "" : "-" + version + ".db"));
     }
 
     public static int getDynamicUpdateInterval()
@@ -953,9 +1129,14 @@ public class DatabaseDescriptor
         conf.dynamic_snitch_badness_threshold = dynamicBadnessThreshold;
     }
 
-    public static EncryptionOptions getEncryptionOptions()
+    public static ServerEncryptionOptions getServerEncryptionOptions()
     {
-        return conf.encryption_options;
+        return conf.server_encryption_options;
+    }
+
+    public static ClientEncryptionOptions getClientEncryptionOptions()
+    {
+        return conf.client_encryption_options;
     }
 
     public static double getFlushLargestMemtablesAt()
@@ -973,9 +1154,14 @@ public class DatabaseDescriptor
         return conf.reduce_cache_capacity_to;
     }
 
-    public static int getHintedHandoffThrottleDelay()
+    public static int getHintedHandoffThrottleInKB()
     {
-        return conf.hinted_handoff_throttle_delay_in_ms;
+        return conf.hinted_handoff_throttle_in_kb;
+    }
+
+    public static int getMaxHintsThread()
+    {
+        return conf.max_hints_delivery_threads;
     }
 
     public static boolean getPreheatKeyCache()
@@ -1044,6 +1230,11 @@ public class DatabaseDescriptor
         return conf.key_cache_save_period;
     }
 
+    public static void setKeyCacheSavePeriod(int keyCacheSavePeriod)
+    {
+        conf.key_cache_save_period = keyCacheSavePeriod;
+    }
+
     public static int getKeyCacheKeysToSave()
     {
         return conf.key_cache_keys_to_save;
@@ -1059,6 +1250,11 @@ public class DatabaseDescriptor
         return conf.row_cache_save_period;
     }
 
+    public static void setRowCacheSavePeriod(int rowCacheSavePeriod)
+    {
+        conf.row_cache_save_period = rowCacheSavePeriod;
+    }
+
     public static int getRowCacheKeysToSave()
     {
         return conf.row_cache_keys_to_save;
@@ -1069,13 +1265,33 @@ public class DatabaseDescriptor
         return rowCacheProvider;
     }
 
+    public static IAllocator getoffHeapMemoryAllocator()
+    {
+        return memoryAllocator;
+    }
+
     public static int getStreamingSocketTimeout()
     {
         return conf.streaming_socket_timeout_in_ms;
     }
 
-    public static boolean populateIOCacheOnFlush()
+    public static String getLocalDataCenter()
     {
-        return conf.populate_io_cache_on_flush;
+        return localDC;
+    }
+
+    public static Comparator<InetAddress> getLocalComparator()
+    {
+        return localComparator;
+    }
+
+    public static Config.InternodeCompression internodeCompression()
+    {
+        return conf.internode_compression;
+    }
+
+    public static boolean getInterDCTcpNoDelay()
+    {
+        return conf.inter_dc_tcp_nodelay;
     }
 }

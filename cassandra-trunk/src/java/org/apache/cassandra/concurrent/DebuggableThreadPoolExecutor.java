@@ -1,6 +1,4 @@
-package org.apache.cassandra.concurrent;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,22 +7,25 @@ package org.apache.cassandra.concurrent;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.concurrent;
 
 import java.util.concurrent.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.apache.cassandra.tracing.TraceState;
+import org.apache.cassandra.tracing.Tracing;
+
+import static org.apache.cassandra.tracing.Tracing.isTracing;
 
 /**
  * This class encorporates some Executor best practices for Cassandra.  Most of the executors in the system
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DebuggableThreadPoolExecutor extends ThreadPoolExecutor
 {
-    protected static Logger logger = LoggerFactory.getLogger(DebuggableThreadPoolExecutor.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DebuggableThreadPoolExecutor.class);
     public static final RejectedExecutionHandler blockingExecutionHandler = new RejectedExecutionHandler()
     {
         public void rejectedExecution(Runnable task, ThreadPoolExecutor executor)
@@ -130,11 +131,58 @@ public class DebuggableThreadPoolExecutor extends ThreadPoolExecutor
     protected void onFinalAccept(Runnable task) {}
     protected void onFinalRejection(Runnable task) {}
 
+    // execute does not call newTaskFor
+    @Override
+    public void execute(Runnable command)
+    {
+        super.execute(isTracing() && !(command instanceof TraceSessionWrapper)
+                      ? new TraceSessionWrapper<Object>(command, null)
+                      : command);
+    }
+
+    @Override
+    protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T result)
+    {
+        if (isTracing() && !(runnable instanceof TraceSessionWrapper))
+        {
+            return new TraceSessionWrapper<T>(runnable, result);
+        }
+        return super.newTaskFor(runnable, result);
+    }
+
+    @Override
+    protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable)
+    {
+        if (isTracing() && !(callable instanceof TraceSessionWrapper))
+        {
+            return new TraceSessionWrapper<T>(callable);
+        }
+        return super.newTaskFor(callable);
+    }
+
     @Override
     protected void afterExecute(Runnable r, Throwable t)
     {
-        super.afterExecute(r,t);
+        super.afterExecute(r, t);
+
+        if (r instanceof TraceSessionWrapper)
+        {
+            TraceSessionWrapper tsw = (TraceSessionWrapper) r;
+            // we have to reset trace state as its presence is what denotes the current thread is tracing
+            // and if left this thread might start tracing unrelated tasks
+            tsw.reset();
+        }
+        
         logExceptionsAfterExecute(r, t);
+    }
+
+    @Override
+    protected void beforeExecute(Thread t, Runnable r)
+    {
+        if (r instanceof TraceSessionWrapper)
+            ((TraceSessionWrapper) r).setupContext();
+
+        super.beforeExecute(t, r);
     }
 
     /**
@@ -196,5 +244,38 @@ public class DebuggableThreadPoolExecutor extends ThreadPoolExecutor
         }
 
         return null;
+    }
+
+    /**
+     * Used to wrap a Runnable or Callable passed to submit or execute so we can clone the TraceSessionContext and move
+     * it into the worker thread.
+     *
+     * @param <T>
+     */
+    private static class TraceSessionWrapper<T> extends FutureTask<T>
+    {
+        private final TraceState state;
+
+        public TraceSessionWrapper(Runnable runnable, T result)
+        {
+            super(runnable, result);
+            state = Tracing.instance().get();
+        }
+
+        public TraceSessionWrapper(Callable<T> callable)
+        {
+            super(callable);
+            state = Tracing.instance().get();
+        }
+
+        private void setupContext()
+        {
+            Tracing.instance().set(state);
+        }
+
+        private void reset()
+        {
+            Tracing.instance().set(null);
+        }
     }
 }

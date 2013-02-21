@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,19 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
 import java.nio.ByteBuffer;
-import java.io.IOException;
 import java.util.Collection;
+import java.util.UUID;
 
 public interface IMutation
 {
     public String getTable();
-    public Collection<Integer> getColumnFamilyIds();
+    public Collection<UUID> getColumnFamilyIds();
     public ByteBuffer key();
-    public void apply() throws IOException;
+    public void apply();
     public String toString(boolean shallow);
     public void addAll(IMutation m);
 }

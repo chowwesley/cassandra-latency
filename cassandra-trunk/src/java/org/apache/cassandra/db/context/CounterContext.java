@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -26,23 +26,21 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.db.DBConstants;
+import org.apache.cassandra.db.TypeSizes;
+import org.apache.cassandra.db.compaction.CompactionManager;
 import org.apache.cassandra.db.marshal.MarshalException;
-import org.apache.cassandra.utils.Allocator;
-import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.HeapAllocator;
-import org.apache.cassandra.utils.NodeId;
+import org.apache.cassandra.utils.*;
 
 /**
  * An implementation of a partitioned counter context.
  *
- * A context is primarily a list of tuples (node id, clock, count) -- called
+ * A context is primarily a list of tuples (counter id, clock, count) -- called
  * shard in the following. But with some shard are flagged as delta (with
  * special resolution rules in merge()).
  *
  * The data structure has two parts:
  *   a) a header containing the lists of "delta" (a list of references to the second parts)
- *   b) a list of shard -- (node id, logical clock, count) tuples -- (the so-called 'body' below)
+ *   b) a list of shard -- (counter id, logical clock, count) tuples -- (the so-called 'body' below)
  *
  * The exact layout is:
  *            | header  |   body   |
@@ -57,9 +55,9 @@ import org.apache.cassandra.utils.NodeId;
  *             ^    ^    ^     ^   ^    ^
  *             |    |  count_1 |   |   count_2
  *             |  clock_1      |  clock_2
- *         nodeid_1          nodeid_2
+ *       counterid_1         counterid_2
  *
- * The rules when merging two shard with the same nodeid are:
+ * The rules when merging two shard with the same counterid are:
  *   - delta + delta = sum counts (and logical clock)
  *   - delta + other = keep the delta one
  *   - other + other = keep the shard with highest logical clock
@@ -70,11 +68,11 @@ import org.apache.cassandra.utils.NodeId;
  */
 public class CounterContext implements IContext
 {
-    private static final int HEADER_SIZE_LENGTH = DBConstants.shortSize;
-    private static final int HEADER_ELT_LENGTH = DBConstants.shortSize;
-    private static final int CLOCK_LENGTH = DBConstants.longSize;
-    private static final int COUNT_LENGTH = DBConstants.longSize;
-    private static final int STEP_LENGTH = NodeId.LENGTH + CLOCK_LENGTH + COUNT_LENGTH;
+    private static final int HEADER_SIZE_LENGTH = TypeSizes.NATIVE.sizeof(Short.MAX_VALUE);
+    private static final int HEADER_ELT_LENGTH = TypeSizes.NATIVE.sizeof(Short.MAX_VALUE);
+    private static final int CLOCK_LENGTH = TypeSizes.NATIVE.sizeof(Long.MAX_VALUE);
+    private static final int COUNT_LENGTH = TypeSizes.NATIVE.sizeof(Long.MAX_VALUE);
+    private static final int STEP_LENGTH = CounterId.LENGTH + CLOCK_LENGTH + COUNT_LENGTH;
 
     private static final Logger logger = LoggerFactory.getLogger(CounterContext.class);
 
@@ -104,12 +102,12 @@ public class CounterContext implements IContext
         // The first (and only) elt is a delta
         context.putShort(context.position(), (short)1);
         context.putShort(context.position() + HEADER_SIZE_LENGTH, (short)0);
-        writeElementAtOffset(context, context.position() + HEADER_SIZE_LENGTH + HEADER_ELT_LENGTH, NodeId.getLocalId(), 1L, value);
+        writeElementAtOffset(context, context.position() + HEADER_SIZE_LENGTH + HEADER_ELT_LENGTH, CounterId.getLocalId(), 1L, value);
         return context;
     }
 
     // Provided for use by unit tests
-    public ByteBuffer create(NodeId id, long clock, long value, boolean isDelta)
+    public ByteBuffer create(CounterId id, long clock, long value, boolean isDelta)
     {
         ByteBuffer context = ByteBuffer.allocate(HEADER_SIZE_LENGTH + (isDelta ? HEADER_ELT_LENGTH : 0) + STEP_LENGTH);
         context.putShort(context.position(), (short)(isDelta ? 1 : 0));
@@ -121,8 +119,8 @@ public class CounterContext implements IContext
         return context;
     }
 
-    // write a tuple (node id, clock, count) at an absolute (bytebuffer-wise) offset
-    private static void writeElementAtOffset(ByteBuffer context, int offset, NodeId id, long clock, long count)
+    // write a tuple (counter id, clock, count) at an absolute (bytebuffer-wise) offset
+    private static void writeElementAtOffset(ByteBuffer context, int offset, CounterId id, long clock, long count)
     {
         context = context.duplicate();
         context.position(offset);
@@ -138,7 +136,7 @@ public class CounterContext implements IContext
 
     private static int compareId(ByteBuffer bb1, int pos1, ByteBuffer bb2, int pos2)
     {
-        return ByteBufferUtil.compareSubArrays(bb1, pos1, bb2, pos2, NodeId.LENGTH);
+        return ByteBufferUtil.compareSubArrays(bb1, pos1, bb2, pos2, CounterId.LENGTH);
     }
 
     /**
@@ -292,7 +290,7 @@ public class CounterContext implements IContext
     }
 
     /**
-     * Return a context w/ an aggregated count for each node id.
+     * Return a context w/ an aggregated count for each counter id.
      *
      * @param left counter context.
      * @param right counter context.
@@ -355,7 +353,7 @@ public class CounterContext implements IContext
                         // both delta, sum
                         long clock = leftState.getClock() + rightState.getClock();
                         long count = leftState.getCount() + rightState.getCount();
-                        mergedState.writeElement(leftState.getNodeId(), clock, count, true);
+                        mergedState.writeElement(leftState.getCounterId(), clock, count, true);
                     }
                     else
                     {
@@ -376,14 +374,11 @@ public class CounterContext implements IContext
                         long leftCount = leftState.getCount();
                         long rightCount = rightState.getCount();
 
-                        if (leftCount != rightCount)
+                        if (leftCount != rightCount && CompactionManager.isCompactionManager.get())
                         {
-                            logger.error("invalid counter shard detected; ({}, {}, {}) and ({}, {}, {}) differ only in "
-                                    + "count; will pick highest to self-heal; this indicates a bug or corruption generated a bad counter shard",
-                                    new Object[] {
-                                            leftState.getNodeId(), leftClock, leftCount,
-                                            rightState.getNodeId(), rightClock, rightCount,
-                                     });
+                            logger.warn("invalid counter shard detected; ({}, {}, {}) and ({}, {}, {}) differ only in "
+                                        + "count; will pick highest to self-heal on compaction",
+                                        leftState.getCounterId(), leftClock, leftCount, rightState.getCounterId(), rightClock, rightCount);
                         }
 
                         if (leftCount > rightCount)
@@ -451,7 +446,7 @@ public class CounterContext implements IContext
                 sb.append(",");
             }
             sb.append("{");
-            sb.append(state.getNodeId().toString()).append(", ");
+            sb.append(state.getCounterId().toString()).append(", ");
             sb.append(state.getClock()).append(", ");;
             sb.append(state.getCount());
             sb.append("}");
@@ -467,7 +462,7 @@ public class CounterContext implements IContext
     }
 
     /**
-     * Returns the aggregated count across all node ids.
+     * Returns the aggregated count across all counter ids.
      *
      * @param context a counter context
      * @return the aggregated count represented by {@code context}
@@ -479,7 +474,7 @@ public class CounterContext implements IContext
         // we could use a ContextState but it is easy enough that we avoid the object creation
         for (int offset = context.position() + headerLength(context); offset < context.limit(); offset += STEP_LENGTH)
         {
-            long count = context.getLong(offset + NodeId.LENGTH + CLOCK_LENGTH);
+            long count = context.getLong(offset + CounterId.LENGTH + CLOCK_LENGTH);
             total += count;
         }
 
@@ -555,18 +550,18 @@ public class CounterContext implements IContext
 
     /**
      * Checks whether the provided context has a count for the provided
-     * NodeId.
+     * CounterId.
      *
      * TODO: since the context is sorted, we could implement a binary search.
      * This is however not called in any critical path and contexts will be
      * fairly small so it doesn't matter much.
      */
-    public boolean hasNodeId(ByteBuffer context, NodeId id)
+    public boolean hasCounterId(ByteBuffer context, CounterId id)
     {
         // we could use a ContextState but it is easy enough that we avoid the object creation
         for (int offset = context.position() + headerLength(context); offset < context.limit(); offset += STEP_LENGTH)
         {
-            if (id.equals(NodeId.wrap(context, offset)))
+            if (id.equals(CounterId.wrap(context, offset)))
             {
                 return true;
             }
@@ -576,29 +571,28 @@ public class CounterContext implements IContext
 
     /**
      * Compute a new context such that if applied to context yields the same
-     * total but with old local node ids nulified and there content merged to
-     * the current localNodeId.
+     * total but with old local counter ids nulified and there content merged to
+     * the current localCounterId.
      */
-    public ByteBuffer computeOldShardMerger(ByteBuffer context, List<NodeId.NodeIdRecord> oldIds, long mergeBefore)
+    public ByteBuffer computeOldShardMerger(ByteBuffer context, List<CounterId.CounterIdRecord> oldIds, long mergeBefore)
     {
         long now = System.currentTimeMillis();
         int hlength = headerLength(context);
-        NodeId localId = NodeId.getLocalId();
+        CounterId localId = CounterId.getLocalId();
 
-        Iterator<NodeId.NodeIdRecord> recordIterator = oldIds.iterator();
-        NodeId.NodeIdRecord currRecord = recordIterator.hasNext() ? recordIterator.next() : null;
+        Iterator<CounterId.CounterIdRecord> recordIterator = oldIds.iterator();
+        CounterId.CounterIdRecord currRecord = recordIterator.hasNext() ? recordIterator.next() : null;
 
         ContextState state = new ContextState(context, hlength);
-        ContextState foundState = null;
 
-        List<NodeId> toMerge = new ArrayList<NodeId>();
+        List<CounterId> toMerge = new ArrayList<CounterId>();
         long mergeTotal = 0;
         while (state.hasRemaining() && currRecord != null)
         {
             assert !currRecord.id.equals(localId);
 
-            NodeId nodeId = state.getNodeId();
-            int c = nodeId.compareTo(currRecord.id);
+            CounterId counterId = state.getCounterId();
+            int c = counterId.compareTo(currRecord.id);
 
             if (c > 0)
             {
@@ -612,15 +606,15 @@ public class CounterContext implements IContext
                 {
                     // Already merged shard, waiting to be collected
 
-                    if (nodeId.equals(localId))
+                    if (counterId.equals(localId))
                         // we should not get there, but we have been creating problematic context prior to #2968
-                        throw new RuntimeException("Current nodeId with a negative clock (likely due to #2968). You need to restart this node with -Dcassandra.renew_counter_id=true to fix.");
+                        throw new RuntimeException("Current counterId with a negative clock (likely due to #2968). You need to restart this node with -Dcassandra.renew_counter_id=true to fix.");
 
                     if (state.getCount() != 0)
                     {
                         // This should not happen, but previous bugs have generated this (#2968 in particular) so fixing it.
-                        logger.error(String.format("Invalid counter context (clock is %d and count is %d for NodeId %s), will fix", state.getCount(), state.getCount(), nodeId.toString()));
-                        toMerge.add(nodeId);
+                        logger.error(String.format("Invalid counter context (clock is %d and count is %d for CounterId %s), will fix", state.getCount(), state.getCount(), counterId.toString()));
+                        toMerge.add(counterId);
                         mergeTotal += state.getCount();
                     }
                 }
@@ -630,7 +624,7 @@ public class CounterContext implements IContext
                     // we check that it has been renewed before mergeBefore.
                     if (currRecord.timestamp < mergeBefore)
                     {
-                        toMerge.add(nodeId);
+                        toMerge.add(counterId);
                         mergeTotal += state.getCount();
                     }
                 }
@@ -644,18 +638,18 @@ public class CounterContext implements IContext
         // Continuing the iteration so that we can repair invalid shards
         while (state.hasRemaining())
         {
-            NodeId nodeId = state.getNodeId();
+            CounterId counterId = state.getCounterId();
             if (state.isDelta() && state.getClock() < 0)
             {
-                if (nodeId.equals(localId))
+                if (counterId.equals(localId))
                     // we should not get there, but we have been creating problematic context prior to #2968
-                    throw new RuntimeException("Current nodeId with a negative clock (likely due to #2968). You need to restart this node with -Dcassandra.renew_counter_id=true to fix.");
+                    throw new RuntimeException("Current counterId with a negative clock (likely due to #2968). You need to restart this node with -Dcassandra.renew_counter_id=true to fix.");
 
                 if (state.getCount() != 0)
                 {
                     // This should not happen, but previous bugs have generated this (#2968 in particular) so fixing it.
-                    logger.error(String.format("Invalid counter context (clock is %d and count is %d for NodeId %s), will fix", state.getClock(), state.getCount(), nodeId.toString()));
-                    toMerge.add(nodeId);
+                    logger.error(String.format("Invalid counter context (clock is %d and count is %d for CounterId %s), will fix", state.getClock(), state.getCount(), counterId.toString()));
+                    toMerge.add(counterId);
                     mergeTotal += state.getCount();
                 }
             }
@@ -672,17 +666,17 @@ public class CounterContext implements IContext
         boolean localWritten = false;
         while (state.hasRemaining())
         {
-            NodeId nodeId = state.getNodeId();
-            if (nodeId.compareTo(localId) > 0)
+            CounterId counterId = state.getCounterId();
+            if (counterId.compareTo(localId) > 0)
             {
                 merger.writeElement(localId, 1L, mergeTotal, true);
                 localWritten = true;
             }
-            else if (i < toMerge.size() && nodeId.compareTo(toMerge.get(i)) == 0)
+            else if (i < toMerge.size() && counterId.compareTo(toMerge.get(i)) == 0)
             {
                 long count = state.getCount();
                 removedTotal += count;
-                merger.writeElement(nodeId, -now - state.getClock(), -count, true);
+                merger.writeElement(counterId, -now - state.getClock(), -count, true);
                 ++i;
             }
             state.moveToNext();
@@ -770,7 +764,7 @@ public class CounterContext implements IContext
 
     /**
      * Helper class to work on contexts (works by iterating over them).
-     * A context being abstractly a list of tuple (nodeid, clock, count), a
+     * A context being abstractly a list of tuple (counterid, clock, count), a
      * ContextState encapsulate a context and a position to one of the tuple.
      * It also allow to create new context iteratively.
      *
@@ -865,23 +859,23 @@ public class CounterContext implements IContext
             updateIsDelta();
         }
 
-        public NodeId getNodeId()
+        public CounterId getCounterId()
         {
-            return NodeId.wrap(context, context.position() + bodyOffset);
+            return CounterId.wrap(context, context.position() + bodyOffset);
         }
 
         public long getClock()
         {
-            return context.getLong(context.position() + bodyOffset + NodeId.LENGTH);
+            return context.getLong(context.position() + bodyOffset + CounterId.LENGTH);
         }
 
         public long getCount()
         {
-            return context.getLong(context.position() + bodyOffset + NodeId.LENGTH + CLOCK_LENGTH);
+            return context.getLong(context.position() + bodyOffset + CounterId.LENGTH + CLOCK_LENGTH);
         }
 
         // Advance this to the next position
-        public void writeElement(NodeId id, long clock, long count, boolean isDelta)
+        public void writeElement(CounterId id, long clock, long count, boolean isDelta)
         {
             writeElementAtOffset(context, context.position() + bodyOffset, id, clock, count);
             if (isDelta)
@@ -892,7 +886,7 @@ public class CounterContext implements IContext
             moveToNext();
         }
 
-        public void writeElement(NodeId id, long clock, long count)
+        public void writeElement(CounterId id, long clock, long count)
         {
             writeElement(id, clock, count, false);
         }

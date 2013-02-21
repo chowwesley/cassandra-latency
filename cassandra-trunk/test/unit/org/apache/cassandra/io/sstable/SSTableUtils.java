@@ -21,17 +21,13 @@ package org.apache.cassandra.io.sstable;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.db.Column;
 import org.apache.cassandra.db.ColumnFamily;
 import org.apache.cassandra.db.DecoratedKey;
-import org.apache.cassandra.db.IColumn;
-import org.apache.cassandra.db.columniterator.IColumnIterator;
+import org.apache.cassandra.db.DeletionInfo;
+import org.apache.cassandra.db.columniterator.OnDiskAtomIterator;
 import org.apache.cassandra.utils.ByteBufferUtil;
 
 import org.apache.cassandra.Util;
@@ -39,17 +35,15 @@ import static org.junit.Assert.assertEquals;
 
 public class SSTableUtils
 {
-    private static Logger logger = LoggerFactory.getLogger(SSTableUtils.class);
-
     // first configured table and cf
     public static String TABLENAME = "Keyspace1";
     public static String CFNAME = "Standard1";
 
-    public static ColumnFamily createCF(long mfda, int ldt, IColumn... cols)
+    public static ColumnFamily createCF(long mfda, int ldt, Column... cols)
     {
         ColumnFamily cf = ColumnFamily.create(TABLENAME, CFNAME);
-        cf.delete(ldt, mfda);
-        for (IColumn col : cols)
+        cf.delete(new DeletionInfo(mfda, ldt));
+        for (Column col : cols)
             cf.addColumn(col);
         return cf;
     }
@@ -81,15 +75,15 @@ public class SSTableUtils
         SSTableScanner srhs = rhs.getDirectScanner();
         while (slhs.hasNext())
         {
-            IColumnIterator ilhs = slhs.next();
+            OnDiskAtomIterator ilhs = slhs.next();
             assert srhs.hasNext() : "LHS contained more rows than RHS";
-            IColumnIterator irhs = srhs.next();
+            OnDiskAtomIterator irhs = srhs.next();
             assertContentEquals(ilhs, irhs);
         }
         assert !srhs.hasNext() : "RHS contained more rows than LHS";
     }
 
-    public static void assertContentEquals(IColumnIterator lhs, IColumnIterator rhs) throws IOException
+    public static void assertContentEquals(OnDiskAtomIterator lhs, OnDiskAtomIterator rhs) throws IOException
     {
         assertEquals(lhs.getKey(), rhs.getKey());
         // check metadata
@@ -103,14 +97,13 @@ public class SSTableUtils
         }
         else if (rcf == null)
             throw new AssertionError("RHS had no content for " + lhs.getKey());
-        assertEquals(lcf.getMarkedForDeleteAt(), rcf.getMarkedForDeleteAt());
-        assertEquals(lcf.getLocalDeletionTime(), rcf.getLocalDeletionTime());
+        assertEquals(lcf.deletionInfo(), rcf.deletionInfo());
         // iterate columns
         while (lhs.hasNext())
         {
-            IColumn clhs = lhs.next();
+            Column clhs = (Column)lhs.next();
             assert rhs.hasNext() : "LHS contained more columns than RHS for " + lhs.getKey();
-            IColumn crhs = rhs.next();
+            Column crhs = (Column)rhs.next();
 
             assertEquals("Mismatched columns for " + lhs.getKey(), clhs, crhs);
         }
@@ -179,12 +172,8 @@ public class SSTableUtils
             return write(map);
         }
 
-        public SSTableReader write(Map<String, ColumnFamily> entries) throws IOException
+        public SSTableReader write(SortedMap<DecoratedKey, ColumnFamily> sorted) throws IOException
         {
-            SortedMap<DecoratedKey, ColumnFamily> sorted = new TreeMap<DecoratedKey, ColumnFamily>();
-            for (Map.Entry<String, ColumnFamily> entry : entries.entrySet())
-                sorted.put(Util.dk(entry.getKey()), entry.getValue());
-
             final Iterator<Map.Entry<DecoratedKey, ColumnFamily>> iter = sorted.entrySet().iterator();
             return write(sorted.size(), new Appender()
             {
@@ -200,30 +189,13 @@ public class SSTableUtils
             });
         }
 
-        /**
-         * @Deprecated: Writes the binary content of a row, which should be encapsulated.
-         */
-        @Deprecated
-        public SSTableReader writeRaw(Map<ByteBuffer, ByteBuffer> entries) throws IOException
+        public SSTableReader write(Map<String, ColumnFamily> entries) throws IOException
         {
-            File datafile = (dest == null) ? tempSSTableFile(ksname, cfname, generation) : new File(dest.filenameFor(Component.DATA));
-            SSTableWriter writer = new SSTableWriter(datafile.getAbsolutePath(), entries.size());
-            SortedMap<DecoratedKey, ByteBuffer> sorted = new TreeMap<DecoratedKey, ByteBuffer>();
-            for (Map.Entry<ByteBuffer, ByteBuffer> entry : entries.entrySet())
-                sorted.put(writer.partitioner.decorateKey(entry.getKey()), entry.getValue());
-            final Iterator<Map.Entry<DecoratedKey, ByteBuffer>> iter = sorted.entrySet().iterator();
-            return write(sorted.size(), new Appender()
-            {
-                @Override
-                public boolean append(SSTableWriter writer) throws IOException
-                {
-                    if (!iter.hasNext())
-                        return false;
-                    Map.Entry<DecoratedKey, ByteBuffer> entry = iter.next();
-                    writer.append(entry.getKey(), entry.getValue());
-                    return true;
-                }
-            });
+            SortedMap<DecoratedKey, ColumnFamily> sorted = new TreeMap<DecoratedKey, ColumnFamily>();
+            for (Map.Entry<String, ColumnFamily> entry : entries.entrySet())
+                sorted.put(Util.dk(entry.getKey()), entry.getValue());
+
+            return write(sorted);
         }
 
         public SSTableReader write(int expectedSize, Appender appender) throws IOException

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,45 +15,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
-import static org.apache.cassandra.db.DBConstants.*;
-
+import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
+import java.util.UUID;
+
+import org.apache.cassandra.io.sstable.SSTable;
+import org.apache.cassandra.utils.*;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import org.apache.cassandra.cache.IRowCacheEntry;
 import org.apache.cassandra.config.CFMetaData;
 import org.apache.cassandra.config.Schema;
-import org.apache.cassandra.db.filter.QueryPath;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.db.marshal.MarshalException;
-import org.apache.cassandra.io.IColumnSerializer;
-import org.apache.cassandra.utils.Allocator;
-import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.FBUtilities;
-import org.apache.cassandra.utils.HeapAllocator;
+import org.apache.cassandra.io.sstable.Descriptor;
+import org.apache.cassandra.io.sstable.ColumnStats;
 
 public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEntry
 {
+    /* The column serializer for this Column Family. Create based on config. */
     public static final ColumnFamilySerializer serializer = new ColumnFamilySerializer();
-
     private final CFMetaData cfm;
 
-    public static ColumnFamilySerializer serializer()
-    {
-        return serializer;
-    }
-
-    public static ColumnFamily create(Integer cfId)
+    public static ColumnFamily create(UUID cfId)
     {
         return create(Schema.instance.getCFMetaData(cfId));
     }
 
-    public static ColumnFamily create(Integer cfId, ISortedColumns.Factory factory)
+    public static ColumnFamily create(UUID cfId, ISortedColumns.Factory factory)
     {
         return create(Schema.instance.getCFMetaData(cfId), factory);
     }
@@ -97,12 +90,6 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
         return cloneMeShallow(columns.getFactory(), columns.isInsertReversed());
     }
 
-    public AbstractType<?> getSubComparator()
-    {
-        IColumnSerializer s = getColumnSerializer();
-        return (s instanceof SuperColumnSerializer) ? ((SuperColumnSerializer) s).getComparator() : null;
-    }
-
     public ColumnFamilyType getType()
     {
         return cfm.cfType;
@@ -115,7 +102,7 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
         return cf;
     }
 
-    public Integer id()
+    public UUID id()
     {
         return cfm.cfId;
     }
@@ -128,90 +115,44 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
         return cfm;
     }
 
-    public IColumnSerializer getColumnSerializer()
+    public void addColumn(ByteBuffer name, ByteBuffer value, long timestamp)
     {
-        return cfm.getColumnSerializer();
+        addColumn(name, value, timestamp, 0);
     }
 
-    public boolean isSuper()
+    public void addColumn(ByteBuffer name, ByteBuffer value, long timestamp, int timeToLive)
     {
-        return getType() == ColumnFamilyType.Super;
-    }
-
-    /**
-     * Same as addAll() but do a cloneMe of SuperColumn if necessary to
-     * avoid keeping references to the structure (see #3957).
-     */
-    public void addAllWithSCCopy(ColumnFamily cf, Allocator allocator)
-    {
-        if (cf.isSuper())
-        {
-            for (IColumn c : cf)
-            {
-                columns.addColumn(((SuperColumn)c).cloneMe(), allocator);
-            }
-            delete(cf);
-        }
-        else
-        {
-            addAll(cf, allocator);
-        }
-    }
-
-    public void addColumn(QueryPath path, ByteBuffer value, long timestamp)
-    {
-        addColumn(path, value, timestamp, 0);
-    }
-
-    public void addColumn(QueryPath path, ByteBuffer value, long timestamp, int timeToLive)
-    {
-        assert path.columnName != null : path;
         assert !metadata().getDefaultValidator().isCommutative();
-        Column column;
-        if (timeToLive > 0)
-            column = new ExpiringColumn(path.columnName, value, timestamp, timeToLive);
-        else
-            column = new Column(path.columnName, value, timestamp);
-        addColumn(path.superColumnName, column);
+        Column column = Column.create(name, value, timestamp, timeToLive, metadata());
+        addColumn(column);
     }
 
-    public void addCounter(QueryPath path, long value)
+    public void addCounter(ByteBuffer name, long value)
     {
-        assert path.columnName != null : path;
-        addColumn(path.superColumnName, new CounterUpdateColumn(path.columnName, value, System.currentTimeMillis()));
+        addColumn(new CounterUpdateColumn(name, value, System.currentTimeMillis()));
     }
 
-    public void addTombstone(QueryPath path, ByteBuffer localDeletionTime, long timestamp)
+    public void addTombstone(ByteBuffer name, ByteBuffer localDeletionTime, long timestamp)
     {
-        assert path.columnName != null : path;
-        addColumn(path.superColumnName, new DeletedColumn(path.columnName, localDeletionTime, timestamp));
-    }
-
-    public void addTombstone(QueryPath path, int localDeletionTime, long timestamp)
-    {
-        assert path.columnName != null : path;
-        addColumn(path.superColumnName, new DeletedColumn(path.columnName, localDeletionTime, timestamp));
+        addColumn(new DeletedColumn(name, localDeletionTime, timestamp));
     }
 
     public void addTombstone(ByteBuffer name, int localDeletionTime, long timestamp)
     {
-        addColumn(null, new DeletedColumn(name, localDeletionTime, timestamp));
+        addColumn(new DeletedColumn(name, localDeletionTime, timestamp));
     }
 
-    public void addColumn(ByteBuffer superColumnName, Column column)
+    public void addAtom(OnDiskAtom atom)
     {
-        IColumn c;
-        if (superColumnName == null)
+        if (atom instanceof Column)
         {
-            c = column;
+            addColumn((Column)atom);
         }
         else
         {
-            assert isSuper();
-            c = new SuperColumn(superColumnName, getSubComparator());
-            c.addColumn(column); // checks subcolumn name
+            assert atom instanceof RangeTombstone;
+            delete(new DeletionInfo((RangeTombstone)atom, getComparator()));
         }
-        addColumn(c);
     }
 
     public void clear()
@@ -227,25 +168,22 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
     {
         assert cfComposite.id().equals(id());
         ColumnFamily cfDiff = ColumnFamily.create(cfm);
-        if (cfComposite.getMarkedForDeleteAt() > getMarkedForDeleteAt())
-        {
-            cfDiff.delete(cfComposite.getLocalDeletionTime(), cfComposite.getMarkedForDeleteAt());
-        }
+        cfDiff.delete(cfComposite.deletionInfo());
 
-        // (don't need to worry about cfNew containing IColumns that are shadowed by
+        // (don't need to worry about cfNew containing Columns that are shadowed by
         // the delete tombstone, since cfNew was generated by CF.resolve, which
         // takes care of those for us.)
-        for (IColumn columnExternal : cfComposite)
+        for (Column columnExternal : cfComposite)
         {
             ByteBuffer cName = columnExternal.name();
-            IColumn columnInternal = this.columns.getColumn(cName);
+            Column columnInternal = this.columns.getColumn(cName);
             if (columnInternal == null)
             {
                 cfDiff.addColumn(columnExternal);
             }
             else
             {
-                IColumn columnDiff = columnInternal.diff(columnExternal);
+                Column columnDiff = columnInternal.diff(columnExternal);
                 if (columnDiff != null)
                 {
                     cfDiff.addColumn(columnDiff);
@@ -258,20 +196,21 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
         return null;
     }
 
-    int size()
+    /** the size of user-provided data, not including internal overhead */
+    int dataSize()
     {
-        int size = DBConstants.longSize + DBConstants.intSize; // tombstone tracking
-        for (IColumn column : columns)
+        int size = deletionInfo().dataSize();
+        for (Column column : columns)
         {
-            size += column.size();
+            size += column.dataSize();
         }
         return size;
     }
 
     public long maxTimestamp()
     {
-        long maxTimestamp = getMarkedForDeleteAt();
-        for (IColumn column : columns)
+        long maxTimestamp = deletionInfo().maxTimestamp();
+        for (Column column : columns)
             maxTimestamp = Math.max(maxTimestamp, column.maxTimestamp());
         return maxTimestamp;
     }
@@ -281,7 +220,7 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
     {
         return new HashCodeBuilder(373, 75437)
                     .append(cfm)
-                    .append(getMarkedForDeleteAt())
+                    .append(deletionInfo())
                     .append(columns).toHashCode();
     }
 
@@ -296,7 +235,7 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
         ColumnFamily comparison = (ColumnFamily) o;
 
         return cfm.equals(comparison.cfm)
-                && getMarkedForDeleteAt() == comparison.getMarkedForDeleteAt()
+                && deletionInfo().equals(comparison.deletionInfo())
                 && ByteBufferUtil.compareUnsigned(digest(this), digest(comparison)) == 0;
     }
 
@@ -308,7 +247,7 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
         sb.append(cfm == null ? "<anonymous>" : cfm.cfName);
 
         if (isMarkedForDelete())
-            sb.append(" -deleted at ").append(getMarkedForDeleteAt()).append("-");
+            sb.append(" -").append(deletionInfo()).append("-");
 
         sb.append(" [").append(getComparator().getColumnsString(getSortedColumns())).append("])");
         return sb.toString();
@@ -324,15 +263,8 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
 
     public void updateDigest(MessageDigest digest)
     {
-        for (IColumn column : columns)
+        for (Column column : columns)
             column.updateDigest(digest);
-    }
-
-    public static AbstractType<?> getComparatorFor(String table, String columnFamilyName, ByteBuffer superColumnName)
-    {
-        return superColumnName == null
-               ? Schema.instance.getComparator(table, columnFamilyName)
-               : Schema.instance.getSubComparator(table, columnFamilyName);
     }
 
     public static ColumnFamily diff(ColumnFamily cf1, ColumnFamily cf2)
@@ -355,23 +287,6 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
         addAll(cf, allocator);
     }
 
-    public long serializedSize()
-    {
-        return boolSize // nullness bool
-               + intSize // id
-               + serializedSizeForSSTable();
-    }
-
-    public long serializedSizeForSSTable()
-    {
-        int size = intSize // local deletion time
-                 + longSize // client deletion time
-                 + intSize; // column count
-        for (IColumn column : columns)
-            size += column.serializedSize();
-        return size;
-    }
-
     /**
      * Goes over all columns and check the fields are valid (as far as we can
      * tell).
@@ -380,9 +295,26 @@ public class ColumnFamily extends AbstractColumnContainer implements IRowCacheEn
     public void validateColumnFields() throws MarshalException
     {
         CFMetaData metadata = metadata();
-        for (IColumn column : this)
+        for (Column column : this)
         {
             column.validateFields(metadata);
         }
+    }
+
+    public ColumnStats getColumnStats()
+    {
+        long minTimestampSeen = deletionInfo() == DeletionInfo.LIVE ? Long.MAX_VALUE : deletionInfo().minTimestamp();
+        long maxTimestampSeen = deletionInfo().maxTimestamp();
+        StreamingHistogram tombstones = new StreamingHistogram(SSTable.TOMBSTONE_HISTOGRAM_BIN_SIZE);
+
+        for (Column column : columns)
+        {
+            minTimestampSeen = Math.min(minTimestampSeen, column.minTimestamp());
+            maxTimestampSeen = Math.max(maxTimestampSeen, column.maxTimestamp());
+            int deletionTime = column.getLocalDeletionTime();
+            if (deletionTime < Integer.MAX_VALUE)
+                tombstones.update(deletionTime);
+        }
+        return new ColumnStats(getColumnCount(), minTimestampSeen, maxTimestampSeen, tombstones);
     }
 }

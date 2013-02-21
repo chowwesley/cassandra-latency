@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,25 +7,23 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.io.util;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import org.apache.cassandra.io.FSReadError;
 import org.apache.cassandra.utils.CLibrary;
 
 public class RandomAccessReader extends RandomAccessFile implements FileDataInput
@@ -62,9 +60,13 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
 
     private final long fileLength;
 
-    public RandomAccessReader(File file, int bufferSize, boolean skipIOCache) throws IOException
+    protected final PoolingSegmentedFile owner;
+
+    protected RandomAccessReader(File file, int bufferSize, boolean skipIOCache, PoolingSegmentedFile owner) throws FileNotFoundException
     {
         super(file, "r");
+
+        this.owner = owner;
 
         channel = super.getChannel();
         filePath = file.getAbsolutePath();
@@ -75,65 +77,93 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
         buffer = new byte[bufferSize];
 
         this.skipIOCache = skipIOCache;
-        fd = CLibrary.getfd(getFD());
+        try
+        {
+            fd = CLibrary.getfd(getFD());
+        }
+        catch (IOException e)
+        {
+            // fd == null, Not Supposed To Happen
+            throw new RuntimeException(e);
+        }
 
         // we can cache file length in read-only mode
-        fileLength = channel.size();
+        try
+        {
+            fileLength = channel.size();
+        }
+        catch (IOException e)
+        {
+            throw new FSReadError(e, filePath);
+        }
         validBufferBytes = -1; // that will trigger reBuffer() on demand by read/seek operations
     }
 
-    public static RandomAccessReader open(File file, boolean skipIOCache) throws IOException
+    public static RandomAccessReader open(File file)
     {
-        return open(file, DEFAULT_BUFFER_SIZE, skipIOCache);
+        return open(file, false);
     }
 
-    public static RandomAccessReader open(File file) throws IOException
+    public static RandomAccessReader open(File file, PoolingSegmentedFile owner)
     {
-        return open(file, DEFAULT_BUFFER_SIZE, false);
+        return open(file, DEFAULT_BUFFER_SIZE, false, owner);
     }
 
-    public static RandomAccessReader open(File file, int bufferSize) throws IOException
+    public static RandomAccessReader open(File file, boolean skipIOCache)
     {
-        return open(file, bufferSize, false);
+        return open(file, DEFAULT_BUFFER_SIZE, skipIOCache, null);
     }
 
-    public static RandomAccessReader open(File file, int bufferSize, boolean skipIOCache) throws IOException
+    @VisibleForTesting
+    static RandomAccessReader open(File file, int bufferSize, boolean skipIOCache, PoolingSegmentedFile owner)
     {
-        return new RandomAccessReader(file, bufferSize, skipIOCache);
+        try
+        {
+            return new RandomAccessReader(file, bufferSize, skipIOCache, owner);
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    // convert open into open
-    public static RandomAccessReader open(SequentialWriter writer) throws IOException
+    @VisibleForTesting
+    static RandomAccessReader open(SequentialWriter writer)
     {
-        return open(new File(writer.getPath()), DEFAULT_BUFFER_SIZE);
+        return open(new File(writer.getPath()), DEFAULT_BUFFER_SIZE, false, null);
     }
 
     /**
      * Read data from file starting from current currentOffset to populate buffer.
-     * @throws IOException on any I/O error.
      */
-    protected void reBuffer() throws IOException
+    protected void reBuffer()
     {
         resetBuffer();
 
-        if (bufferOffset >= channel.size())
-            return;
-
-        channel.position(bufferOffset); // setting channel position
-
-        int read = 0;
-
-        while (read < buffer.length)
+        try
         {
-            int n = super.read(buffer, read, buffer.length - read);
-            if (n < 0)
-                break;
-            read += n;
+            if (bufferOffset >= channel.size())
+                return;
+
+            channel.position(bufferOffset); // setting channel position
+
+            int read = 0;
+
+            while (read < buffer.length)
+            {
+                int n = super.read(buffer, read, buffer.length - read);
+                if (n < 0)
+                    break;
+                read += n;
+            }
+
+            validBufferBytes = read;
+            bytesSinceCacheFlush += read;
         }
-
-        validBufferBytes = read;
-
-        bytesSinceCacheFlush += read;
+        catch (IOException e)
+        {
+            throw new FSReadError(e, filePath);
+        }
 
         if (skipIOCache && bytesSinceCacheFlush >= CACHE_FLUSH_INTERVAL_IN_BYTES)
         {
@@ -156,7 +186,7 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
         return filePath;
     }
 
-    public void reset() throws IOException
+    public void reset()
     {
         seek(markedPointer);
     }
@@ -174,7 +204,7 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
         return new BufferedRandomAccessFileMark(markedPointer);
     }
 
-    public void reset(FileMark mark) throws IOException
+    public void reset(FileMark mark)
     {
         assert mark instanceof BufferedRandomAccessFileMark;
         seek(((BufferedRandomAccessFileMark) mark).pointer);
@@ -190,14 +220,13 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
 
     /**
      * @return true if there is no more data to read
-     * @throws IOException on any I/O error.
      */
-    public boolean isEOF() throws IOException
+    public boolean isEOF()
     {
         return getFilePointer() == length();
     }
 
-    public long bytesRemaining() throws IOException
+    public long bytesRemaining()
     {
         return length() - getFilePointer();
     }
@@ -214,14 +243,38 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
     }
 
     @Override
-    public void close() throws IOException
+    public void close()
     {
-        buffer = null;
+        if (owner == null || buffer == null)
+        {
+            // The buffer == null check is so that if the pool owner has deallocated us, calling close()
+            // will re-call deallocate rather than recycling a deallocated object.
+            // I'd be more comfortable if deallocate didn't have to handle being idempotent like that,
+            // but RandomAccessFile.close will call AbstractInterruptibleChannel.close which will
+            // re-call RAF.close -- in this case, [C]RAR.close since we are overriding that.
+            deallocate();
+        }
+        else
+        {
+            owner.recycle(this);
+        }
+    }
+
+    public void deallocate()
+    {
+        buffer = null; // makes sure we don't use this after it's ostensibly closed
 
         if (skipIOCache && bytesSinceCacheFlush > 0)
             CLibrary.trySkipCache(fd, 0, 0);
 
-        super.close();
+        try
+        {
+            super.close();
+        }
+        catch (IOException e)
+        {
+            throw new FSReadError(e, filePath);
+        }
     }
 
     @Override
@@ -235,7 +288,7 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
      */
     protected static class BufferedRandomAccessFileMark implements FileMark
     {
-        long pointer;
+        final long pointer;
 
         public BufferedRandomAccessFileMark(long pointer)
         {
@@ -244,14 +297,14 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
     }
 
     @Override
-    public void seek(long newPosition) throws IOException
+    public void seek(long newPosition)
     {
         if (newPosition < 0)
             throw new IllegalArgumentException("new position should not be negative");
 
         if (newPosition > length()) // it is save to call length() in read-only mode
-            throw new EOFException(String.format("unable to seek to position %d in %s (%d bytes) in read-only mode",
-                                                 newPosition, getPath(), length()));
+            throw new IllegalArgumentException(String.format("unable to seek to position %d in %s (%d bytes) in read-only mode",
+                                                             newPosition, getPath(), length()));
 
         current = newPosition;
 
@@ -262,10 +315,10 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
     @Override
     // -1 will be returned if there is nothing to read; higher-level methods like readInt
     // or readFully (from RandomAccessFile) will throw EOFException but this should not
-    public int read() throws IOException
+    public int read()
     {
         if (buffer == null)
-            throw new ClosedChannelException();
+            throw new AssertionError("Attempted to read from closed RAR");
 
         if (isEOF())
             return -1; // required by RandomAccessFile
@@ -279,7 +332,7 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
     }
 
     @Override
-    public int read(byte[] buffer) throws IOException
+    public int read(byte[] buffer)
     {
         return read(buffer, 0, buffer.length);
     }
@@ -287,10 +340,10 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
     @Override
     // -1 will be returned if there is nothing to read; higher-level methods like readInt
     // or readFully (from RandomAccessFile) will throw EOFException but this should not
-    public int read(byte[] buff, int offset, int length) throws IOException
+    public int read(byte[] buff, int offset, int length)
     {
         if (buffer == null)
-            throw new ClosedChannelException();
+            throw new AssertionError("Attempted to read from closed RAR");
 
         if (length == 0)
             return 0;
@@ -316,36 +369,48 @@ public class RandomAccessReader extends RandomAccessFile implements FileDataInpu
         return toCopy;
     }
 
-    public ByteBuffer readBytes(int length) throws IOException
+    public ByteBuffer readBytes(int length) throws EOFException
     {
         assert length >= 0 : "buffer length should not be negative: " + length;
 
         byte[] buff = new byte[length];
-        readFully(buff); // reading data buffer
+
+        try
+        {
+            readFully(buff); // reading data buffer
+        }
+        catch (EOFException e)
+        {
+            throw e;
+        }
+        catch (IOException e)
+        {
+            throw new FSReadError(e, filePath);
+        }
 
         return ByteBuffer.wrap(buff);
     }
 
     @Override
-    public long length() throws IOException
+    public long length()
     {
         return fileLength;
     }
 
     @Override
-    public void write(int value) throws IOException
+    public void write(int value)
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void write(byte[] buffer) throws IOException
+    public void write(byte[] buffer)
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void write(byte[] buffer, int offset, int length) throws IOException
+    public void write(byte[] buffer, int offset, int length)
     {
         throw new UnsupportedOperationException();
     }

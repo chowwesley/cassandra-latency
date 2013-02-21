@@ -1,6 +1,4 @@
-package org.apache.cassandra.db.compaction;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,34 +7,36 @@ package org.apache.cassandra.db.compaction;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.db.compaction;
 
-
+import java.io.Closeable;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.security.MessageDigest;
 
 import org.apache.cassandra.db.DecoratedKey;
+import org.apache.cassandra.io.sstable.ColumnStats;
+import org.apache.cassandra.db.DeletionInfo;
+import org.apache.cassandra.db.ColumnIndex;
 
 /**
  * a CompactedRow is an object that takes a bunch of rows (keys + columnfamilies)
  * and can write a compacted version of those rows to an output stream.  It does
  * NOT necessarily require creating a merged CF object in memory.
  */
-public abstract class AbstractCompactedRow
+public abstract class AbstractCompactedRow implements Closeable
 {
-    public final DecoratedKey<?> key;
+    public final DecoratedKey key;
 
-    public AbstractCompactedRow(DecoratedKey<?> key)
+    public AbstractCompactedRow(DecoratedKey key)
     {
         this.key = key;
     }
@@ -64,14 +64,18 @@ public abstract class AbstractCompactedRow
     public abstract boolean isEmpty();
 
     /**
-     * @return the number of columns in the row
+     * @return aggregate information about the columns in this row.  Some fields may
+     * contain default values if computing them value would require extra effort we're not willing to make.
      */
-    public abstract int columnCount();
+    public abstract ColumnStats columnStats();
 
     /**
-     * @return the max column timestamp in the row or Long.MIN_VALUE if
-     * computing this value would require extra effort we're not willing to
-     * make.
+     * @return the compacted row deletion infos.
      */
-    public abstract long maxTimestamp();
+    public abstract DeletionInfo deletionInfo();
+
+    /**
+     * @return the column index for this row.
+     */
+    public abstract ColumnIndex index();
 }

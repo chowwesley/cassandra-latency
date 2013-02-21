@@ -22,7 +22,9 @@ package org.apache.cassandra.service;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
@@ -33,13 +35,14 @@ import org.junit.Test;
 
 import org.apache.cassandra.SchemaLoader;
 import org.apache.cassandra.Util;
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.dht.IPartitioner;
 import org.apache.cassandra.dht.RandomPartitioner;
 import org.apache.cassandra.dht.Token;
 import org.apache.cassandra.gms.Gossiper;
 import org.apache.cassandra.locator.TokenMetadata;
-import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessageIn;
+import org.apache.cassandra.net.MessageOut;
 import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.net.sink.IMessageSink;
 import org.apache.cassandra.net.sink.SinkManager;
@@ -57,8 +60,9 @@ public class RemoveTest
     ArrayList<Token> endpointTokens = new ArrayList<Token>();
     ArrayList<Token> keyTokens = new ArrayList<Token>();
     List<InetAddress> hosts = new ArrayList<InetAddress>();
+    List<UUID> hostIds = new ArrayList<UUID>();
     InetAddress removalhost;
-    Token removaltoken;
+    UUID removalId;
 
     @BeforeClass
     public static void setupClass() throws IOException
@@ -80,18 +84,14 @@ public class RemoveTest
         tmd.clearUnsafe();
 
         // create a ring of 5 nodes
-        Util.createInitialRing(ss, partitioner, endpointTokens, keyTokens, hosts, 6);
+        Util.createInitialRing(ss, partitioner, endpointTokens, keyTokens, hosts, hostIds, 6);
 
         MessagingService.instance().listen(FBUtilities.getBroadcastAddress());
         Gossiper.instance.start(1);
-        for (int i = 0; i < 6; i++)
-        {
-            Gossiper.instance.initializeNodeUnsafe(hosts.get(i), 1);
-        }
         removalhost = hosts.get(5);
         hosts.remove(removalhost);
-        removaltoken = endpointTokens.get(5);
-        endpointTokens.remove(removaltoken);
+        removalId = hostIds.get(5);
+        hostIds.remove(removalId);
     }
 
     @After
@@ -103,27 +103,22 @@ public class RemoveTest
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testBadToken()
+    public void testBadHostId()
     {
-        final String token = StorageService.getPartitioner().getTokenFactory().toString(keyTokens.get(2));
-        ss.removeToken(token);
+        ss.removeNode("ffffffff-aaaa-aaaa-aaaa-ffffffffffff");
 
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testLocalToken()
+    public void testLocalHostId()
     {
-        //first token should be localhost
-        final String token = StorageService.getPartitioner().getTokenFactory().toString(endpointTokens.get(0));
-        ss.removeToken(token);
+        //first ID should be localhost
+        ss.removeNode(hostIds.get(0).toString());
     }
 
     @Test
-    public void testRemoveToken() throws InterruptedException
+    public void testRemoveHostId() throws InterruptedException
     {
-        IPartitioner partitioner = StorageService.getPartitioner();
-
-        final String token = partitioner.getTokenFactory().toString(removaltoken);
         ReplicationSink rSink = new ReplicationSink();
         SinkManager.add(rSink);
 
@@ -135,7 +130,7 @@ public class RemoveTest
             {
                 try
                 {
-                    ss.removeToken(token);
+                    ss.removeNode(removalId.toString());
                 }
                 catch (Exception e)
                 {
@@ -155,7 +150,7 @@ public class RemoveTest
 
         for (InetAddress host : hosts)
         {
-            Message msg = new Message(host, StorageService.Verb.REPLICATION_FINISHED, new byte[0], MessagingService.version_);
+            MessageOut msg = new MessageOut(host, MessagingService.Verb.REPLICATION_FINISHED, null, null, Collections.<String, byte[]>emptyMap());
             MessagingService.instance().sendRR(msg, FBUtilities.getBroadcastAddress());
         }
 
@@ -165,16 +160,24 @@ public class RemoveTest
         assertTrue(tmd.getLeavingEndpoints().isEmpty());
     }
 
+    /**
+     * sink that captures STREAM_REQUEST messages and calls finishStreamRequest on it
+     */
     class ReplicationSink implements IMessageSink
     {
-        public Message handleMessage(Message msg, String id, InetAddress to)
+        public MessageIn handleMessage(MessageIn msg, String id, InetAddress to)
         {
-            if (!msg.getVerb().equals(StorageService.Verb.STREAM_REQUEST))
+            if (!msg.verb.equals(MessagingService.Verb.STREAM_REQUEST))
                 return msg;
 
             StreamUtil.finishStreamRequest(msg, to);
 
             return null;
+        }
+
+        public MessageOut handleMessage(MessageOut msg, String id, InetAddress to)
+        {
+            return msg;
         }
     }
 }

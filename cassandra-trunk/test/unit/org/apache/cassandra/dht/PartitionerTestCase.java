@@ -19,10 +19,13 @@
 package org.apache.cassandra.dht;
 
 import java.nio.ByteBuffer;
-import java.util.Random;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 public abstract class PartitionerTestCase<T extends Token>
 {
@@ -82,6 +85,11 @@ public abstract class PartitionerTestCase<T extends Token>
     @Test
     public void testMidpointMinimum()
     {
+        midpointMinimumTestCase();
+    }
+
+    protected void midpointMinimumTestCase()
+    {
         T mintoken = partitioner.getMinimumToken();
         assert mintoken.compareTo(partitioner.midpoint(mintoken, mintoken)) != 0;
         assertMidpoint(mintoken, tok("a"), 16);
@@ -109,5 +117,40 @@ public abstract class PartitionerTestCase<T extends Token>
     {
         Token.TokenFactory factory = partitioner.getTokenFactory();
         assert tok("a").compareTo(factory.fromString(factory.toString(tok("a")))) == 0;
+    }
+
+    @Test
+    public void testDescribeOwnership()
+    {
+        try
+        {
+            testDescribeOwnershipWith(0);
+            fail();
+        }
+        catch (RuntimeException e)
+        {
+            // success
+        }
+        testDescribeOwnershipWith(1);
+        testDescribeOwnershipWith(2);
+        testDescribeOwnershipWith(256);
+    }
+
+    private void testDescribeOwnershipWith(int numTokens)
+    {
+        List<Token> tokens = new ArrayList<Token>();
+        while (tokens.size() < numTokens)
+        {
+            Token randomToken = partitioner.getRandomToken();
+            if (!tokens.contains(randomToken))
+                tokens.add(randomToken);
+        }
+        Collections.sort(tokens);
+        Map<Token, Float> owns = partitioner.describeOwnership(tokens);
+
+        float totalOwnership = 0;
+        for (float ownership : owns.values())
+            totalOwnership += ownership;
+        assertEquals(1.0, totalOwnership, 0.001);
     }
 }

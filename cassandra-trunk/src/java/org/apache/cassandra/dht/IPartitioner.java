@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.dht;
 
 import java.nio.ByteBuffer;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.cassandra.db.DecoratedKey;
+import org.apache.cassandra.db.marshal.AbstractType;
 
 public interface IPartitioner<T extends Token>
 {
@@ -33,7 +33,7 @@ public interface IPartitioner<T extends Token>
      * @param key On disk representation
      * @return DecoratedKey object
      */
-    public DecoratedKey<T> convertFromDiskFormat(ByteBuffer key);
+    public DecoratedKey convertFromDiskFormat(ByteBuffer key);
 
     /**
      * Transform key to object representation of the on-disk format.
@@ -41,7 +41,7 @@ public interface IPartitioner<T extends Token>
      * @param key the raw, client-facing key
      * @return decorated version of key
      */
-    public DecoratedKey<T> decorateKey(ByteBuffer key);
+    public DecoratedKey decorateKey(ByteBuffer key);
 
     /**
      * Calculate a Token representing the approximate "middle" of the given
@@ -51,10 +51,10 @@ public interface IPartitioner<T extends Token>
      */
     public Token midpoint(Token left, Token right);
 
-	/**
-	 * @return The minimum possible Token in the range that is being partitioned.
-	 */
-	public T getMinimumToken();
+    /**
+     * @return The minimum possible Token in the range that is being partitioned.
+     */
+    public T getMinimumToken();
 
     /**
      * @return a Token that can be used to route a given key
@@ -85,5 +85,7 @@ public interface IPartitioner<T extends Token>
      */
     public Map<Token, Float> describeOwnership(List<Token> sortedTokens);
 
-    public <T extends RingPosition> T minValue(Class<T> klass);
+    public AbstractType<?> getTokenValidator();
+
+    public <R extends RingPosition> R minValue(Class<R> klass);
 }

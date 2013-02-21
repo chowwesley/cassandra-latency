@@ -71,8 +71,12 @@ def init_nodes():
                 sed(absNodeFolder + '/' + f, '#' + var + '#', str(subst))
 
 def create_keyspace():
+<<<<<<< Updated upstream
     pass
     #execute('sh %s/bin/cassandra-cli -f %s/testing/create_keyspace.sql' % (CASSANDRA_HOME, CASSANDRA_HOME))
+=======
+    execute('sh %s/bin/cassandra-cli -h 127.0.0.2 -f %s/create_keyspace.sql' % (CASSANDRA_HOME, CASSANDRA_HOME))
+>>>>>>> Stashed changes
 
 def start_nodes():
     for i in range(85, 85+NUM_NODES):
@@ -246,10 +250,10 @@ if not args.nostart:
                 assert threadCount > 0
 
                 print 'Loading data...'
-                (status, output) = execute('%s/bin/ycsb load cassandra-7 -p hosts=127.0.0.2 -P %s/workloads/load_workload -p threadcount=%s' % (YCSB_HOME, YCSB_HOME, threadCount))
+                (status, output) = execute('%s/bin/ycsb load cassandra-7 -p hosts=127.0.0.2 -P %s/workloads/workloada -p threadcount=%s' % (YCSB_HOME, YCSB_HOME, threadCount))
                 print 'Starting test. Check status from testing/ycsb.log'
                 logFile = open('%s/ycsb.log' % CASSANDRA_HOME, 'w')
-                proc = subprocess.Popen('%s/bin/ycsb run cassandra-7 -p hosts=127.0.0.2 -P %s/workloads/run_workload -p threadcount=%s' % (YCSB_HOME, YCSB_HOME, threadCount), shell=True, stdout=logFile, stderr=logFile)
+                proc = subprocess.Popen('%s/bin/ycsb run cassandra-7 -p hosts=127.0.0.2 -P %s/workloads/workloada -p threadcount=%s' % (YCSB_HOME, YCSB_HOME, threadCount), shell=True, stdout=logFile, stderr=logFile)
                 print 'Started YCSB RUN as pid=%s' % (proc.pid)
                 logFile.close()
                 

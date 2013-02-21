@@ -1,9 +1,4 @@
-/**
- *
- */
-package org.apache.cassandra.service;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -12,29 +7,29 @@ package org.apache.cassandra.service;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.service;
 
 import java.net.InetAddress;
 import java.util.Collection;
 
+import com.google.common.collect.Iterables;
+
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.Table;
+import org.apache.cassandra.exceptions.UnavailableException;
 import org.apache.cassandra.gms.FailureDetector;
 import org.apache.cassandra.locator.IEndpointSnitch;
-import org.apache.cassandra.locator.NetworkTopologyStrategy;
-import org.apache.cassandra.net.Message;
-import org.apache.cassandra.thrift.ConsistencyLevel;
-import org.apache.cassandra.thrift.UnavailableException;
+import org.apache.cassandra.net.MessageIn;
+import org.apache.cassandra.db.ConsistencyLevel;
+import org.apache.cassandra.db.WriteType;
 import org.apache.cassandra.utils.FBUtilities;
 
 /**
@@ -44,55 +39,24 @@ public class DatacenterWriteResponseHandler extends WriteResponseHandler
 {
     private static final IEndpointSnitch snitch = DatabaseDescriptor.getEndpointSnitch();
 
-    private static final String localdc;
-    static
+    public DatacenterWriteResponseHandler(Collection<InetAddress> naturalEndpoints,
+                                          Collection<InetAddress> pendingEndpoints,
+                                          ConsistencyLevel consistencyLevel,
+                                          Table table,
+                                          Runnable callback,
+                                          WriteType writeType)
     {
-        localdc = snitch.getDatacenter(FBUtilities.getBroadcastAddress());
-    }
-
-    protected DatacenterWriteResponseHandler(Collection<InetAddress> writeEndpoints, ConsistencyLevel consistencyLevel, String table, Runnable callback)
-    {
-        super(writeEndpoints, consistencyLevel, table, callback);
+        super(naturalEndpoints, pendingEndpoints, consistencyLevel, table, callback, writeType);
         assert consistencyLevel == ConsistencyLevel.LOCAL_QUORUM;
     }
 
-    public static IWriteResponseHandler create(Collection<InetAddress> writeEndpoints, ConsistencyLevel consistencyLevel, String table, Runnable callback)
-    {
-        return new DatacenterWriteResponseHandler(writeEndpoints, consistencyLevel, table, callback);
-    }
-
     @Override
-    protected int determineBlockFor(String table)
+    public void response(MessageIn message)
     {
-        NetworkTopologyStrategy strategy = (NetworkTopologyStrategy) Table.open(table).getReplicationStrategy();
-        return (strategy.getReplicationFactor(localdc) / 2) + 1;
-    }
-
-
-    @Override
-    public void response(Message message)
-    {
-        if (message == null || localdc.equals(snitch.getDatacenter(message.getFrom())))
+        if (message == null || DatabaseDescriptor.getLocalDataCenter().equals(snitch.getDatacenter(message.from)))
         {
             if (responses.decrementAndGet() == 0)
                 signal();
         }
     }
-
-    @Override
-    public void assureSufficientLiveNodes() throws UnavailableException
-    {
-        int liveNodes = 0;
-        for (InetAddress destination : writeEndpoints)
-        {
-            if (localdc.equals(snitch.getDatacenter(destination)) && FailureDetector.instance.isAlive(destination))
-                liveNodes++;
-        }
-
-        if (liveNodes < responses.get())
-        {
-            throw new UnavailableException();
-        }
-    }
-
 }

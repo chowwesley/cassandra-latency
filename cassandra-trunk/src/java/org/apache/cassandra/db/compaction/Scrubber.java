@@ -21,14 +21,14 @@ import java.nio.ByteBuffer;
 import java.io.*;
 import java.util.*;
 
+import com.google.common.base.Throwables;
+
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.*;
 import org.apache.cassandra.io.sstable.*;
 import org.apache.cassandra.io.util.FileUtils;
 import org.apache.cassandra.io.util.RandomAccessReader;
 import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.FBUtilities;
-import org.apache.cassandra.utils.IntervalTree.*;
 import org.apache.cassandra.utils.OutputHandler;
 
 public class Scrubber implements Closeable
@@ -86,9 +86,9 @@ public class Scrubber implements Closeable
         // If we run scrub offline, we should never purge tombstone, as we cannot know if other sstable have data that the tombstone deletes.
         this.controller = isOffline
                         ? new ScrubController(cfs)
-                        : new CompactionController(cfs, Collections.singletonList(sstable), CompactionManager.getDefaultGcBefore(cfs), true);
+                        : new CompactionController(cfs, Collections.singletonList(sstable), CompactionManager.getDefaultGcBefore(cfs));
         this.isCommutative = cfs.metadata.getDefaultValidator().isCommutative();
-        this.expectedBloomFilterSize = Math.max(DatabaseDescriptor.getIndexInterval(), (int)(SSTableReader.getApproximateKeyCount(toScrub)));
+        this.expectedBloomFilterSize = Math.max(cfs.metadata.getIndexInterval(), (int)(SSTableReader.getApproximateKeyCount(toScrub,cfs.metadata)));
 
         // loop through each row, deserializing to check for damage.
         // we'll also loop through the index at the same time, using the position from the index to recover if the
@@ -107,12 +107,12 @@ public class Scrubber implements Closeable
             ByteBuffer nextIndexKey = ByteBufferUtil.readWithShortLength(indexFile);
             {
                 // throw away variable so we don't have a side effect in the assert
-                long firstRowPositionFromIndex = indexFile.readLong();
+                long firstRowPositionFromIndex = RowIndexEntry.serializer.deserialize(indexFile, sstable.descriptor.version).position;
                 assert firstRowPositionFromIndex == 0 : firstRowPositionFromIndex;
             }
 
             // TODO errors when creating the writer may leave empty temp files.
-            writer = CompactionManager.maybeCreateWriter(cfs, destination, expectedBloomFilterSize, null, Collections.singletonList(sstable));
+            writer = CompactionManager.maybeCreateWriter(cfs, OperationType.SCRUB, destination, expectedBloomFilterSize, null, Collections.singletonList(sstable));
 
             AbstractCompactedRow prevRow = null;
 
@@ -128,7 +128,7 @@ public class Scrubber implements Closeable
                 try
                 {
                     key = SSTableReader.decodeKey(sstable.partitioner, sstable.descriptor, ByteBufferUtil.readWithShortLength(dataFile));
-                    dataSize = sstable.descriptor.hasIntRowSize ? dataFile.readInt() : dataFile.readLong();
+                    dataSize = sstable.descriptor.version.hasIntRowSize ? dataFile.readInt() : dataFile.readLong();
                     outputHandler.debug(String.format("row %s is %s bytes", ByteBufferUtil.bytesToHex(key.key), dataSize));
                 }
                 catch (Throwable th)
@@ -142,7 +142,9 @@ public class Scrubber implements Closeable
                 try
                 {
                     nextIndexKey = indexFile.isEOF() ? null : ByteBufferUtil.readWithShortLength(indexFile);
-                    nextRowPositionFromIndex = indexFile.isEOF() ? dataFile.length() : indexFile.readLong();
+                    nextRowPositionFromIndex = indexFile.isEOF()
+                                             ? dataFile.length()
+                                             : RowIndexEntry.serializer.deserialize(indexFile, sstable.descriptor.version).position;
                 }
                 catch (Throwable th)
                 {
@@ -154,7 +156,7 @@ public class Scrubber implements Closeable
                 long dataStart = dataFile.getFilePointer();
                 long dataStartFromIndex = currentIndexKey == null
                                         ? -1
-                                        : rowStart + 2 + currentIndexKey.remaining() + (sstable.descriptor.hasIntRowSize ? 4 : 8);
+                                        : rowStart + 2 + currentIndexKey.remaining() + (sstable.descriptor.version.hasIntRowSize ? 4 : 8);
                 long dataSizeFromIndex = nextRowPositionFromIndex - dataStartFromIndex;
                 assert currentIndexKey != null || indexFile.isEOF();
                 if (currentIndexKey != null)
@@ -254,16 +256,20 @@ public class Scrubber implements Closeable
             if (writer.getFilePointer() > 0)
                 newSstable = writer.closeAndOpenReader(sstable.maxDataAge);
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
             if (writer != null)
                 writer.abort();
-            throw FBUtilities.unchecked(e);
+            throw Throwables.propagate(t);
+        }
+        finally
+        {
+            controller.close();
         }
 
         if (!outOfOrderRows.isEmpty())
         {
-            SSTableWriter inOrderWriter = CompactionManager.maybeCreateWriter(cfs, destination, expectedBloomFilterSize, null, Collections.singletonList(sstable));
+            SSTableWriter inOrderWriter = CompactionManager.maybeCreateWriter(cfs, OperationType.SCRUB, destination, expectedBloomFilterSize, null, Collections.singletonList(sstable));
             for (AbstractCompactedRow row : outOfOrderRows)
                 inOrderWriter.append(row);
             newInOrderSstable = inOrderWriter.closeAndOpenReader(sstable.maxDataAge);
@@ -343,11 +349,11 @@ public class Scrubber implements Closeable
     {
         public ScrubController(ColumnFamilyStore cfs)
         {
-            super(cfs, Integer.MAX_VALUE, true, new IntervalTree<SSTableReader>(Collections.<Interval>emptyList()), false);
+            super(cfs, Integer.MAX_VALUE);
         }
 
         @Override
-        public boolean shouldPurge(DecoratedKey key)
+        public boolean shouldPurge(DecoratedKey key, long delTimestamp)
         {
             return false;
         }

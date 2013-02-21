@@ -7,33 +7,30 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cql3.statements;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.auth.Permission;
-import org.apache.cassandra.config.ConfigurationException;
 import org.apache.cassandra.config.DatabaseDescriptor;
-import org.apache.cassandra.config.KSMetaData;
 import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.cql3.KSPropDefs;
+import org.apache.cassandra.exceptions.InvalidRequestException;
+import org.apache.cassandra.exceptions.RequestValidationException;
+import org.apache.cassandra.exceptions.UnauthorizedException;
 import org.apache.cassandra.locator.AbstractReplicationStrategy;
 import org.apache.cassandra.service.ClientState;
 import org.apache.cassandra.service.MigrationManager;
 import org.apache.cassandra.service.StorageService;
-import org.apache.cassandra.thrift.InvalidRequestException;
-import org.apache.cassandra.thrift.SchemaDisagreementException;
 import org.apache.cassandra.thrift.ThriftValidation;
+import org.apache.cassandra.transport.messages.ResultMessage;
 
 /** A <code>CREATE KEYSPACE</code> statement parsed from a CQL query. */
 public class CreateKeyspaceStatement extends SchemaAlteringStatement
@@ -55,9 +52,15 @@ public class CreateKeyspaceStatement extends SchemaAlteringStatement
         this.attrs = attrs;
     }
 
-    public void checkAccess(ClientState state) throws InvalidRequestException
+    @Override
+    public String keyspace()
     {
-        state.hasKeyspaceAccess(name, Permission.CREATE);
+        return name;
+    }
+
+    public void checkAccess(ClientState state) throws UnauthorizedException, InvalidRequestException
+    {
+        state.hasAllKeyspacesAccess(Permission.CREATE);
     }
 
     /**
@@ -68,7 +71,7 @@ public class CreateKeyspaceStatement extends SchemaAlteringStatement
      * @throws InvalidRequestException if arguments are missing or unacceptable
      */
     @Override
-    public void validate(ClientState state) throws InvalidRequestException, SchemaDisagreementException
+    public void validate(ClientState state) throws RequestValidationException
     {
         super.validate(state);
         ThriftValidation.validateKeyspaceNotSystem(name);
@@ -79,29 +82,26 @@ public class CreateKeyspaceStatement extends SchemaAlteringStatement
         if (name.length() > Schema.NAME_LENGTH)
             throw new InvalidRequestException(String.format("Keyspace names shouldn't be more than %s characters long (got \"%s\")", Schema.NAME_LENGTH, name));
 
-        try
-        {
-            attrs.validate();
+        attrs.validate();
 
-            if (attrs.getReplicationStrategyClass() == null)
-                throw new ConfigurationException("Missing mandatory replication strategy class");
+        if (attrs.getReplicationStrategyClass() == null)
+            throw new ConfigurationException("Missing mandatory replication strategy class");
 
-            // trial run to let ARS validate class + per-class options
-            AbstractReplicationStrategy.createReplicationStrategy(name,
-                                                                  AbstractReplicationStrategy.getClass(attrs.getReplicationStrategyClass()),
-                                                                  StorageService.instance.getTokenMetadata(),
-                                                                  DatabaseDescriptor.getEndpointSnitch(),
-                                                                  attrs.getReplicationOptions());
-        }
-        catch (ConfigurationException e)
-        {
-            throw new InvalidRequestException(e.getMessage());
-        }
+        // trial run to let ARS validate class + per-class options
+        AbstractReplicationStrategy.createReplicationStrategy(name,
+                                                              AbstractReplicationStrategy.getClass(attrs.getReplicationStrategyClass()),
+                                                              StorageService.instance.getTokenMetadata(),
+                                                              DatabaseDescriptor.getEndpointSnitch(),
+                                                              attrs.getReplicationOptions());
     }
 
-    public void announceMigration() throws InvalidRequestException, ConfigurationException
+    public void announceMigration() throws RequestValidationException
     {
-        ThriftValidation.validateKeyspaceNotYetExisting(name);
         MigrationManager.announceNewKeyspace(attrs.asKSMetadata(name));
+    }
+
+    public ResultMessage.SchemaChange.Change changeType()
+    {
+        return ResultMessage.SchemaChange.Change.CREATED;
     }
 }

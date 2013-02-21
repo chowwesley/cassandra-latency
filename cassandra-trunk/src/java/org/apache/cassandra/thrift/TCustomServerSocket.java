@@ -1,7 +1,4 @@
-package org.apache.cassandra.thrift;
-
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -10,16 +7,16 @@ package org.apache.cassandra.thrift;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.thrift;
+
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -44,7 +41,7 @@ public class TCustomServerSocket extends TServerTransport
     /**
      * Underlying serversocket object
      */
-    private ServerSocket serverSocket_ = null;
+    private ServerSocket serverSocket = null;
 
     private final boolean keepAlive;
     private final Integer sendBufferSize;
@@ -66,18 +63,27 @@ public class TCustomServerSocket extends TServerTransport
         try
         {
             // Make server socket
-            serverSocket_ = new ServerSocket();
+            serverSocket = new ServerSocket();
             // Prevent 2MSL delay problem on server restarts
-            serverSocket_.setReuseAddress(true);
+            serverSocket.setReuseAddress(true);
             // Bind to listening port
-            serverSocket_.bind(bindAddr);
+            serverSocket.bind(bindAddr);
         }
         catch (IOException ioe)
         {
-            serverSocket_ = null;
+            serverSocket = null;
             throw new TTransportException("Could not create ServerSocket on address " + bindAddr.toString() + ".");
         }
 
+        this.keepAlive = keepAlive;
+        this.sendBufferSize = sendBufferSize;
+        this.recvBufferSize = recvBufferSize;
+    }
+
+    public TCustomServerSocket(ServerSocket socket, boolean keepAlive, Integer sendBufferSize, Integer recvBufferSize)
+            throws TTransportException
+    {
+        this.serverSocket = socket;
         this.keepAlive = keepAlive;
         this.sendBufferSize = sendBufferSize;
         this.recvBufferSize = recvBufferSize;
@@ -87,14 +93,14 @@ public class TCustomServerSocket extends TServerTransport
     protected TCustomSocket acceptImpl() throws TTransportException
     {
 
-        if (serverSocket_ == null)
+        if (serverSocket == null)
             throw new TTransportException(TTransportException.NOT_OPEN, "No underlying server socket.");
 
         TCustomSocket tsocket = null;
         Socket socket = null;
         try
         {
-            socket = serverSocket_.accept();
+            socket = serverSocket.accept();
             tsocket = new TCustomSocket(socket);
             tsocket.setTimeout(0);
         }
@@ -143,11 +149,11 @@ public class TCustomServerSocket extends TServerTransport
     public void listen() throws TTransportException
     {
         // Make sure not to block on accept
-        if (serverSocket_ != null)
+        if (serverSocket != null)
         {
             try
             {
-                serverSocket_.setSoTimeout(100);
+                serverSocket.setSoTimeout(100);
             }
             catch (SocketException sx)
             {
@@ -159,17 +165,17 @@ public class TCustomServerSocket extends TServerTransport
     @Override
     public void close()
     {
-        if (serverSocket_ != null)
+        if (serverSocket != null)
         {
             try
             {
-                serverSocket_.close();
+                serverSocket.close();
             }
             catch (IOException iox)
             {
                 logger.warn("Could not close server socket.", iox);
             }
-            serverSocket_ = null;
+            serverSocket = null;
         }
     }
 

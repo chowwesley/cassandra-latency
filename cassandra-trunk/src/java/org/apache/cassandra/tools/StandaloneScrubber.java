@@ -32,7 +32,7 @@ import org.apache.cassandra.db.Table;
 import org.apache.cassandra.db.compaction.LeveledManifest;
 import org.apache.cassandra.db.compaction.Scrubber;
 import org.apache.cassandra.io.sstable.*;
-import org.apache.cassandra.service.AbstractCassandraDaemon;
+import org.apache.cassandra.service.CassandraDaemon;
 import org.apache.cassandra.utils.OutputHandler;
 
 import static org.apache.cassandra.tools.BulkLoader.CmdLineOptions;
@@ -41,7 +41,7 @@ public class StandaloneScrubber
 {
     static
     {
-        AbstractCassandraDaemon.initLog4j();
+        CassandraDaemon.initLog4j();
     }
 
     private static final String TOOL_NAME = "sstablescrub";
@@ -69,7 +69,7 @@ public class StandaloneScrubber
             String snapshotName = "pre-scrub-" + System.currentTimeMillis();
 
             OutputHandler handler = new OutputHandler.SystemOutput(options.verbose, options.debug);
-            Directories.SSTableLister lister = cfs.directories.sstableLister().skipCompacted(true).skipTemporary(true);
+            Directories.SSTableLister lister = cfs.directories.sstableLister().skipTemporary(true);
 
             List<SSTableReader> sstables = new ArrayList<SSTableReader>();
 

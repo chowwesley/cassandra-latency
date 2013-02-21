@@ -30,7 +30,7 @@ import org.apache.cassandra.io.compress.CompressionParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.dht.IPartitioner;
 import org.apache.cassandra.thrift.*;
 import org.apache.cassandra.utils.FBUtilities;
@@ -58,7 +58,7 @@ public class ConfigHelper
     private static final String OUTPUT_KEYSPACE_USERNAME_CONFIG = "cassandra.output.keyspace.username";
     private static final String OUTPUT_KEYSPACE_PASSWD_CONFIG = "cassandra.output.keyspace.passwd";
     private static final String INPUT_COLUMNFAMILY_CONFIG = "cassandra.input.columnfamily";
-    private static final String OUTPUT_COLUMNFAMILY_CONFIG = "cassandra.output.columnfamily";
+    private static final String OUTPUT_COLUMNFAMILY_CONFIG = "mapreduce.output.basename"; //this must == OutputFormat.BASE_OUTPUT_NAME
     private static final String INPUT_PREDICATE_CONFIG = "cassandra.input.predicate";
     private static final String INPUT_KEYRANGE_CONFIG = "cassandra.input.keyRange";
     private static final String INPUT_SPLIT_SIZE_CONFIG = "cassandra.input.split.size";
@@ -76,6 +76,8 @@ public class ConfigHelper
     private static final String OUTPUT_COMPRESSION_CHUNK_LENGTH = "cassandra.output.compression.length";
     private static final String INPUT_TRANSPORT_FACTORY_CLASS = "cassandra.input.transport.factory.class";
     private static final String OUTPUT_TRANSPORT_FACTORY_CLASS = "cassandra.output.transport.factory.class";
+    private static final String THRIFT_FRAMED_TRANSPORT_SIZE_IN_MB = "cassandra.thrift.framed.size_mb";
+    private static final String THRIFT_MAX_MESSAGE_LENGTH_IN_MB = "cassandra.thrift.message.max_size_mb";
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
 
@@ -117,25 +119,43 @@ public class ConfigHelper
     }
 
     /**
-     * Set the keyspace and column family for the output of this job.
+     * Set the keyspace for the output of this job.
      *
      * @param conf Job configuration you are about to run
      * @param keyspace
-     * @param columnFamily
      */
-    public static void setOutputColumnFamily(Configuration conf, String keyspace, String columnFamily)
+    public static void setOutputKeyspace(Configuration conf, String keyspace)
     {
         if (keyspace == null)
         {
             throw new UnsupportedOperationException("keyspace may not be null");
         }
-        if (columnFamily == null)
-        {
-            throw new UnsupportedOperationException("columnfamily may not be null");
-        }
 
         conf.set(OUTPUT_KEYSPACE_CONFIG, keyspace);
-        conf.set(OUTPUT_COLUMNFAMILY_CONFIG, columnFamily);
+    }
+
+    /**
+     * Set the column family for the output of this job.
+     *
+     * @param conf         Job configuration you are about to run
+     * @param columnFamily
+     */
+    public static void setOutputColumnFamily(Configuration conf, String columnFamily)
+    {
+    	conf.set(OUTPUT_COLUMNFAMILY_CONFIG, columnFamily);
+    }
+
+    /**
+     * Set the column family for the output of this job.
+     *
+     * @param conf         Job configuration you are about to run
+     * @param keyspace
+     * @param columnFamily
+     */
+    public static void setOutputColumnFamily(Configuration conf, String keyspace, String columnFamily)
+    {
+    	setOutputKeyspace(conf, keyspace);
+    	setOutputColumnFamily(conf, columnFamily);
     }
 
     /**
@@ -266,7 +286,7 @@ public class ConfigHelper
     public static KeyRange getInputKeyRange(Configuration conf)
     {
         String str = conf.get(INPUT_KEYRANGE_CONFIG);
-        return null != str ? keyRangeFromString(str) : null;
+        return str == null ? null : keyRangeFromString(str);
     }
 
     private static KeyRange keyRangeFromString(String st)
@@ -295,14 +315,36 @@ public class ConfigHelper
         return conf.get(OUTPUT_KEYSPACE_CONFIG);
     }
 
+    public static void setInputKeyspaceUserNameAndPassword(Configuration conf, String username, String password)
+    {
+        setInputKeyspaceUserName(conf, username);
+        setInputKeyspacePassword(conf, password);
+    }
+
+    public static void setInputKeyspaceUserName(Configuration conf, String username)
+    {
+        conf.set(INPUT_KEYSPACE_USERNAME_CONFIG, username);
+    }
+
     public static String getInputKeyspaceUserName(Configuration conf)
     {
     	return conf.get(INPUT_KEYSPACE_USERNAME_CONFIG);
     }
 
+    public static void setInputKeyspacePassword(Configuration conf, String password)
+    {
+        conf.set(INPUT_KEYSPACE_PASSWD_CONFIG, password);
+    }
+
     public static String getInputKeyspacePassword(Configuration conf)
     {
     	return conf.get(INPUT_KEYSPACE_PASSWD_CONFIG);
+    }
+
+    public static void setOutputKeyspaceUserNameAndPassword(Configuration conf, String username, String password)
+    {
+        setOutputKeyspaceUserName(conf, username);
+        setOutputKeyspacePassword(conf, password);
     }
 
     public static void setOutputKeyspaceUserName(Configuration conf, String username)
@@ -330,14 +372,17 @@ public class ConfigHelper
         return conf.get(INPUT_COLUMNFAMILY_CONFIG);
     }
 
-    public static boolean getInputIsWide(Configuration conf)
-    {
-        return Boolean.valueOf(conf.get(INPUT_WIDEROWS_CONFIG));
-    }
-
     public static String getOutputColumnFamily(Configuration conf)
     {
-        return conf.get(OUTPUT_COLUMNFAMILY_CONFIG);
+    	if (conf.get(OUTPUT_COLUMNFAMILY_CONFIG) != null)
+    		return conf.get(OUTPUT_COLUMNFAMILY_CONFIG);
+    	else
+    		throw new UnsupportedOperationException("You must set the output column family using either setOutputColumnFamily or by adding a named output with MultipleOutputs");
+    }
+
+    public static boolean getInputIsWide(Configuration conf)
+    {
+        return Boolean.parseBoolean(conf.get(INPUT_WIDEROWS_CONFIG));
     }
 
     public static String getReadConsistencyLevel(Configuration conf)
@@ -444,6 +489,34 @@ public class ConfigHelper
         conf.set(OUTPUT_COMPRESSION_CHUNK_LENGTH, length);
     }
 
+    public static void setThriftFramedTransportSizeInMb(Configuration conf, int frameSizeInMB)
+    {
+        conf.setInt(THRIFT_FRAMED_TRANSPORT_SIZE_IN_MB, frameSizeInMB);
+    }
+
+    /**
+     * @param conf The configuration to use.
+     * @return Value (converts MBs to Bytes) set by {@link setThriftFramedTransportSizeInMb(Configuration, int)} or default of 15MB
+     */
+    public static int getThriftFramedTransportSize(Configuration conf)
+    {
+        return conf.getInt(THRIFT_FRAMED_TRANSPORT_SIZE_IN_MB, 15) * 1024 * 1024; // 15MB is default in Cassandra
+    }
+
+    public static void setThriftMaxMessageLengthInMb(Configuration conf, int maxMessageSizeInMB)
+    {
+        conf.setInt(THRIFT_MAX_MESSAGE_LENGTH_IN_MB, maxMessageSizeInMB);
+    }
+
+    /**
+     * @param conf The configuration to use.
+     * @return Value (converts MBs to Bytes) set by {@link setThriftMaxMessageLengthInMb(Configuration, int)} or default of 16MB
+     */
+    public static int getThriftMaxMessageLength(Configuration conf)
+    {
+        return conf.getInt(THRIFT_FRAMED_TRANSPORT_SIZE_IN_MB, 16) * 1024 * 1024; // 16MB is default in Cassandra
+    }
+
     public static CompressionParameters getOutputCompressionParamaters(Configuration conf)
     {
         if (getOutputCompressionClass(conf) == null)
@@ -504,8 +577,8 @@ public class ConfigHelper
         try
         {
             TSocket socket = new TSocket(host, port);
-            TTransport transport = getInputTransportFactory(conf).openTransport(socket);
-            return new Cassandra.Client(new TBinaryProtocol(transport));
+            TTransport transport = getInputTransportFactory(conf).openTransport(socket, conf);
+            return new Cassandra.Client(new TBinaryProtocol(transport, getThriftMaxMessageLength(conf)));
         }
         catch (LoginException e)
         {

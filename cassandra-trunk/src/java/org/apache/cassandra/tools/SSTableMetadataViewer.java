@@ -20,7 +20,7 @@ package org.apache.cassandra.tools;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.io.sstable.Descriptor;
 import org.apache.cassandra.io.sstable.SSTableMetadata;
 
@@ -46,10 +46,12 @@ public class SSTableMetadataViewer
             Descriptor descriptor = Descriptor.fromFilename(fname);
             SSTableMetadata metadata = SSTableMetadata.serializer.deserialize(descriptor);
 
-            out.printf("SSTable: %s\n", descriptor);
-            out.printf("Partitioner: %s\n", metadata.partitioner);
-            out.printf("Maximum timestamp: %s\n", metadata.maxTimestamp);
-            out.printf("Compression ratio: %s\n", metadata.compressionRatio);
+            out.printf("SSTable: %s%n", descriptor);
+            out.printf("Partitioner: %s%n", metadata.partitioner);
+            out.printf("Maximum timestamp: %s%n", metadata.maxTimestamp);
+            out.printf("Compression ratio: %s%n", metadata.compressionRatio);
+            out.printf("Estimated droppable tombstones: %s%n", metadata.getEstimatedDroppableTombstoneRatio((int) (System.currentTimeMillis() / 1000)));
+            out.printf("SSTable Level: %d%n", metadata.sstableLevel);
             out.println(metadata.replayPosition);
             printHistograms(metadata, out);
         }

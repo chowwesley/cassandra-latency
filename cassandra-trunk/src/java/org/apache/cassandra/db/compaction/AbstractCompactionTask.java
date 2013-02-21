@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,65 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db.compaction;
 
 import java.util.Collection;
-import java.util.Set;
-import java.io.IOException;
 
+import org.apache.cassandra.db.Directories;
 import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.db.ColumnFamilyStore;
 import org.apache.cassandra.db.compaction.CompactionManager.CompactionExecutorStatsCollector;
+import org.apache.cassandra.io.util.DiskAwareRunnable;
 
-public abstract class AbstractCompactionTask
+public abstract class AbstractCompactionTask extends DiskAwareRunnable
 {
-    protected ColumnFamilyStore cfs;
+    protected final ColumnFamilyStore cfs;
     protected Collection<SSTableReader> sstables;
+    protected boolean isUserDefined;
+    protected OperationType compactionType;
 
     public AbstractCompactionTask(ColumnFamilyStore cfs, Collection<SSTableReader> sstables)
     {
         this.cfs = cfs;
         this.sstables = sstables;
+        this.isUserDefined = false;
+        this.compactionType = OperationType.COMPACTION;
     }
 
-    public abstract int execute(CompactionExecutorStatsCollector collector) throws IOException;
+    public abstract int execute(CompactionExecutorStatsCollector collector);
 
-    public ColumnFamilyStore getColumnFamilyStore()
+    protected Directories getDirectories()
     {
-        return cfs;
-    }
-
-    public Collection<SSTableReader> getSSTables()
-    {
-        return sstables;
-    }
-
-    /**
-     * Try to mark the sstable to compact as compacting.
-     * It returns true if some sstables have been marked for compaction, false
-     * otherwise.
-     * This *must* be called before calling execute(). Moreover,
-     * unmarkSSTables *must* always be called after execute() if this
-     * method returns true.
-     */
-    public boolean markSSTablesForCompaction()
-    {
-        return markSSTablesForCompaction(cfs.getMinimumCompactionThreshold(), cfs.getMaximumCompactionThreshold());
-    }
-
-    public boolean markSSTablesForCompaction(int min, int max)
-    {
-        Set<SSTableReader> marked = cfs.getDataTracker().markCompacting(sstables, min, max);
-
-        if (marked == null || marked.isEmpty())
-        {
-            cancel();
-            return false;
-        }
-
-        this.sstables = marked;
-        return true;
+        return cfs.directories;
     }
 
     public void unmarkSSTables()
@@ -81,9 +52,17 @@ public abstract class AbstractCompactionTask
         cfs.getDataTracker().unmarkCompacting(sstables);
     }
 
-    // Can be overriden for action that need to be performed if the task won't
-    // execute (if sstable can't be marked successfully)
-    protected void cancel() {}
+    public AbstractCompactionTask setUserDefined(boolean isUserDefined)
+    {
+        this.isUserDefined = isUserDefined;
+        return this;
+    }
+
+    public AbstractCompactionTask setCompactionType(OperationType compactionType)
+    {
+        this.compactionType = compactionType;
+        return this;
+    }
 
     public String toString()
     {

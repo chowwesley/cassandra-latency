@@ -1,5 +1,4 @@
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -8,17 +7,14 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apache.cassandra.io.sstable;
 
 import java.io.File;
@@ -38,7 +34,7 @@ public class Component
     public static final char separator = '-';
 
     final static EnumSet<Type> TYPES = EnumSet.allOf(Type.class);
-    enum Type
+    public enum Type
     {
         // the base data for an sstable: the remaining components can be regenerated
         // based on the data component
@@ -56,7 +52,15 @@ public class Component
         // statistical metadata about the content of the sstable
         STATS("Statistics.db"),
         // holds sha1 sum of the data file (to be checked by sha1sum)
-        DIGEST("Digest.sha1");
+        DIGEST("Digest.sha1"),
+        // holds the CRC32 for chunks in an a uncompressed file.
+        CRC("CRC.db"),
+        // holds SSTable Index Summary and Boundaries
+        SUMMARY("Summary.db"),
+        // table of contents, stores the list of all components for the sstable
+        TOC("TOC.txt"),
+        // custom component, used by e.g. custom compaction strategy
+        CUSTOM(null);
 
         final String repr;
         Type(String repr)
@@ -69,33 +73,38 @@ public class Component
             for (Type type : TYPES)
                 if (repr.equals(type.repr))
                     return type;
-            throw new RuntimeException("Invalid SSTable component: '" + repr + "'");
+            return CUSTOM;
         }
     }
 
     // singleton components for types that don't need ids
-    public final static Component DATA = new Component(Type.DATA, -1);
-    public final static Component PRIMARY_INDEX = new Component(Type.PRIMARY_INDEX, -1);
-    public final static Component FILTER = new Component(Type.FILTER, -1);
-    public final static Component COMPACTED_MARKER = new Component(Type.COMPACTED_MARKER, -1);
-    public final static Component COMPRESSION_INFO = new Component(Type.COMPRESSION_INFO, -1);
-    public final static Component STATS = new Component(Type.STATS, -1);
-    public final static Component DIGEST = new Component(Type.DIGEST, -1);
+    public final static Component DATA = new Component(Type.DATA);
+    public final static Component PRIMARY_INDEX = new Component(Type.PRIMARY_INDEX);
+    public final static Component FILTER = new Component(Type.FILTER);
+    public final static Component COMPACTED_MARKER = new Component(Type.COMPACTED_MARKER);
+    public final static Component COMPRESSION_INFO = new Component(Type.COMPRESSION_INFO);
+    public final static Component STATS = new Component(Type.STATS);
+    public final static Component DIGEST = new Component(Type.DIGEST);
+    public final static Component CRC = new Component(Type.CRC);
+    public final static Component SUMMARY = new Component(Type.SUMMARY);
+    public final static Component TOC = new Component(Type.TOC);
 
     public final Type type;
-    public final int id;
+    public final String name;
     public final int hashCode;
 
     public Component(Type type)
     {
-        this(type, -1);
+        this(type, type.repr);
+        assert type != Type.CUSTOM;
     }
 
-    public Component(Type type, int id)
+    public Component(Type type, String name)
     {
+        assert name != null : "Component name cannot be null";
         this.type = type;
-        this.id = id;
-        this.hashCode = Objects.hashCode(type, id);
+        this.name = name;
+        this.hashCode = Objects.hashCode(type, name);
     }
 
     /**
@@ -103,7 +112,7 @@ public class Component
      */
     public String name()
     {
-        return type.repr;
+        return name;
     }
 
     /**
@@ -121,18 +130,22 @@ public class Component
         Component component;
         switch(type)
         {
-            case DATA:              component = Component.DATA;             break;
-            case PRIMARY_INDEX:     component = Component.PRIMARY_INDEX;    break;
-            case FILTER:            component = Component.FILTER;           break;
-            case COMPACTED_MARKER:  component = Component.COMPACTED_MARKER; break;
-            case COMPRESSION_INFO:  component = Component.COMPRESSION_INFO; break;
-            case STATS:             component = Component.STATS;            break;
-            case DIGEST:            component = Component.DIGEST;           break;
+            case DATA:              component = Component.DATA;                         break;
+            case PRIMARY_INDEX:     component = Component.PRIMARY_INDEX;                break;
+            case FILTER:            component = Component.FILTER;                       break;
+            case COMPACTED_MARKER:  component = Component.COMPACTED_MARKER;             break;
+            case COMPRESSION_INFO:  component = Component.COMPRESSION_INFO;             break;
+            case STATS:             component = Component.STATS;                        break;
+            case DIGEST:            component = Component.DIGEST;                       break;
+            case CRC:               component = Component.CRC;                          break;
+            case SUMMARY:           component = Component.SUMMARY;                      break;
+            case TOC:               component = Component.TOC;                          break;
+            case CUSTOM:            component = new Component(Type.CUSTOM, path.right); break;
             default:
                  throw new IllegalStateException();
         }
 
-        return new Pair<Descriptor,Component>(path.left, component);
+        return Pair.create(path.left, component);
     }
 
     @Override
@@ -149,7 +162,7 @@ public class Component
         if (!(o instanceof Component))
             return false;
         Component that = (Component)o;
-        return this.type == that.type && this.id == that.id;
+        return this.type == that.type && this.name.equals(that.name);
     }
 
     @Override

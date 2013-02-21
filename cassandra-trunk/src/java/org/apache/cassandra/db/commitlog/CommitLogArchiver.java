@@ -1,4 +1,3 @@
-package org.apache.cassandra.db.commitlog;
 /*
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +18,7 @@ package org.apache.cassandra.db.commitlog;
  * under the License.
  * 
  */
-
+package org.apache.cassandra.db.commitlog;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,6 @@ import java.util.Properties;
 import java.util.concurrent.*;
 
 import org.apache.cassandra.concurrent.JMXEnabledThreadPoolExecutor;
-import org.apache.cassandra.config.ConfigurationException;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.io.util.FileUtils;
 import org.apache.cassandra.utils.FBUtilities;
@@ -138,7 +136,7 @@ public class CommitLogArchiver
         return true;
     }
 
-    public void maybeRestoreArchive() throws IOException
+    public void maybeRestoreArchive()
     {
         if (Strings.isNullOrEmpty(restoreDirectories))
             return;
@@ -146,15 +144,23 @@ public class CommitLogArchiver
         for (String dir : restoreDirectories.split(","))
         {
             File[] files = new File(dir).listFiles();
+            if (files == null)
+            {
+                throw new RuntimeException("Unable to list director " + dir);
+            }
             for (File fromFile : files)
             {
-                File toFile = new File(DatabaseDescriptor.getCommitLogLocation(),
-                                       CommitLogSegment.FILENAME_PREFIX +
-                                       CommitLogSegment.getNextId() +
-                                       CommitLogSegment.FILENAME_EXTENSION);             
+                File toFile = new File(DatabaseDescriptor.getCommitLogLocation(), new CommitLogDescriptor(CommitLogSegment.getNextId()).fileName());
                 String command = restoreCommand.replace("%from", fromFile.getPath());
-                command = command.replace("%to", toFile.getPath());       
-                exec(command);
+                command = command.replace("%to", toFile.getPath());
+                try
+                {
+                    exec(command);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,12 +17,9 @@
  */
 package org.apache.cassandra.db.index;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.apache.cassandra.db.DecoratedKey;
-import org.apache.cassandra.db.IColumn;
-import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.db.Column;
 import org.apache.cassandra.utils.FBUtilities;
 
 /**
@@ -34,38 +31,35 @@ public abstract class PerColumnSecondaryIndex extends SecondaryIndex
     /**
      * Delete a column from the index
      *
-     * @param valueKey the column value which is used as the index key
      * @param rowKey the underlying row key which is indexed
      * @param col all the column info
      */
-    public abstract void deleteColumn(DecoratedKey<?> valueKey, ByteBuffer rowKey, IColumn col) throws IOException;
+    public abstract void delete(ByteBuffer rowKey, Column col);
 
     /**
      * insert a column to the index
      *
-     * @param valueKey the column value which is used as the index key
      * @param rowKey the underlying row key which is indexed
      * @param col all the column info
      */
-    public abstract void insertColumn(DecoratedKey<?> valueKey, ByteBuffer rowKey, IColumn col) throws IOException;
+    public abstract void insert(ByteBuffer rowKey, Column col);
 
     /**
      * update a column from the index
      *
-     * @param valueKey the column value which is used as the index key
      * @param rowKey the underlying row key which is indexed
      * @param col all the column info
      */
-    public abstract void updateColumn(DecoratedKey<?> valueKey, ByteBuffer rowKey, IColumn col) throws IOException;
+    public abstract void update(ByteBuffer rowKey, Column col);
 
     public String getNameForSystemTable(ByteBuffer column)
     {
         return getIndexName();
     }
-    
+
     @Override
     public boolean validate(Column column)
     {
-        return column.value.remaining() < FBUtilities.MAX_UNSIGNED_SHORT;
+        return column.value().remaining() < FBUtilities.MAX_UNSIGNED_SHORT;
     }
 }

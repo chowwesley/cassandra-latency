@@ -22,21 +22,32 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.exceptions.SyntaxException;
 
 public class PropertyDefinitions
 {
     protected static final Logger logger = LoggerFactory.getLogger(PropertyDefinitions.class);
 
-    protected final Map<String, String> properties = new HashMap<String, String>();
+    protected final Map<String, Object> properties = new HashMap<String, Object>();
 
-    public void addProperty(String name, String value) throws InvalidRequestException
+    public void addProperty(String name, String value) throws SyntaxException
     {
         if (properties.put(name, value) != null)
-            throw new InvalidRequestException(String.format("Multiple definition for property '%s'", name));
+            throw new SyntaxException(String.format("Multiple definition for property '%s'", name));
     }
 
-    public void validate(Set<String> keywords, Set<String> obsolete) throws InvalidRequestException
+    public void addProperty(String name, Map<String, String> value) throws SyntaxException
+    {
+        // Lowercase the map keys to be nice to users
+        Map<String, String> lowerCased = new HashMap<String, String>(value.size());
+        for (Map.Entry<String, String> entry : value.entrySet())
+            lowerCased.put(entry.getKey().toLowerCase(), entry.getValue());
+
+        if (properties.put(name, lowerCased) != null)
+            throw new SyntaxException(String.format("Multiple definition for property '%s'", name));
+    }
+
+    public void validate(Set<String> keywords, Set<String> obsolete) throws SyntaxException
     {
         for (String name : properties.keySet())
         {
@@ -46,13 +57,28 @@ public class PropertyDefinitions
             if (obsolete.contains(name))
                 logger.warn("Ignoring obsolete property {}", name);
             else
-                throw new InvalidRequestException(String.format("Unknown property '%s'", name));
+                throw new SyntaxException(String.format("Unknown property '%s'", name));
         }
     }
 
-    protected String getSimple(String name) throws InvalidRequestException
+    protected String getSimple(String name) throws SyntaxException
     {
-        return properties.get(name);
+        Object val = properties.get(name);
+        if (val == null)
+            return null;
+        if (!(val instanceof String))
+            throw new SyntaxException(String.format("Invalid value for property '%s'", name));
+        return (String)val;
+    }
+
+    protected Map<String, String> getMap(String name) throws SyntaxException
+    {
+        Object val = properties.get(name);
+        if (val == null)
+            return null;
+        if (!(val instanceof Map))
+            throw new SyntaxException(String.format("Invalid value for property '%s'", name));
+        return (Map<String, String>)val;
     }
 
     public Boolean hasProperty(String name)
@@ -60,21 +86,21 @@ public class PropertyDefinitions
         return properties.containsKey(name);
     }
 
-    public String getString(String key, String defaultValue) throws InvalidRequestException
+    public String getString(String key, String defaultValue) throws SyntaxException
     {
         String value = getSimple(key);
         return value != null ? value : defaultValue;
     }
 
     // Return a property value, typed as a Boolean
-    public Boolean getBoolean(String key, Boolean defaultValue) throws InvalidRequestException
+    public Boolean getBoolean(String key, Boolean defaultValue) throws SyntaxException
     {
         String value = getSimple(key);
         return (value == null) ? defaultValue : value.toLowerCase().matches("(1|true|yes)");
     }
 
     // Return a property value, typed as a Double
-    public Double getDouble(String key, Double defaultValue) throws InvalidRequestException
+    public Double getDouble(String key, Double defaultValue) throws SyntaxException
     {
         String value = getSimple(key);
         if (value == null)
@@ -89,19 +115,19 @@ public class PropertyDefinitions
             }
             catch (NumberFormatException e)
             {
-                throw new InvalidRequestException(String.format("Invalid double value %s for '%s'", value, key));
+                throw new SyntaxException(String.format("Invalid double value %s for '%s'", value, key));
             }
         }
     }
 
     // Return a property value, typed as an Integer
-    public Integer getInt(String key, Integer defaultValue) throws InvalidRequestException
+    public Integer getInt(String key, Integer defaultValue) throws SyntaxException
     {
         String value = getSimple(key);
         return toInt(key, value, defaultValue);
     }
 
-    public static Integer toInt(String key, String value, Integer defaultValue) throws InvalidRequestException
+    public static Integer toInt(String key, String value, Integer defaultValue) throws SyntaxException
     {
         if (value == null)
         {
@@ -115,7 +141,7 @@ public class PropertyDefinitions
             }
             catch (NumberFormatException e)
             {
-                throw new InvalidRequestException(String.format("Invalid integer value %s for '%s'", value, key));
+                throw new SyntaxException(String.format("Invalid integer value %s for '%s'", value, key));
             }
         }
     }

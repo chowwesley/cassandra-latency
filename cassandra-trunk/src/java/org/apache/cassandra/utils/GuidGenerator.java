@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.utils;
 
 import java.net.InetAddress;
@@ -25,9 +24,9 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 public class GuidGenerator {
-    private static Random myRand;
-    private static SecureRandom mySecureRand;
-    private static String s_id;
+    private static final Random myRand;
+    private static final SecureRandom mySecureRand;
+    private static final String s_id;
 
     static {
         if (System.getProperty("java.security.egd") == null) {
@@ -77,10 +76,10 @@ public class GuidGenerator {
         long rand = 0;
         rand = myRand.nextLong();
         sbValueBeforeMD5.append(s_id)
-        				.append(":")
-        				.append(Long.toString(time))
-        				.append(":")
-        				.append(Long.toString(rand));
+                        .append(":")
+                        .append(Long.toString(time))
+                        .append(":")
+                        .append(Long.toString(rand));
 
         String valueBeforeMD5 = sbValueBeforeMD5.toString();
         return ByteBuffer.wrap(FBUtilities.threadLocalMD5Digest().digest(valueBeforeMD5.getBytes()));

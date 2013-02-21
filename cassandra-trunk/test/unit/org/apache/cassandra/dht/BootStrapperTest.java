@@ -22,10 +22,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
@@ -33,6 +36,7 @@ import org.apache.cassandra.SchemaLoader;
 import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.db.Table;
 import org.apache.cassandra.gms.ApplicationState;
+import org.apache.cassandra.gms.Gossiper;
 import org.apache.cassandra.gms.IFailureDetectionEventListener;
 import org.apache.cassandra.gms.IFailureDetector;
 import org.apache.cassandra.locator.TokenMetadata;
@@ -40,7 +44,7 @@ import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.streaming.OperationType;
 import org.apache.cassandra.utils.FBUtilities;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class BootStrapperTest extends SchemaLoader
 {
@@ -73,7 +77,12 @@ public class BootStrapperTest extends SchemaLoader
         };
         Map<InetAddress, Double> load = new HashMap<InetAddress, Double>();
         for (int i = 0; i < addrs.length; i++)
+        {
+            Gossiper.instance.initializeNodeUnsafe(addrs[i], UUID.randomUUID(), 1);
             load.put(addrs[i], (double)i+2);
+            // also make bootstrapping nodes present in gossip
+            Gossiper.instance.initializeNodeUnsafe(bootstrapAddrs[i], UUID.randomUUID(), 1);
+        }
 
         // give every node a bootstrap source.
         for (int i = 3; i >=0; i--)
@@ -86,7 +95,10 @@ public class BootStrapperTest extends SchemaLoader
             Range<Token> range = ss.getPrimaryRangeForEndpoint(bootstrapSource);
             Token token = StorageService.getPartitioner().midpoint(range.left, range.right);
             assert range.contains(token);
-            ss.onChange(bootstrapAddrs[i], ApplicationState.STATUS, StorageService.instance.valueFactory.bootstrapping(token));
+            Gossiper.instance.injectApplicationState(bootstrapAddrs[i], ApplicationState.TOKENS, ss.valueFactory.tokens(Collections.singleton(token)));
+            ss.onChange(bootstrapAddrs[i],
+                        ApplicationState.STATUS,
+                        StorageService.instance.valueFactory.bootstrapping(Collections.<Token>singleton(token)));
         }
 
         // any further attempt to bootsrtap should fail since every node in the cluster is splitting.
@@ -103,7 +115,9 @@ public class BootStrapperTest extends SchemaLoader
         // indicate that one of the nodes is done. see if the node it was bootstrapping from is still available.
         Range<Token> range = ss.getPrimaryRangeForEndpoint(addrs[2]);
         Token token = StorageService.getPartitioner().midpoint(range.left, range.right);
-        ss.onChange(bootstrapAddrs[2], ApplicationState.STATUS, StorageService.instance.valueFactory.normal(token));
+        ss.onChange(bootstrapAddrs[2],
+                    ApplicationState.STATUS,
+                    StorageService.instance.valueFactory.normal(Collections.singleton(token)));
         load.put(bootstrapAddrs[2], 0d);
         InetAddress addr = BootStrapper.getBootstrapSource(ss.getTokenMetadata(), load);
         assert addr != null && addr.equals(addrs[2]);
@@ -135,7 +149,10 @@ public class BootStrapperTest extends SchemaLoader
         Range<Token> range5 = ss.getPrimaryRangeForEndpoint(five);
         Token fakeToken = StorageService.getPartitioner().midpoint(range5.left, range5.right);
         assert range5.contains(fakeToken);
-        ss.onChange(myEndpoint, ApplicationState.STATUS, StorageService.instance.valueFactory.bootstrapping(fakeToken));
+        Gossiper.instance.injectApplicationState(myEndpoint, ApplicationState.TOKENS, ss.valueFactory.tokens(Collections.singleton(fakeToken)));
+        ss.onChange(myEndpoint,
+                    ApplicationState.STATUS,
+                    StorageService.instance.valueFactory.bootstrapping(Collections.<Token>singleton(fakeToken)));
         tmd = ss.getTokenMetadata();
 
         InetAddress source4 = BootStrapper.getBootstrapSource(tmd, load);
@@ -155,7 +172,7 @@ public class BootStrapperTest extends SchemaLoader
         }
     }
 
-    private void testSourceTargetComputation(String table, int numOldNodes, int replicationFactor) throws UnknownHostException
+    private RangeStreamer testSourceTargetComputation(String table, int numOldNodes, int replicationFactor) throws UnknownHostException
     {
         StorageService ss = StorageService.instance;
 
@@ -197,6 +214,7 @@ public class BootStrapperTest extends SchemaLoader
         // is used, they will vary.
         assert toFetch.iterator().next().getValue().size() > 0;
         assert !toFetch.iterator().next().getKey().equals(myEndpoint);
+        return s;
     }
 
     private void generateFakeEndpoints(int numOldNodes) throws UnknownHostException

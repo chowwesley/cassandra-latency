@@ -22,9 +22,12 @@ import java.util.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import org.apache.cassandra.SchemaLoader;
+import org.apache.cassandra.db.ColumnFamilyStore;
+import org.apache.cassandra.db.Table;
 import org.apache.cassandra.utils.Pair;
 
-public class SizeTieredCompactionStrategyTest
+public class SizeTieredCompactionStrategyTest extends SchemaLoader
 {
     @Test
     public void testGetBuckets()
@@ -33,11 +36,15 @@ public class SizeTieredCompactionStrategyTest
         String[] strings = { "a", "bbbb", "cccccccc", "cccccccc", "bbbb", "a" };
         for (String st : strings)
         {
-            Pair<String, Long> pair = new Pair<String, Long>(st, new Long(st.length()));
+            Pair<String, Long> pair = Pair.create(st, new Long(st.length()));
             pairs.add(pair);
         }
 
-        List<List<String>> buckets = SizeTieredCompactionStrategy.getBuckets(pairs, 2);
+        ColumnFamilyStore cfs = Table.open("Keyspace1").getColumnFamilyStore("Standard1");
+        Map<String, String> opts = new HashMap<String, String>();
+        opts.put(SizeTieredCompactionStrategy.MIN_SSTABLE_SIZE_KEY, "2");
+        SizeTieredCompactionStrategy strategy = new SizeTieredCompactionStrategy(cfs, opts);
+        List<List<String>> buckets = strategy.getBuckets(pairs);
         assertEquals(3, buckets.size());
 
         for (List<String> bucket : buckets)
@@ -53,11 +60,11 @@ public class SizeTieredCompactionStrategyTest
         String[] strings2 = { "aaa", "bbbbbbbb", "aaa", "bbbbbbbb", "bbbbbbbb", "aaa" };
         for (String st : strings2)
         {
-            Pair<String, Long> pair = new Pair<String, Long>(st, new Long(st.length()));
+            Pair<String, Long> pair = Pair.create(st, new Long(st.length()));
             pairs.add(pair);
         }
 
-        buckets = SizeTieredCompactionStrategy.getBuckets(pairs, 2);
+        buckets = strategy.getBuckets(pairs);
         assertEquals(2, buckets.size());
 
         for (List<String> bucket : buckets)
@@ -74,11 +81,13 @@ public class SizeTieredCompactionStrategyTest
         String[] strings3 = { "aaa", "bbbbbbbb", "aaa", "bbbbbbbb", "bbbbbbbb", "aaa" };
         for (String st : strings3)
         {
-            Pair<String, Long> pair = new Pair<String, Long>(st, new Long(st.length()));
+            Pair<String, Long> pair = Pair.create(st, new Long(st.length()));
             pairs.add(pair);
         }
 
-        buckets = SizeTieredCompactionStrategy.getBuckets(pairs, 10); // notice the min is 10
+        opts.put(SizeTieredCompactionStrategy.MIN_SSTABLE_SIZE_KEY, "10");
+        strategy = new SizeTieredCompactionStrategy(cfs, opts);
+        buckets = strategy.getBuckets(pairs); // notice the min is 10
         assertEquals(1, buckets.size());
     }
 }

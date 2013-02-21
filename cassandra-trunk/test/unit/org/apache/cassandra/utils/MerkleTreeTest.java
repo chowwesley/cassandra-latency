@@ -48,15 +48,11 @@ import org.apache.cassandra.utils.MerkleTree.TreeRange;
 import org.apache.cassandra.utils.MerkleTree.TreeRangeIterator;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.AbstractIterator;
 
 public class MerkleTreeTest
 {
-    private static final Logger logger = LoggerFactory.getLogger(MerkleTreeTest.class);
-
     public static byte[] DUMMY = "blah".getBytes();
 
     /**
@@ -336,7 +332,7 @@ public class MerkleTreeTest
         for (TreeRange range : ranges)
             range.addHash(new RowHash(range.right, new byte[0]));
 
-        assert null != mt.hash(new Range(tok(-1), tok(-1))) :
+        assert mt.hash(new Range(tok(-1), tok(-1))) != null :
             "Could not hash tree " + mt;
     }
 

@@ -8,16 +8,173 @@ upgrade, just in case you need to roll back to the previous version.
 (Cassandra version X + 1 will always be able to read data files created
 by version X, but the inverse is not necessarily the case.)
 
-
-1.1.6
+1.2.2
 =====
 
 Upgrading
 ---------
-    - If you are using counters, you should drain existing Cassandra nodes
-      prior to the upgrade to prevent overcount during commitlog replay
-      (see CASSANDRA-4782).  For non-counter uses, drain is not required
+    - CQL3 type validation for constants has been fixed, which may require
+      fixing queries that were relying on the previous loose validation. Please
+      refer to the CQL3 documentation (http://cassandra.apache.org/doc/cql3/CQL.html)
+      and in particular the changelog section for more details. Please note in
+      particular that inputing blobs as strings constants is now deprecated (in
+      favor of blob constants) and its support will be removed in a future
+      version.
+
+Features
+--------
+    - Built-in CQL3-based implementations of IAuthenticator (PasswordAuthenticator)
+      and IAuthorizer (CassandraAuthorizer) have been added. PasswordAuthenticator
+      stores usernames and hashed passwords in system_auth.credentials table;
+      CassandraAuthorizer stores permissions in system_auth.permissions table.
+    - system_auth keyspace is now alterable via ALTER KEYSPACE queries.
+      The default is SimpleStrategy with replication_factor of 1, but it's
+      advised to raise RF to at least 3 or 5, since CL.QUORUM is used for all
+      auth-related queries. It's also possible to change the strategy to NTS.
+    - Permissions caching with time-based expiration policy has been added to reduce
+      performance impact of authorization. Permission validity can be configured
+      using 'permissions_validity_in_ms' setting in cassandra.yaml. The default
+      is 2000 (2 seconds).
+    - SimpleAuthenticator and SimpleAuthorizer examples have been removed. Please
+      look at CassandraAuthorizer/PasswordAuthenticator instead.
+
+
+1.2.1
+=====
+
+Upgrading
+---------
+    - In CQL3, date string are no longer accepted as timeuuid value since a
+      date string is not a correct representation of a timeuuid. Instead, new
+      methods (minTimeuuid, maxTimeuuid, now, dateOf, unixTimestampOf) have been
+      introduced to make working on timeuuid from date string easy. cqlsh also
+      does not display timeuuid as date string (since this is a lossy
+      representation), but the new dateOf method can be used instead. Please
+      refer to the reference documentation (http://cassandra.apache.org/doc/cql3/CQL.html)
+      for more detail.
+    - For client implementors: CQL3 client using the thrift interface should
+      use the new execute_cql3_query, prepare_cql3_query and execute_prepared_cql3_query
+      since 1.2.0. However, Cassandra 1.2.0 was not complaining if CQL3 was set
+      through set_cql_version but the now CQL2 only methods were used. This is
+      now the case.
+    - Queries that uses unrecognized or bad compaction or replication strategy
+      options are now refused (instead of simply logging a warning).
+
+
+1.2
+===
+
+Upgrading
+---------
+    - IAuthenticator interface has been updated to support dynamic
+      user creation, modification and removal. Users, even when stored
+      externally, now have to be explicitly created using
+      CREATE USER query first. AllowAllAuthenticator and SimpleAuthenticator
+      have been updated for the new interface, but you'll have to update
+      your old IAuthenticator implementations for 1.2. To ease this process,
+      a new abstract LegacyAuthenticator class has been added - subclass it
+      in your old IAuthenticator implementaion and everything should just work
+      (this only affects users who implemented custom authenticators).
+    - IAuthority interface has been deprecated in favor of IAuthorizer.
+      AllowAllAuthority and SimpleAuthority have been renamed to
+      AllowAllAuthorizer and SimpleAuthorizer, respectively. In order to
+      simplify the upgrade to the new interface, a new abstract
+      LegacyAuthorizer has been added - you should subclass it in your
+      old IAuthority implementation and everything should just work
+      (this only affects users who implemented custom authorities).
+      'authority' setting in cassandra.yaml has been renamed to 'authorizer',
+      'authority' is no longer recognized. This affects all upgrading users.
+    - 1.2 is NOT network-compatible with versions older than 1.0. That
+      means if you want to do a rolling, zero-downtime upgrade, you'll need
+      to upgrade first to 1.0.x or 1.1.x, and then to 1.2.  1.2 retains
+      the ability to read data files from Cassandra versions at least
+      back to 0.6, so a non-rolling upgrade remains possible with just
+      one step.
+    - The default partitioner for new clusters is Murmur3Partitioner,
+      which is about 10% faster for index-intensive workloads.  Partitioners
+      cannot be changed once data is in the cluster, however, so if you are
+      switching to the 1.2 cassandra.yaml, you should change this to
+      RandomPartitioner or whatever your old partitioner was.
+    - If you using counters and upgrading from a version prior to
+      1.1.6, you should drain existing Cassandra nodes prior to the
+      upgrade to prevent overcount during commitlog replay (see
+      CASSANDRA-4782).  For non-counter uses, drain is not required
       but is a good practice to minimize restart time.
+    - Tables using LeveledCompactionStrategy will default to not
+      creating a row-level bloom filter.  The default in older versions
+      of Cassandra differs; you should manually set the false positive
+      rate to 1.0 (to disable) or 0.01 (to enable, if you make many
+      requests for rows that do not exist).
+    - The hints schema was changed from 1.1 to 1.2. Cassandra automatically
+      snapshots and then truncates the hints column family as part of
+      starting up 1.2 for the first time.  Additionally, upgraded nodes
+      will not store new hints destined for older (pre-1.2) nodes. It is
+      therefore recommended that you perform a cluster upgrade when all
+      nodes are up. Because hints will be lost, a cluster-wide repair (with
+      -pr) is recommended after upgrade of all nodes.
+    - The `nodetool removetoken` command (and corresponding JMX operation)
+      have been renamed to `nodetool removenode`.  This function is
+      incompatible with the earlier `nodetool removetoken`, and attempts to
+      remove nodes in this way with a mixed 1.1 (or lower) / 1.2 cluster,
+      is not supported.
+    - The somewhat ill-conceived CollatingOrderPreservingPartitioner
+      has been removed. Use Murmur3Partitioner (recommended) or
+      ByteOrderedPartitioner instead.
+    - Global option hinted_handoff_throttle_delay_in_ms has been removed.
+      hinted_handoff_throttle_in_kb has been added instead.
+    - The default bloom filter fp chance has been increased to 1%.
+      This will save about 30% of the memory used by the old default.
+      Existing columnfamilies will retain their old setting.
+    - The default partitioner (for new clusters; the partitioner cannot be
+      changed in existing clusters) was changed from RandomPartitioner to
+      Murmur3Partitioner which provides faster hashing as well as improved
+      performance with secondary indexes.
+    - The default version of CQL (and cqlsh) is now CQL3. CQL2 is still
+      available but you will have to use the thrift set_cql_version method
+      (that is already supported in 1.1) to use CQL2. For cqlsh, you will need
+      to use 'cqlsh -2'.
+    - CQL3 is now considered final in this release. Compared to the beta
+      version that is part of 1.1, this final version has a few additions
+      (collections), but also some (incompatible) changes in the syntax for the
+      options of the create/alter keyspace/table statements. Typically, the
+      syntax to create a keyspace is now:
+        CREATE KEYSPACE ks WITH replication = { 'class' : 'SimpleStrategy',
+                                                'replication_factor' : 2 };
+      Also, the consistency level cannot be set in the language anymore, but is
+      at the protocol level.
+      Please refer to the CQL3 documentation (http://cassandra.apache.org/doc/cql3/CQL.html)
+      for details.
+    - In CQL3, the DROP behavior from ALTER TABLE has currently been removed
+      (because it was not correctly implemented). We hope to add it back soon
+      (Cassandra 1.2.1 or 1.2.2)
+
+Features
+--------
+    - Cassandra can now handle concurrent CREATE TABLE schema changes
+      as well as other updates
+    - rpc_timeout has been split up to allow finer-grained control
+      on timeouts for different operation types
+    - num_tokens can now be specified in cassandra.yaml. This defines the
+      number of tokens assigned to the host on the ring (default: 1).
+      Also specifying initial_token will override any num_tokens setting.
+    - disk_failure_policy allows blacklisting failed disks in JBOD 
+      configuration instead of erroring out indefinitely
+    - event tracing can be configured per-connection ("trace_next_query")
+      or globally/probabilistically ("nodetool settraceprobability")
+    - Atomic batches are now supported server side, where Cassandra will
+      guarantee that (at the price of pre-writing the batch to another node
+      first), all mutations in the batch will be applied, even if the
+      coordinator fails mid-batch.
+    - new IAuthorizer interface has replaced the old IAuthority. IAuthorizer
+      allows dynamic permission management via new CQL3 statements:
+      GRANT, REVOKE, LIST PERMISSIONS. A native implementation storing
+      the permissions in Cassandra is being worked on and we expect to
+      include it in 1.2.1 or 1.2.2.
+    - IAuthenticator interface has been updated to support dynamic user
+      creation, modification and removal via new CQL3 statements:
+      CREATE USER, ALTER USER, DROP USER, LIST USERS. A native implementation
+      that stores users in Cassandra itself is being worked on and is expected to
+      become part of 1.2.1 or 1.2.2.
 
 
 1.1.5

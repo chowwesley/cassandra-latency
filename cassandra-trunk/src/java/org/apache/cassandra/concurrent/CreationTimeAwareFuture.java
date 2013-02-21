@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -35,14 +35,12 @@ import java.util.concurrent.TimeoutException;
 public class CreationTimeAwareFuture<V> implements Future<V>
 {
 
-    private long creationTime = System.currentTimeMillis();
-
-    private Future<V> future;
+    private final long creationTime = System.currentTimeMillis();
+    private final Future<V> future;
 
     public CreationTimeAwareFuture(Future<V> future)
     {
         this.future = future;
-        creationTime = System.currentTimeMillis();
     }
 
     public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException

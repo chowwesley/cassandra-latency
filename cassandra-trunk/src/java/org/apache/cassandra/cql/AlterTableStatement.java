@@ -1,5 +1,4 @@
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -8,24 +7,20 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cql;
 
 import org.apache.cassandra.config.*;
 import org.apache.cassandra.db.marshal.TypeParser;
+import org.apache.cassandra.exceptions.*;
 import org.apache.cassandra.io.compress.CompressionParameters;
-import org.apache.cassandra.thrift.CfDef;
-import org.apache.cassandra.thrift.ColumnDef;
-import org.apache.cassandra.thrift.InvalidRequestException;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -68,21 +63,21 @@ public class AlterTableStatement
         }
     }
 
-    public CFMetaData getCFMetaData(String keyspace) throws ConfigurationException, InvalidRequestException
+    public CFMetaData getCFMetaData(String keyspace) throws ConfigurationException, InvalidRequestException, SyntaxException
     {
         CFMetaData meta = Schema.instance.getCFMetaData(keyspace, columnFamily);
         CFMetaData cfm = meta.clone();
 
         ByteBuffer columnName = this.oType == OperationType.OPTS ? null
-                                                                 : meta.comparator.fromString(this.columnName);
+                                                                 : meta.comparator.fromStringCQL2(this.columnName);
 
         switch (oType)
         {
             case ADD:
-                if (cfm.getKeyAlias() != null && cfm.getKeyAlias().equals(columnName))
+                if (!cfm.getKeyAliases().isEmpty() && cfm.getKeyAliases().contains(columnName))
                     throw new InvalidRequestException("Invalid column name: "
                                                       + this.columnName
-                                                      + ", because it equals to key_alias.");
+                                                      + ", because it equals to a key alias.");
 
                 cfm.addColumnDefinition(new ColumnDefinition(columnName,
                                                              TypeParser.parse(validator),
@@ -93,7 +88,8 @@ public class AlterTableStatement
                 break;
 
             case ALTER:
-                if (cfm.getKeyAlias() != null && cfm.getKeyAlias().equals(columnName))
+                // We only look for the first key alias which is ok for CQL2
+                if (!cfm.getKeyAliases().isEmpty() && cfm.getKeyAliases().get(0).equals(columnName))
                 {
                     cfm.keyValidator(TypeParser.parse(validator));
                 }
@@ -161,21 +157,22 @@ public class AlterTableStatement
 
     public static void applyPropertiesToCFMetadata(CFMetaData cfm, CFPropDefs cfProps) throws InvalidRequestException, ConfigurationException
     {
+        if (cfProps.hasProperty(CFPropDefs.KW_COMPACTION_STRATEGY_CLASS))
+            cfm.compactionStrategyClass(cfProps.compactionStrategyClass);
+
         if (cfProps.hasProperty(CFPropDefs.KW_COMPARATOR))
-        {
             throw new InvalidRequestException("Can't change CF comparator after creation");
-        }
+
         if (cfProps.hasProperty(CFPropDefs.KW_COMMENT))
-        {
             cfm.comment(cfProps.getProperty(CFPropDefs.KW_COMMENT));
-        }
+
         if (cfProps.hasProperty(CFPropDefs.KW_DEFAULTVALIDATION))
         {
             try
             {
                 cfm.defaultValidator(cfProps.getValidator());
             }
-            catch (ConfigurationException e)
+            catch (RequestValidationException e)
             {
                 throw new InvalidRequestException(String.format("Invalid validation type %s",
                                                                 cfProps.getProperty(CFPropDefs.KW_DEFAULTVALIDATION)));
@@ -189,7 +186,11 @@ public class AlterTableStatement
         cfm.minCompactionThreshold(cfProps.getPropertyInt(CFPropDefs.KW_MINCOMPACTIONTHRESHOLD, cfm.getMinCompactionThreshold()));
         cfm.maxCompactionThreshold(cfProps.getPropertyInt(CFPropDefs.KW_MAXCOMPACTIONTHRESHOLD, cfm.getMaxCompactionThreshold()));
         cfm.caching(CFMetaData.Caching.fromString(cfProps.getPropertyString(CFPropDefs.KW_CACHING, cfm.getCaching().toString())));
+        cfm.defaultTimeToLive(cfProps.getPropertyInt(CFPropDefs.KW_DEFAULT_TIME_TO_LIVE, cfm.getDefaultTimeToLive()));
+        cfm.speculativeRetry(CFMetaData.SpeculativeRetry.fromString(cfProps.getPropertyString(CFPropDefs.KW_SPECULATIVE_RETRY, cfm.getSpeculativeRetry().toString())));
+        cfm.populateIoCacheOnFlush(cfProps.getPropertyBoolean(CFPropDefs.KW_POPULATE_IO_CACHE_ON_FLUSH, cfm.populateIoCacheOnFlush()));
         cfm.bloomFilterFpChance(cfProps.getPropertyDouble(CFPropDefs.KW_BF_FP_CHANCE, cfm.getBloomFilterFpChance()));
+        cfm.memtableFlushPeriod(cfProps.getPropertyInt(CFPropDefs.KW_MEMTABLE_FLUSH_PERIOD, cfm.getMemtableFlushPeriod()));
 
         if (!cfProps.compactionStrategyOptions.isEmpty())
         {

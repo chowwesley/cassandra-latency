@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.utils;
 
 import com.google.common.base.Objects;
@@ -25,7 +24,7 @@ public class Pair<T1, T2>
     public final T1 left;
     public final T2 right;
 
-    public Pair(T1 left, T2 right)
+    protected Pair(T1 left, T2 right)
     {
         this.left = left;
         this.right = right;

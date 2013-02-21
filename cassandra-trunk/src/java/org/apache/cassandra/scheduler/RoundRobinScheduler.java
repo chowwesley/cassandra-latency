@@ -1,7 +1,4 @@
-package org.apache.cassandra.scheduler;
-
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -10,16 +7,16 @@ package org.apache.cassandra.scheduler;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.scheduler;
+
 
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -50,8 +47,8 @@ public class RoundRobinScheduler implements IRequestScheduler
     // Used by the the scheduler thread so we don't need to busy-wait until there is a request to process
     private final Semaphore queueSize = new Semaphore(0, false);
 
-    private int defaultWeight;
-    private Map<String, Integer> weights;
+    private final int defaultWeight;
+    private final Map<String, Integer> weights;
 
     public RoundRobinScheduler(RequestSchedulerOptions options)
     {

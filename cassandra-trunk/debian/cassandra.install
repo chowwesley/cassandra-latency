@@ -1,6 +1,7 @@
 conf/log4j-server.properties etc/cassandra
 conf/cassandra.yaml etc/cassandra
 conf/cassandra-env.sh etc/cassandra
+conf/cassandra-rackdc.properties etc/cassandra
 debian/cassandra.in.sh usr/share/cassandra
 debian/cassandra.conf etc/security/limits.d
 debian/cassandra-sysctl.conf etc/sysctl.d
@@ -13,6 +14,7 @@ bin/sstablekeys usr/bin
 bin/sstableloader usr/bin
 bin/cqlsh usr/bin
 bin/sstablescrub usr/bin
+bin/cassandra-shuffle usr/bin
 tools/bin/cassandra-stress usr/bin
 tools/bin/token-generator usr/bin
 lib/*.jar usr/share/cassandra/lib

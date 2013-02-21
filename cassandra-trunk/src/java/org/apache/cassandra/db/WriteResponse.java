@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,18 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.apache.cassandra.io.IVersionedSerializer;
-import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessageOut;
+import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.FBUtilities;
 
 
 /*
@@ -36,67 +34,42 @@ import org.apache.cassandra.utils.FBUtilities;
  */
 public class WriteResponse
 {
-    private static WriteResponseSerializer serializer_ = new WriteResponseSerializer();
+    public static final WriteResponseSerializer serializer = new WriteResponseSerializer();
 
-    public static WriteResponseSerializer serializer()
+    public MessageOut<WriteResponse> createMessage()
     {
-        return serializer_;
+        return new MessageOut<WriteResponse>(MessagingService.Verb.REQUEST_RESPONSE, this, serializer);
     }
-
-    public static Message makeWriteResponseMessage(Message original, WriteResponse respose) throws IOException
-    {
-        byte[] bytes = FBUtilities.serialize(respose, WriteResponse.serializer(), original.getVersion());
-        return original.getReply(FBUtilities.getBroadcastAddress(), bytes, original.getVersion());
-    }
-
-	private final String table_;
-	private final ByteBuffer key_;
-	private final boolean status_;
-
-	public WriteResponse(String table, ByteBuffer key, boolean bVal) {
-		table_ = table;
-		key_ = key;
-		status_ = bVal;
-	}
-
-	public String table()
-	{
-		return table_;
-	}
-
-	public ByteBuffer key()
-	{
-		return key_;
-	}
-
-	public boolean isSuccess()
-	{
-		return status_;
-	}
 
     public static class WriteResponseSerializer implements IVersionedSerializer<WriteResponse>
     {
         public void serialize(WriteResponse wm, DataOutput dos, int version) throws IOException
         {
-            dos.writeUTF(wm.table());
-            ByteBufferUtil.writeWithShortLength(wm.key(), dos);
-            dos.writeBoolean(wm.isSuccess());
+            if (version < MessagingService.VERSION_12)
+            {
+                dos.writeUTF("");
+                ByteBufferUtil.writeWithShortLength(ByteBufferUtil.EMPTY_BYTE_BUFFER, dos);
+                dos.writeBoolean(true);
+            }
         }
 
         public WriteResponse deserialize(DataInput dis, int version) throws IOException
         {
-            String table = dis.readUTF();
-            ByteBuffer key = ByteBufferUtil.readWithShortLength(dis);
-            boolean status = dis.readBoolean();
-            return new WriteResponse(table, key, status);
+            if (version < MessagingService.VERSION_12)
+            {
+                dis.readUTF();
+                ByteBufferUtil.readWithShortLength(dis);
+                dis.readBoolean();
+            }
+            return new WriteResponse();
         }
 
         public long serializedSize(WriteResponse response, int version)
         {
-            int size = DBConstants.shortSize + FBUtilities.encodedUTF8Length(response.table());
-            size += DBConstants.shortSize + response.key().remaining();
-            size += DBConstants.boolSize;
-            return size;
+            TypeSizes sizes = TypeSizes.NATIVE;
+            if (version < MessagingService.VERSION_12)
+                return sizes.sizeof("") + sizes.sizeof((short) 0) + sizes.sizeof(true);
+            return 0;
         }
     }
 }

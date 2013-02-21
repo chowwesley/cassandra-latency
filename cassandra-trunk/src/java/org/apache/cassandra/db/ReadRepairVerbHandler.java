@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,37 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
-import java.io.DataInputStream;
-import java.io.IOError;
-import java.io.IOException;
-
-import org.apache.cassandra.io.util.FastByteArrayInputStream;
 import org.apache.cassandra.net.IVerbHandler;
-import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessageIn;
 import org.apache.cassandra.net.MessagingService;
 
-public class ReadRepairVerbHandler implements IVerbHandler
+public class ReadRepairVerbHandler implements IVerbHandler<RowMutation>
 {
-    public void doVerb(Message message, String id)
+    public void doVerb(MessageIn<RowMutation> message, String id)
     {
-        byte[] body = message.getMessageBody();
-        FastByteArrayInputStream buffer = new FastByteArrayInputStream(body);
-
-        try
-        {
-            RowMutation rm = RowMutation.serializer().deserialize(new DataInputStream(buffer), message.getVersion());
-            rm.apply();
-
-            WriteResponse response = new WriteResponse(rm.getTable(), rm.key(), true);
-            Message responseMessage = WriteResponse.makeWriteResponseMessage(message, response);
-            MessagingService.instance().sendReply(responseMessage, id, message.getFrom());
-        }
-        catch (IOException e)
-        {
-            throw new IOError(e);
-        }
+        RowMutation rm = message.payload;
+        rm.apply();
+        WriteResponse response = new WriteResponse();
+        MessagingService.instance().sendReply(response.createMessage(), id, message.from);
     }
 }

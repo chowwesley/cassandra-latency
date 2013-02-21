@@ -26,6 +26,8 @@ import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.db.marshal.BytesType;
 import org.apache.cassandra.db.marshal.TypeParser;
 import org.apache.cassandra.db.migration.avro.CfDef;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.exceptions.RequestValidationException;
 import org.apache.cassandra.io.compress.CompressionParameters;
 import org.apache.cassandra.locator.AbstractReplicationStrategy;
 import org.apache.cassandra.locator.NetworkTopologyStrategy;
@@ -135,8 +137,7 @@ public class Avro
                                             cf.name.toString(),
                                             ColumnFamilyType.create(cf.column_type.toString()),
                                             comparator,
-                                            subcolumnComparator,
-                                            cf.id);
+                                            subcolumnComparator);
 
         // When we pull up an old avro CfDef which doesn't have these arguments,
         //  it doesn't default them correctly. Without explicit defaulting,
@@ -144,7 +145,7 @@ public class Avro
         //  Isn't AVRO supposed to handle stuff like this?
         if (cf.min_compaction_threshold != null) { newCFMD.minCompactionThreshold(cf.min_compaction_threshold); }
         if (cf.max_compaction_threshold != null) { newCFMD.maxCompactionThreshold(cf.max_compaction_threshold); }
-        if (cf.key_alias != null) { newCFMD.keyAlias(cf.key_alias); }
+        if (cf.key_alias != null) { newCFMD.keyAliases(Collections.<ByteBuffer>singletonList(cf.key_alias)); }
         if (cf.column_aliases != null)
             newCFMD.columnAliases(new ArrayList<ByteBuffer>(cf.column_aliases)); // fix avro stupidity
         if (cf.value_alias != null) { newCFMD.valueAlias(cf.value_alias); }
@@ -186,6 +187,9 @@ public class Avro
             throw new RuntimeException(e);
         }
 
+        // adding old -> new style ID mapping to support backward compatibility
+        Schema.instance.addOldCfIdMapping(cf.id, newCFMD.cfId);
+
         return newCFMD.comment(cf.comment.toString())
                       .readRepairChance(cf.read_repair_chance)
                       .dcLocalReadRepairChance(cf.dclocal_read_repair_chance)
@@ -209,7 +213,7 @@ public class Avro
             AbstractType<?> validatorType = TypeParser.parse(cd.validation_class);
             return new ColumnDefinition(ByteBufferUtil.clone(cd.name), validatorType, index_type, ColumnDefinition.getStringMap(cd.index_options), index_name, null);
         }
-        catch (ConfigurationException e)
+        catch (RequestValidationException e)
         {
             throw new RuntimeException(e);
         }

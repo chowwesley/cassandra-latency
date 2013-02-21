@@ -1,6 +1,4 @@
-package org.apache.cassandra.service;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,52 +7,76 @@ package org.apache.cassandra.service;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.service;
 
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import org.apache.cassandra.config.DatabaseDescriptor;
-import org.apache.cassandra.net.Message;
-import org.apache.cassandra.thrift.ConsistencyLevel;
-import org.apache.cassandra.thrift.UnavailableException;
+import org.apache.cassandra.db.ConsistencyLevel;
+import org.apache.cassandra.db.Table;
+import org.apache.cassandra.db.WriteType;
+import org.apache.cassandra.exceptions.*;
+import org.apache.cassandra.gms.FailureDetector;
+import org.apache.cassandra.net.IAsyncCallback;
+import org.apache.cassandra.net.MessageIn;
 import org.apache.cassandra.utils.SimpleCondition;
 
-public abstract class AbstractWriteResponseHandler implements IWriteResponseHandler
+public abstract class AbstractWriteResponseHandler implements IAsyncCallback
 {
+    private static Predicate<InetAddress> isAlive = new Predicate<InetAddress>()
+    {
+        public boolean apply(InetAddress endpoint)
+        {
+            return FailureDetector.instance.isAlive(endpoint);
+        }
+    };
+
     private final SimpleCondition condition = new SimpleCondition();
+    protected final Table table;
     protected final long startTime;
-    protected final Collection<InetAddress> writeEndpoints;
+    protected final Collection<InetAddress> naturalEndpoints;
     protected final ConsistencyLevel consistencyLevel;
     protected final Runnable callback;
+    protected final Collection<InetAddress> pendingEndpoints;
+    private final WriteType writeType;
 
     /**
+     * @param pendingEndpoints
      * @param callback A callback to be called when the write is successful.
-     * Note that this callback will *not* be called in case of an exception (timeout or unavailable).
      */
-    protected AbstractWriteResponseHandler(Collection<InetAddress> writeEndpoints, ConsistencyLevel consistencyLevel, Runnable callback)
+    protected AbstractWriteResponseHandler(Table table,
+                                           Collection<InetAddress> naturalEndpoints,
+                                           Collection<InetAddress> pendingEndpoints,
+                                           ConsistencyLevel consistencyLevel,
+                                           Runnable callback,
+                                           WriteType writeType)
     {
-        startTime = System.currentTimeMillis();
+        this.table = table;
+        this.pendingEndpoints = pendingEndpoints;
+        this.startTime = System.currentTimeMillis();
         this.consistencyLevel = consistencyLevel;
-        this.writeEndpoints = writeEndpoints;
+        this.naturalEndpoints = naturalEndpoints;
         this.callback = callback;
+        this.writeType = writeType;
     }
 
-    public void get() throws TimeoutException
+    public void get() throws WriteTimeoutException
     {
-        long timeout = DatabaseDescriptor.getRpcTimeout() - (System.currentTimeMillis() - startTime);
+        long timeout = DatabaseDescriptor.getWriteRpcTimeout() - (System.currentTimeMillis() - startTime);
+
         boolean success;
         try
         {
@@ -66,15 +88,18 @@ public abstract class AbstractWriteResponseHandler implements IWriteResponseHand
         }
 
         if (!success)
-        {
-            throw new TimeoutException();
-        }
+            throw new WriteTimeoutException(writeType, consistencyLevel, ackCount(), consistencyLevel.blockFor(table) + pendingEndpoints.size());
     }
 
-    /** null message means "response from local write" */
-    public abstract void response(Message msg);
+    protected abstract int ackCount();
 
-    public abstract void assureSufficientLiveNodes() throws UnavailableException;
+    /** null message means "response from local write" */
+    public abstract void response(MessageIn msg);
+
+    public void assureSufficientLiveNodes() throws UnavailableException
+    {
+        consistencyLevel.assureSufficientLiveNodes(table, Iterables.filter(Iterables.concat(naturalEndpoints, pendingEndpoints), isAlive));
+    }
 
     protected void signal()
     {

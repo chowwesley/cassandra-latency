@@ -1,5 +1,4 @@
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -8,66 +7,74 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cql;
 
-import java.io.IOException;
-
 import org.apache.cassandra.config.*;
-import org.apache.cassandra.thrift.CfDef;
-import org.apache.cassandra.thrift.ColumnDef;
-import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.exceptions.InvalidRequestException;
 
 public class DropIndexStatement
 {
-    public final String index;
+    public final String indexName;
+    private String keyspace;
 
     public DropIndexStatement(String indexName)
     {
-        index = indexName;
+        this.indexName = indexName;
     }
 
-    public CFMetaData generateCFMetadataUpdate(String keyspace)
-    throws InvalidRequestException, ConfigurationException, IOException
+    public void setKeyspace(String keyspace)
     {
-        CfDef cfDef = null;
+        this.keyspace = keyspace;
+    }
 
-        KSMetaData ksm = Schema.instance.getTableDefinition(keyspace);
+    public String getColumnFamily() throws InvalidRequestException
+    {
+        return findIndexedCF().cfName;
+    }
 
+    public CFMetaData generateCFMetadataUpdate() throws InvalidRequestException
+    {
+        return updateCFMetadata(findIndexedCF());
+    }
+
+    private CFMetaData updateCFMetadata(CFMetaData cfm) throws InvalidRequestException
+    {
+        ColumnDefinition column = findIndexedColumn(cfm);
+        assert column != null;
+        CFMetaData cloned = cfm.clone();
+        ColumnDefinition toChange = cloned.getColumn_metadata().get(column.name);
+        assert toChange.getIndexName() != null && toChange.getIndexName().equals(indexName);
+        toChange.setIndexName(null);
+        toChange.setIndexType(null, null);
+        return cloned;
+    }
+
+    private CFMetaData findIndexedCF() throws InvalidRequestException
+    {
+        KSMetaData ksm = Schema.instance.getKSMetaData(keyspace);
         for (CFMetaData cfm : ksm.cfMetaData().values())
         {
-            cfDef = getUpdatedCFDef(cfm.toThrift());
-            if (cfDef != null)
-                break;
+            if (findIndexedColumn(cfm) != null)
+                return cfm;
         }
-
-        if (cfDef == null)
-            throw new InvalidRequestException("Index '" + index + "' could not be found in any of the ColumnFamilies of keyspace '" + keyspace + "'");
-
-        return CFMetaData.fromThrift(cfDef);
+        throw new InvalidRequestException("Index '" + indexName + "' could not be found in any of the column families of keyspace '" + keyspace + "'");
     }
 
-    private CfDef getUpdatedCFDef(CfDef cfDef) throws InvalidRequestException
+    private ColumnDefinition findIndexedColumn(CFMetaData cfm)
     {
-        for (ColumnDef column : cfDef.column_metadata)
+        for (ColumnDefinition column : cfm.getColumn_metadata().values())
         {
-            if (column.isSetIndex_type() && column.isSetIndex_name() && column.index_name.equals(index))
-            {
-                column.unsetIndex_name();
-                column.unsetIndex_type();
-                return cfDef;
-            }
+            if (column.getIndexType() != null && column.getIndexName() != null && column.getIndexName().equals(indexName))
+                return column;
         }
-
         return null;
     }
 }

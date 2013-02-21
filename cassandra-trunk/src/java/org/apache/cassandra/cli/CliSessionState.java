@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,13 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.cli;
-
-import org.apache.cassandra.tools.NodeProbe;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+
+import org.apache.cassandra.cli.transport.FramedTransportFactory;
+import org.apache.cassandra.config.EncryptionOptions;
+import org.apache.cassandra.config.EncryptionOptions.ClientEncryptionOptions;
+import org.apache.cassandra.tools.NodeProbe;
+import org.apache.thrift.transport.TTransportFactory;
 
 /**
  * Used to hold the state for the CLI.
@@ -31,16 +34,20 @@ public class CliSessionState
 
     public String  hostName;      // cassandra server name
     public int     thriftPort;    // cassandra server's thrift port
-    public boolean framed = true; // cassandra server's framed transport
     public boolean debug = false; // print stack traces when errors occur in the CLI
-    public String  username;      // cassandra login name (if SimpleAuthenticator is used)
-    public String  password;      // cassandra login password (if SimpleAuthenticator is used)
+    public String  username;      // cassandra login name (if password-based authenticator is used)
+    public String  password;      // cassandra login password (if password-based authenticator is used)
     public String  keyspace;      // cassandra keyspace user is authenticating
     public boolean batch = false; // enable/disable batch processing mode
     public String  filename = ""; // file to read commands from
     public int     jmxPort = 7199;// JMX service port
+    public String  jmxUsername;   // JMX service username
+    public String  jmxPassword;   // JMX service password
     public boolean verbose = false; // verbose output
     public int     schema_mwt = 10 * 1000;    // Schema migration wait time (secs.)
+    public TTransportFactory transportFactory = new FramedTransportFactory();
+    public EncryptionOptions encOptions = new ClientEncryptionOptions();
+
     /*
      * Streams to read/write from
      */
@@ -74,11 +81,13 @@ public class CliSessionState
     {
         try
         {
-            return new NodeProbe(hostName, jmxPort);
+            return jmxUsername != null && jmxPassword != null
+                   ? new NodeProbe(hostName, jmxPort, jmxUsername, jmxPassword)
+                   : new NodeProbe(hostName, jmxPort);
         }
         catch (Exception e)
         {
-            err.printf("WARNING: Could not connect to the JMX on %s:%d, information won't be shown.%n%n", hostName, jmxPort);
+            err.printf("WARNING: Could not connect to the JMX on %s:%d - some information won't be shown.%n%n", hostName, jmxPort);
         }
 
         return null;

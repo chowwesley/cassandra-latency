@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.service;
 
 import java.io.IOException;
@@ -23,15 +22,10 @@ import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import com.google.common.collect.AbstractIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.db.ColumnFamily;
-import org.apache.cassandra.db.DecoratedKey;
-import org.apache.cassandra.db.RangeSliceReply;
-import org.apache.cassandra.db.Row;
+import org.apache.cassandra.db.*;
 import org.apache.cassandra.net.IAsyncResult;
-import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessageIn;
 import org.apache.cassandra.utils.Pair;
 import org.apache.cassandra.utils.CloseableIterator;
 import org.apache.cassandra.utils.MergeIterator;
@@ -40,10 +34,8 @@ import org.apache.cassandra.utils.MergeIterator;
  * Turns RangeSliceReply objects into row (string -> CF) maps, resolving
  * to the most recent ColumnFamily and setting up read repairs as necessary.
  */
-public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Row>>
+public class RangeSliceResponseResolver implements IResponseResolver<RangeSliceReply, Iterable<Row>>
 {
-    private static final Logger logger = LoggerFactory.getLogger(RangeSliceResponseResolver.class);
-
     private static final Comparator<Pair<Row,InetAddress>> pairComparator = new Comparator<Pair<Row, InetAddress>>()
     {
         public int compare(Pair<Row, InetAddress> o1, Pair<Row, InetAddress> o2)
@@ -54,7 +46,7 @@ public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Ro
 
     private final String table;
     private List<InetAddress> sources;
-    protected final Collection<Message> responses = new LinkedBlockingQueue<Message>();;
+    protected final Collection<MessageIn<RangeSliceReply>> responses = new LinkedBlockingQueue<MessageIn<RangeSliceReply>>();;
     public final List<IAsyncResult> repairResults = new ArrayList<IAsyncResult>();
 
     public RangeSliceResponseResolver(String table)
@@ -69,9 +61,8 @@ public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Ro
 
     public List<Row> getData() throws IOException
     {
-        Message response = responses.iterator().next();
-        RangeSliceReply reply = RangeSliceReply.read(response.getMessageBody(), response.getVersion());
-        return reply.rows;
+        MessageIn<RangeSliceReply> response = responses.iterator().next();
+        return response.payload.rows;
     }
 
     // Note: this would deserialize the response a 2nd time if getData was called first.
@@ -80,11 +71,11 @@ public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Ro
     {
         ArrayList<RowIterator> iters = new ArrayList<RowIterator>(responses.size());
         int n = 0;
-        for (Message response : responses)
+        for (MessageIn<RangeSliceReply> response : responses)
         {
-            RangeSliceReply reply = RangeSliceReply.read(response.getMessageBody(), response.getVersion());
+            RangeSliceReply reply = response.payload;
             n = Math.max(n, reply.rows.size());
-            iters.add(new RowIterator(reply.rows.iterator(), response.getFrom()));
+            iters.add(new RowIterator(reply.rows.iterator(), response.from));
         }
         // for each row, compute the combination of all different versions seen, and repair incomplete versions
         // TODO do we need to call close?
@@ -97,9 +88,10 @@ public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Ro
         return resolvedRows;
     }
 
-    public void preprocess(Message message)
+    public boolean preprocess(MessageIn message)
     {
         responses.add(message);
+        return true;
     }
 
     public boolean isDataPresent()
@@ -120,20 +112,15 @@ public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Ro
 
         protected Pair<Row,InetAddress> computeNext()
         {
-            return iter.hasNext() ? new Pair<Row, InetAddress>(iter.next(), source) : endOfData();
+            return iter.hasNext() ? Pair.create(iter.next(), source) : endOfData();
         }
 
         public void close() {}
     }
 
-    public Iterable<Message> getMessages()
+    public Iterable<MessageIn<RangeSliceReply>> getMessages()
     {
         return responses;
-    }
-
-    public int getMaxLiveColumns()
-    {
-        throw new UnsupportedOperationException();
     }
 
     private class Reducer extends MergeIterator.Reducer<Pair<Row,InetAddress>, Row>
@@ -152,7 +139,7 @@ public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Ro
         protected Row getReduced()
         {
             ColumnFamily resolved = versions.size() > 1
-                                  ? RowRepairResolver.resolveSuperset(versions)
+                                  ? RowDataResolver.resolveSuperset(versions)
                                   : versions.get(0);
             if (versions.size() < sources.size())
             {
@@ -168,7 +155,7 @@ public class RangeSliceResponseResolver implements IResponseResolver<Iterable<Ro
             }
             // resolved can be null even if versions doesn't have all nulls because of the call to removeDeleted in resolveSuperSet
             if (resolved != null)
-                repairResults.addAll(RowRepairResolver.scheduleRepairs(resolved, table, key, versions, versionSources));
+                repairResults.addAll(RowDataResolver.scheduleRepairs(resolved, table, key, versions, versionSources));
             versions.clear();
             versionSources.clear();
             return new Row(key, resolved);

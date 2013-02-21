@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.dht;
 
 import java.math.BigInteger;
@@ -27,6 +26,9 @@ import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.commons.lang.ArrayUtils;
 
 import org.apache.cassandra.db.DecoratedKey;
+import org.apache.cassandra.db.marshal.AbstractType;
+import org.apache.cassandra.db.marshal.BytesType;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.utils.FBUtilities;
 import org.apache.cassandra.utils.Hex;
@@ -38,14 +40,14 @@ public abstract class AbstractByteOrderedPartitioner extends AbstractPartitioner
 
     public static final BigInteger BYTE_MASK = new BigInteger("255");
 
-    public DecoratedKey<BytesToken> decorateKey(ByteBuffer key)
+    public DecoratedKey decorateKey(ByteBuffer key)
     {
-        return new DecoratedKey<BytesToken>(getToken(key), key);
+        return new DecoratedKey(getToken(key), key);
     }
 
-    public DecoratedKey<BytesToken> convertFromDiskFormat(ByteBuffer key)
+    public DecoratedKey convertFromDiskFormat(ByteBuffer key)
     {
-        return new DecoratedKey<BytesToken>(getToken(key), key);
+        return new DecoratedKey(getToken(key), key);
     }
 
     public BytesToken midpoint(Token ltoken, Token rtoken)
@@ -89,7 +91,6 @@ public abstract class AbstractByteOrderedPartitioner extends AbstractPartitioner
     private BigInteger bigForBytes(ByteBuffer bytes, int sigbytes)
     {
         byte[] b = new byte[sigbytes];
-        Arrays.fill(b, (byte) 0); // append zeros
         ByteBufferUtil.arrayCopy(bytes, bytes.position(), b, 0, bytes.remaining());
         return new BigInteger(1, b);
     }
@@ -202,7 +203,7 @@ public abstract class AbstractByteOrderedPartitioner extends AbstractPartitioner
                 for (Range<Token> r : sortedRanges)
                 {
                     // Looping over every KS:CF:Range, get the splits size and add it to the count
-                    allTokens.put(r.right, allTokens.get(r.right) + StorageService.instance.getSplits(ks, cfmd.cfName, r, 1).size());
+                    allTokens.put(r.right, allTokens.get(r.right) + StorageService.instance.getSplits(ks, cfmd.cfName, r, 1, cfmd).size());
                 }
             }
         }
@@ -215,5 +216,10 @@ public abstract class AbstractByteOrderedPartitioner extends AbstractPartitioner
             allTokens.put(row.getKey(), row.getValue() / total);
 
         return allTokens;
+    }
+
+    public AbstractType<?> getTokenValidator()
+    {
+        return BytesType.instance;
     }
 }

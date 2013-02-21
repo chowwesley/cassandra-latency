@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.utils;
 
 import java.util.Map;
@@ -36,28 +35,23 @@ public class ExpiringMap<K, V>
     private static final Logger logger = LoggerFactory.getLogger(ExpiringMap.class);
     private volatile boolean shutdown;
 
-    private static class CacheableObject<T>
+    public static class CacheableObject<T>
     {
-        private final T value;
+        public final T value;
+        public final long timeout;
         private final long createdAt;
-        private final long expiration;
 
-        CacheableObject(T o, long e)
+        private CacheableObject(T value, long timeout)
         {
-            assert o != null;
-            value = o;
-            expiration = e;
-            createdAt = System.currentTimeMillis();
+            assert value != null;
+            this.value = value;
+            this.timeout = timeout;
+            this.createdAt = System.currentTimeMillis();
         }
 
-        T getValue()
+        private boolean isReadyToDieAt(long time)
         {
-            return value;
-        }
-
-        boolean isReadyToDieAt(long time)
-        {
-            return ((time - createdAt) > expiration);
+            return ((time - createdAt) > timeout);
         }
     }
 
@@ -76,7 +70,7 @@ public class ExpiringMap<K, V>
      *
      * @param defaultExpiration the TTL for objects in the cache in milliseconds
      */
-    public ExpiringMap(long defaultExpiration, final Function<Pair<K,V>, ?> postExpireHook)
+    public ExpiringMap(long defaultExpiration, final Function<Pair<K,CacheableObject<V>>, ?> postExpireHook)
     {
         this.defaultExpiration = defaultExpiration;
 
@@ -98,7 +92,7 @@ public class ExpiringMap<K, V>
                         cache.remove(entry.getKey());
                         n++;
                         if (postExpireHook != null)
-                            postExpireHook.apply(new Pair<K, V>(entry.getKey(), entry.getValue().getValue()));
+                            postExpireHook.apply(Pair.create(entry.getKey(), entry.getValue()));
                     }
                 }
                 logger.trace("Expired {} entries", n);
@@ -149,19 +143,19 @@ public class ExpiringMap<K, V>
             }
         }
         CacheableObject<V> previous = cache.put(key, new CacheableObject<V>(value, timeout));
-        return (previous == null) ? null : previous.getValue();
+        return (previous == null) ? null : previous.value;
     }
 
     public V get(K key)
     {
         CacheableObject<V> co = cache.get(key);
-        return co == null ? null : co.getValue();
+        return co == null ? null : co.value;
     }
 
     public V remove(K key)
     {
         CacheableObject<V> co = cache.remove(key);
-        return co == null ? null : co.getValue();
+        return co == null ? null : co.value;
     }
 
     public long getAge(K key)

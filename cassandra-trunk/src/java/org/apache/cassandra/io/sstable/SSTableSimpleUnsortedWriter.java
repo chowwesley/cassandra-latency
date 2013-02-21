@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,14 +7,13 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.io.sstable;
 
@@ -24,11 +23,18 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
+
+import com.google.common.base.Throwables;
+
 import org.apache.cassandra.config.CFMetaData;
-import org.apache.cassandra.db.*;
+import org.apache.cassandra.db.ColumnFamily;
+import org.apache.cassandra.db.ColumnFamilyType;
+import org.apache.cassandra.db.DecoratedKey;
+import org.apache.cassandra.db.TreeMapBackedSortedColumns;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.dht.IPartitioner;
 import org.apache.cassandra.io.compress.CompressionParameters;
+import org.apache.cassandra.net.MessagingService;
 
 /**
  * A SSTable writer that doesn't assume rows are in sorted order.
@@ -69,7 +75,7 @@ public class SSTableSimpleUnsortedWriter extends AbstractSSTableSimpleWriter
                                        AbstractType<?> comparator,
                                        AbstractType<?> subComparator,
                                        int bufferSizeInMB,
-                                       CompressionParameters compressParameters) throws IOException
+                                       CompressionParameters compressParameters)
     {
         super(directory, new CFMetaData(keyspace, columnFamily, subComparator == null ? ColumnFamilyType.Standard : ColumnFamilyType.Super, comparator, subComparator).compressionParameters(compressParameters), partitioner);
         this.bufferSize = bufferSizeInMB * 1024L * 1024L;
@@ -82,14 +88,14 @@ public class SSTableSimpleUnsortedWriter extends AbstractSSTableSimpleWriter
                                        String columnFamily,
                                        AbstractType<?> comparator,
                                        AbstractType<?> subComparator,
-                                       int bufferSizeInMB) throws IOException
+                                       int bufferSizeInMB)
     {
         this(directory, partitioner, keyspace, columnFamily, comparator, subComparator, bufferSizeInMB, new CompressionParameters(null));
     }
 
     protected void writeRow(DecoratedKey key, ColumnFamily columnFamily) throws IOException
     {
-        currentSize += key.key.remaining() + columnFamily.serializedSize() * 1.2;
+        currentSize += key.key.remaining() + ColumnFamily.serializer.serializedSize(columnFamily, MessagingService.current_version) * 1.2;
 
         if (currentSize > bufferSize)
             sync();
@@ -108,7 +114,7 @@ public class SSTableSimpleUnsortedWriter extends AbstractSSTableSimpleWriter
         {
             // We will reuse a CF that we have counted already. But because it will be easier to add the full size
             // of the CF in the next writeRow call than to find out the delta, we just remove the size until that next call
-            currentSize -= currentKey.key.remaining() + previous.serializedSize() * 1.2;
+            currentSize -= currentKey.key.remaining() + ColumnFamily.serializer.serializedSize(previous, MessagingService.current_version) * 1.2;
         }
         return previous;
     }
@@ -143,6 +149,7 @@ public class SSTableSimpleUnsortedWriter extends AbstractSSTableSimpleWriter
         catch (InterruptedException e)
         {
             throw new RuntimeException(e);
+
         }
         buffer = new Buffer();
         currentSize = 0;
@@ -156,7 +163,7 @@ public class SSTableSimpleUnsortedWriter extends AbstractSSTableSimpleWriter
             if (diskWriter.exception instanceof IOException)
                 throw (IOException) diskWriter.exception;
             else
-                throw new RuntimeException(diskWriter.exception);
+                throw Throwables.propagate(diskWriter.exception);
         }
     }
 
@@ -165,7 +172,7 @@ public class SSTableSimpleUnsortedWriter extends AbstractSSTableSimpleWriter
 
     private class DiskWriter extends Thread
     {
-        volatile Exception exception = null;
+        volatile Throwable exception = null;
 
         public void run()
         {
@@ -184,7 +191,7 @@ public class SSTableSimpleUnsortedWriter extends AbstractSSTableSimpleWriter
                     writer.closeAndOpenReader();
                 }
             }
-            catch (Exception e)
+            catch (Throwable e)
             {
                 if (writer != null)
                     writer.abort();

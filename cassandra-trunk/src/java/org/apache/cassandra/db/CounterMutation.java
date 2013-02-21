@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,31 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
-import java.io.*;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.cassandra.db.filter.QueryPath;
+import org.apache.cassandra.db.filter.NamesQueryFilter;
 import org.apache.cassandra.io.IVersionedSerializer;
-import org.apache.cassandra.net.Message;
-import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.net.MessageOut;
+import org.apache.cassandra.net.MessagingService;
+import org.apache.cassandra.db.ConsistencyLevel;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.utils.HeapAllocator;
-import org.apache.cassandra.utils.FBUtilities;
-import org.apache.cassandra.thrift.ConsistencyLevel;
 
 public class CounterMutation implements IMutation
 {
-    private static final Logger logger = LoggerFactory.getLogger(CounterMutation.class);
-    private static final CounterMutationSerializer serializer = new CounterMutationSerializer();
+    public static final CounterMutationSerializer serializer = new CounterMutationSerializer();
 
     private final RowMutation rowMutation;
     private final ConsistencyLevel consistency;
@@ -55,7 +54,7 @@ public class CounterMutation implements IMutation
         return rowMutation.getTable();
     }
 
-    public Collection<Integer> getColumnFamilyIds()
+    public Collection<UUID> getColumnFamilyIds()
     {
         return rowMutation.getColumnFamilyIds();
     }
@@ -73,11 +72,6 @@ public class CounterMutation implements IMutation
     public ConsistencyLevel consistency()
     {
         return consistency;
-    }
-
-    public static CounterMutationSerializer serializer()
-    {
-        return serializer;
     }
 
     public RowMutation makeReplicationMutation() throws IOException
@@ -100,8 +94,6 @@ public class CounterMutation implements IMutation
                 continue;
 
             ColumnFamily cf = row.cf;
-            if (cf.isSuper())
-                cf.retainAll(rowMutation.getColumnFamily(cf.metadata().cfId));
             replicationMutation.add(cf);
         }
         return replicationMutation;
@@ -109,14 +101,14 @@ public class CounterMutation implements IMutation
 
     private void addReadCommandFromColumnFamily(String table, ByteBuffer key, ColumnFamily columnFamily, List<ReadCommand> commands)
     {
-        QueryPath queryPath = new QueryPath(columnFamily.metadata().cfName);
-        commands.add(new SliceByNamesReadCommand(table, key, queryPath, columnFamily.getColumnNames()));
+        SortedSet s = new TreeSet<ByteBuffer>(columnFamily.metadata().comparator);
+        s.addAll(columnFamily.getColumnNames());
+        commands.add(new SliceByNamesReadCommand(table, key, columnFamily.metadata().cfName, new NamesQueryFilter(s)));
     }
 
-    public Message makeMutationMessage(int version) throws IOException
+    public MessageOut<CounterMutation> makeMutationMessage() throws IOException
     {
-        byte[] bytes = FBUtilities.serialize(this, serializer, version);
-        return new Message(FBUtilities.getBroadcastAddress(), StorageService.Verb.COUNTER_MUTATION, bytes, version);
+        return new MessageOut<CounterMutation>(MessagingService.Verb.COUNTER_MUTATION, this, serializer);
     }
 
     public boolean shouldReplicateOnWrite()
@@ -127,7 +119,7 @@ public class CounterMutation implements IMutation
         return false;
     }
 
-    public void apply() throws IOException
+    public void apply()
     {
         // transform all CounterUpdateColumn to CounterColumn: accomplished by localCopy
         RowMutation rm = new RowMutation(rowMutation.getTable(), ByteBufferUtil.clone(rowMutation.key()));
@@ -137,7 +129,7 @@ public class CounterMutation implements IMutation
         {
             ColumnFamily cf = cf_.cloneMeShallow();
             ColumnFamilyStore cfs = table.getColumnFamilyStore(cf.id());
-            for (IColumn column : cf_)
+            for (Column column : cf_)
             {
                 cf.addColumn(column.localCopy(cfs), HeapAllocator.instance);
             }
@@ -174,20 +166,20 @@ class CounterMutationSerializer implements IVersionedSerializer<CounterMutation>
 {
     public void serialize(CounterMutation cm, DataOutput dos, int version) throws IOException
     {
-        RowMutation.serializer().serialize(cm.rowMutation(), dos, version);
+        RowMutation.serializer.serialize(cm.rowMutation(), dos, version);
         dos.writeUTF(cm.consistency().name());
     }
 
     public CounterMutation deserialize(DataInput dis, int version) throws IOException
     {
-        RowMutation rm = RowMutation.serializer().deserialize(dis, version);
+        RowMutation rm = RowMutation.serializer.deserialize(dis, version);
         ConsistencyLevel consistency = Enum.valueOf(ConsistencyLevel.class, dis.readUTF());
         return new CounterMutation(rm, consistency);
     }
 
     public long serializedSize(CounterMutation cm, int version)
     {
-        return RowMutation.serializer().serializedSize(cm.rowMutation(), version)
-               + DBConstants.shortSize + FBUtilities.encodedUTF8Length(cm.consistency().name());
+        return RowMutation.serializer.serializedSize(cm.rowMutation(), version)
+             + TypeSizes.NATIVE.sizeof(cm.consistency().name());
     }
 }

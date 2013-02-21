@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.dht;
 
 import java.math.BigInteger;
@@ -25,6 +24,9 @@ import java.util.*;
 
 import org.apache.cassandra.config.*;
 import org.apache.cassandra.db.DecoratedKey;
+import org.apache.cassandra.db.marshal.AbstractType;
+import org.apache.cassandra.db.marshal.UTF8Type;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.gms.VersionedValue;
 import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.utils.ByteBufferUtil;
@@ -37,14 +39,14 @@ public class OrderPreservingPartitioner extends AbstractPartitioner<StringToken>
 
     public static final BigInteger CHAR_MASK = new BigInteger("65535");
 
-    public DecoratedKey<StringToken> decorateKey(ByteBuffer key)
+    public DecoratedKey decorateKey(ByteBuffer key)
     {
-        return new DecoratedKey<StringToken>(getToken(key), key);
+        return new DecoratedKey(getToken(key), key);
     }
 
-    public DecoratedKey<StringToken> convertFromDiskFormat(ByteBuffer key)
+    public DecoratedKey convertFromDiskFormat(ByteBuffer key)
     {
-        return new DecoratedKey<StringToken>(getToken(key), key);
+        return new DecoratedKey(getToken(key), key);
     }
 
     public StringToken midpoint(Token ltoken, Token rtoken)
@@ -194,7 +196,7 @@ public class OrderPreservingPartitioner extends AbstractPartitioner<StringToken>
                 for (Range<Token> r : sortedRanges)
                 {
                     // Looping over every KS:CF:Range, get the splits size and add it to the count
-                    allTokens.put(r.right, allTokens.get(r.right) + StorageService.instance.getSplits(ks, cfmd.cfName, r, DatabaseDescriptor.getIndexInterval()).size());
+                    allTokens.put(r.right, allTokens.get(r.right) + StorageService.instance.getSplits(ks, cfmd.cfName, r, cfmd.getIndexInterval(), cfmd).size());
                 }
             }
         }
@@ -207,5 +209,10 @@ public class OrderPreservingPartitioner extends AbstractPartitioner<StringToken>
             allTokens.put(row.getKey(), row.getValue() / total);
 
         return allTokens;
+    }
+
+    public AbstractType<?> getTokenValidator()
+    {
+        return UTF8Type.instance;
     }
 }

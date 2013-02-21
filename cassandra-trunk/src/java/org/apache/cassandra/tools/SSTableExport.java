@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,51 +15,72 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.tools;
+
+import static org.apache.cassandra.utils.ByteBufferUtil.bytesToHex;
+import static org.apache.cassandra.utils.ByteBufferUtil.hexToBytes;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 import org.apache.cassandra.config.CFMetaData;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.config.Schema;
-import org.apache.cassandra.db.*;
+import org.apache.cassandra.db.AbstractColumnContainer;
+import org.apache.cassandra.db.ColumnFamily;
+import org.apache.cassandra.db.CounterColumn;
+import org.apache.cassandra.db.DecoratedKey;
+import org.apache.cassandra.db.DeletedColumn;
+import org.apache.cassandra.db.DeletionInfo;
+import org.apache.cassandra.db.DeletionTime;
+import org.apache.cassandra.db.ExpiringColumn;
+import org.apache.cassandra.db.Column;
+import org.apache.cassandra.db.OnDiskAtom;
+import org.apache.cassandra.db.RangeTombstone;
 import org.apache.cassandra.db.marshal.AbstractType;
-
-import org.apache.commons.cli.*;
-
-import org.apache.cassandra.config.ConfigurationException;
 import org.apache.cassandra.dht.IPartitioner;
-import org.apache.cassandra.io.sstable.*;
+import org.apache.cassandra.io.sstable.Descriptor;
+import org.apache.cassandra.io.sstable.KeyIterator;
+import org.apache.cassandra.io.sstable.SSTableIdentityIterator;
+import org.apache.cassandra.io.sstable.SSTableReader;
+import org.apache.cassandra.io.sstable.SSTableScanner;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
-
-import static org.apache.cassandra.utils.ByteBufferUtil.bytesToHex;
-import static org.apache.cassandra.utils.ByteBufferUtil.hexToBytes;
 
 /**
  * Export SSTables to JSON format.
  */
 public class SSTableExport
 {
-    private static ObjectMapper jsonMapper = new ObjectMapper();
+    private static final ObjectMapper jsonMapper = new ObjectMapper();
 
     private static final String KEY_OPTION = "k";
     private static final String EXCLUDEKEY_OPTION = "x";
     private static final String ENUMERATEKEYS_OPTION = "e";
 
-    private static Options options;
+    private static final Options options = new Options();
     private static CommandLine cmd;
 
     static
     {
-        options = new Options();
-
         Option optKey = new Option(KEY_OPTION, true, "Row key");
         // Number of times -k <key> can be passed on the command line.
         optKey.setArgs(500);
@@ -90,6 +111,42 @@ public class SSTableExport
     }
 
     /**
+     * JSON ColumnFamily metadata serializer.</br> Serializes:
+     * <ul>
+     * <li>column family deletion info (if present)</li>
+     * </ul>
+     *
+     * @param out
+     *            The output steam to write data
+     * @param columnFamily
+     *            to which the metadata belongs
+     */
+    private static void writeMeta(PrintStream out, AbstractColumnContainer columnContainer)
+    {
+        if (columnContainer instanceof ColumnFamily)
+        {
+            ColumnFamily columnFamily = (ColumnFamily) columnContainer;
+            if (!columnFamily.deletionInfo().equals(DeletionInfo.LIVE))
+            {
+                // begin meta
+                writeKey(out, "metadata");
+                writeDeletionInfo(out, columnFamily.deletionInfo().getTopLevelDeletion());
+                out.print(",");
+            }
+            return;
+        }
+    }
+
+    private static void writeDeletionInfo(PrintStream out, DeletionTime deletionTime)
+    {
+        out.print("{");
+        writeKey(out, "deletionInfo");
+        // only store topLevelDeletion (serializeForSSTable only uses this)
+        writeJSON(out, deletionTime);
+        out.print("}");
+    }
+
+    /**
      * Serialize columns using given column iterator
      *
      * @param columns column iterator
@@ -97,7 +154,18 @@ public class SSTableExport
      * @param comparator columns comparator
      * @param cfMetaData Column Family metadata (to get validator)
      */
-    private static void serializeColumns(Iterator<IColumn> columns, PrintStream out, AbstractType<?> comparator, CFMetaData cfMetaData)
+    private static void serializeAtoms(Iterator<OnDiskAtom> atoms, PrintStream out, AbstractType<?> comparator, CFMetaData cfMetaData)
+    {
+        while (atoms.hasNext())
+        {
+            writeJSON(out, serializeAtom(atoms.next(), comparator, cfMetaData));
+
+            if (atoms.hasNext())
+                out.print(", ");
+        }
+    }
+
+    private static void serializeColumns(Iterator<Column> columns, PrintStream out, AbstractType<?> comparator, CFMetaData cfMetaData)
     {
         while (columns.hasNext())
         {
@@ -105,6 +173,26 @@ public class SSTableExport
 
             if (columns.hasNext())
                 out.print(", ");
+        }
+    }
+
+    private static List<Object> serializeAtom(OnDiskAtom atom, AbstractType<?> comparator, CFMetaData cfMetaData)
+    {
+        if (atom instanceof Column)
+        {
+            return serializeColumn((Column)atom, comparator, cfMetaData);
+        }
+        else
+        {
+            assert atom instanceof RangeTombstone;
+            RangeTombstone rt = (RangeTombstone)atom;
+            ArrayList<Object> serializedColumn = new ArrayList<Object>();
+            serializedColumn.add(comparator.getString(rt.min));
+            serializedColumn.add(comparator.getString(rt.max));
+            serializedColumn.add(rt.data.markedForDeleteAt);
+            serializedColumn.add("t");
+            serializedColumn.add(rt.data.localDeletionTime);
+            return serializedColumn;
         }
     }
 
@@ -117,7 +205,7 @@ public class SSTableExport
      *
      * @return column as serialized list
      */
-    private static List<Object> serializeColumn(IColumn column, AbstractType<?> comparator, CFMetaData cfMetaData)
+    private static List<Object> serializeColumn(Column column, AbstractType<?> comparator, CFMetaData cfMetaData)
     {
         ArrayList<Object> serializedColumn = new ArrayList<Object>();
 
@@ -131,7 +219,7 @@ public class SSTableExport
         }
         else
         {
-            AbstractType<?> validator = cfMetaData.getValueValidator(name);
+            AbstractType<?> validator = cfMetaData.getValueValidator(cfMetaData.getColumnDefinitionFromColumnName(name));
             serializedColumn.add(validator.getString(value));
         }
         serializedColumn.add(column.timestamp());
@@ -164,41 +252,23 @@ public class SSTableExport
     private static void serializeRow(SSTableIdentityIterator row, DecoratedKey key, PrintStream out)
     {
         ColumnFamily columnFamily = row.getColumnFamily();
-        boolean isSuperCF = columnFamily.isSuper();
         CFMetaData cfMetaData = columnFamily.metadata();
         AbstractType<?> comparator = columnFamily.getComparator();
 
-        writeKey(out, bytesToHex(key.key));
-        out.print(isSuperCF ? "{" : "[");
+        out.print("{");
+        writeKey(out, "key");
+        writeJSON(out, bytesToHex(key.key));
+        out.print(",");
 
-        if (isSuperCF)
-        {
-            while (row.hasNext())
-            {
-                IColumn column = row.next();
+        writeMeta(out, columnFamily);
 
-                writeKey(out, comparator.getString(column.name()));
-                out.print("{");
-                writeKey(out, "deletedAt");
-                out.print(column.getMarkedForDeleteAt());
-                out.print(", ");
-                writeKey(out, "subColumns");
-                out.print("[");
-                serializeColumns(column.getSubColumns().iterator(), out, columnFamily.getSubComparator(), cfMetaData);
-                out.print("]");
-                out.print("}");
+        writeKey(out, "columns");
+        out.print("[");
 
-                if (row.hasNext())
-                    out.print(", ");
-            }
-        }
-        else
-        {
-            serializeColumns(row, out, comparator, cfMetaData);
-        }
+        serializeAtoms(row, out, comparator, cfMetaData);
 
-        out.print(isSuperCF ? "}" : "]");
-
+        out.print("]");
+        out.print("}");
     }
 
     /**
@@ -247,7 +317,7 @@ public class SSTableExport
         if (excludes != null)
             toExport.removeAll(Arrays.asList(excludes));
 
-        outs.println("{");
+        outs.println("[");
 
         int i = 0;
 
@@ -280,7 +350,7 @@ public class SSTableExport
             i++;
         }
 
-        outs.println("\n}");
+        outs.println("\n]");
         outs.flush();
 
         scanner.close();
@@ -299,7 +369,7 @@ public class SSTableExport
         SSTableIdentityIterator row;
         SSTableScanner scanner = reader.getDirectScanner();
 
-        outs.println("{");
+        outs.println("[");
 
         int i = 0;
 
@@ -320,7 +390,7 @@ public class SSTableExport
             i++;
         }
 
-        outs.println("\n}");
+        outs.println("\n]");
         outs.flush();
 
         scanner.close();
@@ -392,12 +462,6 @@ public class SSTableExport
         String ssTableFileName = new File(cmd.getArgs()[0]).getAbsolutePath();
 
         DatabaseDescriptor.loadSchemas();
-        if (Schema.instance.getNonSystemTables().size() < 1)
-        {
-            String msg = "no non-system tables are defined";
-            System.err.println(msg);
-            throw new ConfigurationException(msg);
-        }
         Descriptor descriptor = Descriptor.fromFilename(ssTableFileName);
         if (Schema.instance.getCFMetaData(descriptor) == null)
         {

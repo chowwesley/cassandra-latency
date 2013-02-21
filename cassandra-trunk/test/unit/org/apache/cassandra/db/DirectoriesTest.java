@@ -22,13 +22,17 @@ import java.io.IOException;
 import java.util.*;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
+import org.apache.cassandra.config.DatabaseDescriptor;
+import org.apache.cassandra.config.Config.DiskFailurePolicy;
+import org.apache.cassandra.db.Directories.DataDirectory;
 import org.apache.cassandra.db.compaction.LeveledManifest;
+import org.apache.cassandra.io.sstable.Component;
+import org.apache.cassandra.io.sstable.Descriptor;
 import org.apache.cassandra.io.util.FileUtils;
-import org.apache.cassandra.io.sstable.*;
 
 public class DirectoriesTest
 {
@@ -51,7 +55,7 @@ public class DirectoriesTest
     }
 
     @AfterClass
-    public static void afterClass() throws IOException
+    public static void afterClass()
     {
         Directories.resetDataDirectoriesAfterTest();
         FileUtils.deleteRecursive(tempDataDir);
@@ -66,34 +70,27 @@ public class DirectoriesTest
             File dir = cfDir(cf);
             dir.mkdirs();
 
-            createFakeSSTable(dir, cf, 1, false, false, fs);
-            createFakeSSTable(dir, cf, 2, true, false, fs);
-            createFakeSSTable(dir, cf, 3, false, true, fs);
+            createFakeSSTable(dir, cf, 1, false, fs);
+            createFakeSSTable(dir, cf, 2, true, fs);
             // leveled manifest
             new File(dir, cf + LeveledManifest.EXTENSION).createNewFile();
 
             File backupDir = new File(dir, Directories.BACKUPS_SUBDIR);
             backupDir.mkdir();
-            createFakeSSTable(backupDir, cf, 1, false, false, fs);
+            createFakeSSTable(backupDir, cf, 1, false, fs);
 
             File snapshotDir = new File(dir, Directories.SNAPSHOT_SUBDIR + File.separator + "42");
             snapshotDir.mkdirs();
-            createFakeSSTable(snapshotDir, cf, 1, false, false, fs);
+            createFakeSSTable(snapshotDir, cf, 1, false, fs);
         }
     }
 
-    private static void createFakeSSTable(File dir, String cf, int gen, boolean temp, boolean compacted, List<File> addTo) throws IOException
+    private static void createFakeSSTable(File dir, String cf, int gen, boolean temp, List<File> addTo) throws IOException
     {
         Descriptor desc = new Descriptor(dir, KS, cf, gen, temp);
         for (Component c : new Component[]{ Component.DATA, Component.PRIMARY_INDEX, Component.FILTER })
         {
             File f = new File(desc.filenameFor(c));
-            f.createNewFile();
-            addTo.add(f);
-        }
-        if (compacted)
-        {
-            File f = new File(desc.filenameFor(Component.COMPACTED_MARKER));
             f.createNewFile();
             addTo.add(f);
         }
@@ -110,14 +107,14 @@ public class DirectoriesTest
         for (String cf : CFS)
         {
             Directories directories = Directories.create(KS, cf);
-            assertEquals(cfDir(cf), directories.getDirectoryForNewSSTables(0));
+            Assert.assertEquals(cfDir(cf), directories.getDirectoryForNewSSTables(0));
 
             Descriptor desc = new Descriptor(cfDir(cf), KS, cf, 1, false);
             File snapshotDir = new File(cfDir(cf),  File.separator + Directories.SNAPSHOT_SUBDIR + File.separator + "42");
-            assertEquals(snapshotDir, directories.getSnapshotDirectory(desc, "42"));
+            Assert.assertEquals(snapshotDir, directories.getSnapshotDirectory(desc, "42"));
 
             File backupsDir = new File(cfDir(cf),  File.separator + Directories.BACKUPS_SUBDIR);
-            assertEquals(backupsDir, directories.getBackupsDirectory(desc));
+            Assert.assertEquals(backupsDir, directories.getBackupsDirectory(desc));
         }
     }
 
@@ -153,15 +150,13 @@ public class DirectoriesTest
             }
 
             // Skip temporary and compacted
-            lister = directories.sstableLister().skipTemporary(true).skipCompacted(true);
+            lister = directories.sstableLister().skipTemporary(true);
             listed = new HashSet<File>(lister.listFiles());
             for (File f : files.get(cf))
             {
                 if (f.getPath().contains(Directories.SNAPSHOT_SUBDIR) || f.getPath().contains(Directories.BACKUPS_SUBDIR))
                     assert !listed.contains(f) : f + " should not be listed";
                 else if (f.getName().contains("-tmp-"))
-                    assert !listed.contains(f) : f + " should not be listed";
-                else if (f.getName().endsWith("Compacted") || new File(f.getPath().replaceFirst("-[a-zA-Z]+.db", "-Compacted")).exists())
                     assert !listed.contains(f) : f + " should not be listed";
                 else
                     assert listed.contains(f) : f + " is missing";
@@ -176,7 +171,69 @@ public class DirectoriesTest
         {
             Directories directories = Directories.create(KS, cf);
             File manifest = new File(cfDir(cf), cf + LeveledManifest.EXTENSION);
-            assertEquals(manifest, directories.tryGetLeveledManifest());
+            Assert.assertEquals(manifest, directories.tryGetLeveledManifest());
+        }
+    }
+
+    @Test
+    public void testHandleBadFiles() throws IOException
+    {
+        /* files not matching the pattern should just be ignored, with a log warning */
+        Directories directories = Directories.create(KS, "bad");
+        File dir = directories.getDirectoryForNewSSTables(1);
+        File f = File.createTempFile("bad", "file", dir.getParentFile());
+        Directories.migrateSSTables();
+        Assert.assertTrue(f.isFile());
+
+        /* real failures should throw an exception with informational message */
+        f = File.createTempFile("locked", ".json", dir.getParentFile());
+        File targetDir = new File(dir.getParentFile(), f.getName().substring(0, f.getName().length() - ".json".length()));
+        targetDir.mkdirs();
+        targetDir.setReadOnly();
+
+        try
+        {
+            Directories.migrateSSTables();
+            Assert.assertFalse(true);
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e.getMessage().contains(f.getPath()));
+        }
+    }
+
+    @Test
+    public void testDiskFailurePolicy_best_effort() throws IOException
+    {
+        DiskFailurePolicy origPolicy = DatabaseDescriptor.getDiskFailurePolicy();
+        
+        try 
+        {
+            DatabaseDescriptor.setDiskFailurePolicy(DiskFailurePolicy.best_effort);
+            
+            for (DataDirectory dd : Directories.dataFileLocations)
+            {
+                dd.location.setExecutable(false);
+                dd.location.setWritable(false);
+            }
+            
+            Directories.create(KS, "bad");
+            
+            for (DataDirectory dd : Directories.dataFileLocations)
+            {
+                File file = new File(dd.location, new File(KS, "bad").getPath());
+                Assert.assertTrue(BlacklistedDirectories.isUnwritable(file));
+            }
+        } 
+        finally 
+        {
+            for (DataDirectory dd : Directories.dataFileLocations)
+            {
+                dd.location.setExecutable(true);
+                dd.location.setWritable(true);
+            }
+            
+            DatabaseDescriptor.setDiskFailurePolicy(origPolicy);
         }
     }
 }

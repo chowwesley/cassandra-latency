@@ -1,6 +1,4 @@
-package org.apache.cassandra.db;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,35 +7,27 @@ package org.apache.cassandra.db;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.db;
 
 import java.io.DataInput;
-import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.apache.cassandra.io.IVersionedSerializer;
-import org.apache.cassandra.io.util.DataOutputBuffer;
-import org.apache.cassandra.io.util.FastByteArrayInputStream;
-import org.apache.cassandra.net.Message;
-import org.apache.cassandra.net.MessageProducer;
-import org.apache.cassandra.service.StorageService;
-import org.apache.cassandra.utils.FBUtilities;
+import org.apache.cassandra.net.MessageOut;
+import org.apache.cassandra.net.MessagingService;
 
-public class SnapshotCommand implements MessageProducer
+public class SnapshotCommand
 {
-    private static final SnapshotCommandSerializer serializer = new SnapshotCommandSerializer();
+    public static final SnapshotCommandSerializer serializer = new SnapshotCommandSerializer();
 
     public final String keyspace;
     public final String column_family;
@@ -52,18 +42,9 @@ public class SnapshotCommand implements MessageProducer
         this.clear_snapshot = clearSnapshot;
     }
 
-    public Message getMessage(Integer version) throws IOException
+    public MessageOut createMessage()
     {
-        DataOutputBuffer dob = new DataOutputBuffer();
-        serializer.serialize(this, dob, version);
-        return new Message(FBUtilities.getBroadcastAddress(), StorageService.Verb.SNAPSHOT, Arrays.copyOf(dob.getData(), dob.getLength()), version);
-    }
-
-    public static SnapshotCommand read(Message message) throws IOException
-    {
-        byte[] bytes = message.getMessageBody();
-        FastByteArrayInputStream bis = new FastByteArrayInputStream(bytes);
-        return serializer.deserialize(new DataInputStream(bis), message.getVersion());
+        return new MessageOut<SnapshotCommand>(MessagingService.Verb.SNAPSHOT, this, serializer);
     }
 
     @Override
@@ -95,8 +76,11 @@ class SnapshotCommandSerializer implements IVersionedSerializer<SnapshotCommand>
         return new SnapshotCommand(keyspace, column_family, snapshot_name, clear_snapshot);
     }
 
-    public long serializedSize(SnapshotCommand snapshot_command, int version)
+    public long serializedSize(SnapshotCommand sc, int version)
     {
-        throw new UnsupportedOperationException();
+        return TypeSizes.NATIVE.sizeof(sc.keyspace)
+             + TypeSizes.NATIVE.sizeof(sc.column_family)
+             + TypeSizes.NATIVE.sizeof(sc.snapshot_name)
+             + TypeSizes.NATIVE.sizeof(sc.clear_snapshot);
     }
 }

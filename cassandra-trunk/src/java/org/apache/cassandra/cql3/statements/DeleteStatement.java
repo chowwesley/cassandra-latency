@@ -7,34 +7,29 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cql3.statements;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.cassandra.cql3.*;
 import org.apache.cassandra.config.CFMetaData;
-import org.apache.cassandra.db.IMutation;
+import org.apache.cassandra.db.ConsistencyLevel;
+import org.apache.cassandra.db.ColumnFamily;
+import org.apache.cassandra.db.DeletionInfo;
 import org.apache.cassandra.db.RowMutation;
-import org.apache.cassandra.db.filter.QueryPath;
-import org.apache.cassandra.db.marshal.AbstractType;
-import org.apache.cassandra.service.ClientState;
-import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.db.marshal.*;
+import org.apache.cassandra.exceptions.*;
 import org.apache.cassandra.thrift.ThriftValidation;
+import org.apache.cassandra.utils.Pair;
 
 /**
  * A <code>DELETE</code> parsed from a CQL query statement.
@@ -42,108 +37,100 @@ import org.apache.cassandra.thrift.ThriftValidation;
 public class DeleteStatement extends ModificationStatement
 {
     private CFDefinition cfDef;
-    private final List<ColumnIdentifier> columns;
+    private final List<Operation.RawDeletion> deletions;
     private final List<Relation> whereClause;
 
+    private final List<Operation> toRemove;
     private final Map<ColumnIdentifier, List<Term>> processedKeys = new HashMap<ColumnIdentifier, List<Term>>();
 
-    public DeleteStatement(CFName name, List<ColumnIdentifier> columns, List<Relation> whereClause, Attributes attrs)
+    public DeleteStatement(CFName name, List<Operation.RawDeletion> deletions, List<Relation> whereClause, Attributes attrs)
     {
         super(name, attrs);
 
-        this.columns = columns;
+        this.deletions = deletions;
         this.whereClause = whereClause;
+        this.toRemove = new ArrayList<Operation>(deletions.size());
     }
 
-    public List<IMutation> getMutations(ClientState clientState, List<ByteBuffer> variables) throws InvalidRequestException
+    protected void validateConsistency(ConsistencyLevel cl) throws InvalidRequestException
     {
-        // Check key
-        List<Term> keys = processedKeys.get(cfDef.key.name);
-        if (keys == null || keys.isEmpty())
-            throw new InvalidRequestException(String.format("Missing mandatory PRIMARY KEY part %s", cfDef.key.name));
+        if (type == Type.COUNTER)
+            cl.validateCounterForWrite(cfDef.cfm);
+        else
+            cl.validateForWrite(cfDef.cfm.ksName);
+    }
 
+    public Collection<RowMutation> getMutations(List<ByteBuffer> variables, boolean local, ConsistencyLevel cl, long now)
+    throws RequestExecutionException, RequestValidationException
+    {
+        // keys
+        List<ByteBuffer> keys = UpdateStatement.buildKeyNames(cfDef, processedKeys, variables);
+
+        // columns
         ColumnNameBuilder builder = cfDef.getColumnNameBuilder();
-        CFDefinition.Name firstEmpty = null;
-        for (CFDefinition.Name name : cfDef.columns.values())
+        CFDefinition.Name firstEmpty = UpdateStatement.buildColumnNames(cfDef, processedKeys, builder, variables, false);
+
+        boolean fullKey = builder.componentCount() == cfDef.columns.size();
+        boolean isRange = cfDef.isCompact ? !fullKey : (!fullKey || toRemove.isEmpty());
+
+        if (!toRemove.isEmpty() && isRange)
+            throw new InvalidRequestException(String.format("Missing mandatory PRIMARY KEY part %s since %s specified", firstEmpty, toRemove.iterator().next().columnName));
+
+        Set<ByteBuffer> toRead = null;
+        for (Operation op : toRemove)
         {
-            List<Term> values = processedKeys.get(name.name);
-            if (values == null || values.isEmpty())
+            if (op.requiresRead())
             {
-                firstEmpty = name;
-                // For composites, we must either have all component or none
-                if (cfDef.isComposite && builder.componentCount() != 0)
-                    throw new InvalidRequestException(String.format("Missing mandatory PRIMARY KEY part %s", name));
-            }
-            else if (firstEmpty != null)
-            {
-                throw new InvalidRequestException(String.format("Missing PRIMARY KEY part %s since %s is set", firstEmpty, name));
-            }
-            else
-            {
-                assert values.size() == 1; // We only allow IN for keys so far
-                builder.add(values.get(0), Relation.Type.EQ, variables);
+                if (toRead == null)
+                    toRead = new TreeSet<ByteBuffer>(UTF8Type.instance);
+                toRead.add(op.columnName.key);
             }
         }
 
-        List<IMutation> rowMutations = new ArrayList<IMutation>(keys.size());
+        Map<ByteBuffer, ColumnGroupMap> rows = toRead != null ? readRows(keys, builder, toRead, (CompositeType)cfDef.cfm.comparator, local, cl) : null;
 
-        for (Term key : keys)
-        {
-            ByteBuffer rawKey = key.getByteBuffer(cfDef.key.type, variables);
-            rowMutations.add(mutationForKey(cfDef, clientState, rawKey, builder, variables));
-        }
+        Collection<RowMutation> rowMutations = new ArrayList<RowMutation>(keys.size());
+        UpdateParameters params = new UpdateParameters(cfDef.cfm, variables, getTimestamp(now), -1, rows);
+
+        for (ByteBuffer key : keys)
+            rowMutations.add(mutationForKey(cfDef, key, builder, isRange, params));
 
         return rowMutations;
     }
 
-    public RowMutation mutationForKey(CFDefinition cfDef, ClientState clientState, ByteBuffer key, ColumnNameBuilder builder, List<ByteBuffer> variables)
+    public RowMutation mutationForKey(CFDefinition cfDef, ByteBuffer key, ColumnNameBuilder builder, boolean isRange, UpdateParameters params)
     throws InvalidRequestException
     {
         QueryProcessor.validateKey(key);
         RowMutation rm = new RowMutation(cfDef.cfm.ksName, key);
+        ColumnFamily cf = rm.addOrGet(columnFamily());
 
-        if (columns.isEmpty() && builder.componentCount() == 0)
+        if (toRemove.isEmpty() && builder.componentCount() == 0)
         {
-            // No columns, delete the row
-            rm.delete(new QueryPath(columnFamily()), getTimestamp(clientState));
+            // No columns specified, delete the row
+            cf.delete(new DeletionInfo(params.timestamp, params.localDeletionTime));
         }
         else
         {
-            for (ColumnIdentifier column : columns)
+            if (isRange)
             {
-                CFDefinition.Name name = cfDef.get(column);
-                if (name == null)
-                    throw new InvalidRequestException(String.format("Unknown identifier %s", column));
-
-                // For compact, we only have one value except the key, so the only form of DELETE that make sense is without a column
-                // list. However, we support having the value name for coherence with the static/sparse case
-                if (name.kind != CFDefinition.Name.Kind.COLUMN_METADATA && name.kind != CFDefinition.Name.Kind.VALUE_ALIAS)
-                    throw new InvalidRequestException(String.format("Invalid identifier %s for deletion (should not be a PRIMARY KEY part)", column));
-            }
-
-            if (cfDef.isCompact)
-            {
-                    ByteBuffer columnName = builder.build();
-                    QueryProcessor.validateColumnName(columnName);
-                    rm.delete(new QueryPath(columnFamily(), null, columnName), getTimestamp(clientState));
+                assert toRemove.isEmpty();
+                ByteBuffer start = builder.build();
+                ByteBuffer end = builder.buildAsEndOfRange();
+                cf.addAtom(params.makeRangeTombstone(start, end));
             }
             else
             {
-                Iterator<ColumnIdentifier> iter;
-                if (columns.isEmpty())
-                    // It's a DELETE *, remove all columns individually (#3708 will replace that by a single range tombstone)
-                    iter = cfDef.metadata.keySet().iterator();
-                else
-                    // Delete specific columns
-                    iter = columns.iterator();
-
-                while (iter.hasNext())
+                // Delete specific columns
+                if (cfDef.isCompact)
                 {
-                    ColumnIdentifier column = iter.next();
-                    ColumnNameBuilder b = iter.hasNext() ? builder.copy() : builder;
-                    ByteBuffer columnName = b.add(column.key).build();
-                    QueryProcessor.validateColumnName(columnName);
-                    rm.delete(new QueryPath(columnFamily(), null, columnName), getTimestamp(clientState));
+                    ByteBuffer columnName = builder.build();
+                    cf.addColumn(params.makeTombstone(columnName));
+                }
+                else
+                {
+                    for (Operation op : toRemove)
+                        op.execute(key, cf, builder.copy(), params);
                 }
             }
         }
@@ -151,26 +138,44 @@ public class DeleteStatement extends ModificationStatement
         return rm;
     }
 
-    public ParsedStatement.Prepared prepare(CFDefinition.Name[] boundNames) throws InvalidRequestException
+    public ParsedStatement.Prepared prepare(ColumnSpecification[] boundNames) throws InvalidRequestException
     {
         CFMetaData metadata = ThriftValidation.validateColumnFamily(keyspace(), columnFamily());
+        type = metadata.getDefaultValidator().isCommutative() ? Type.COUNTER : Type.LOGGED;
+
         cfDef = metadata.getCfDef();
         UpdateStatement.processKeys(cfDef, whereClause, processedKeys, boundNames);
-        return new ParsedStatement.Prepared(this, Arrays.<CFDefinition.Name>asList(boundNames));
+
+        for (Operation.RawDeletion deletion : deletions)
+        {
+            CFDefinition.Name name = cfDef.get(deletion.affectedColumn());
+            if (name == null)
+                throw new InvalidRequestException(String.format("Unknown identifier %s", name));
+
+            // For compact, we only have one value except the key, so the only form of DELETE that make sense is without a column
+            // list. However, we support having the value name for coherence with the static/sparse case
+            if (name.kind != CFDefinition.Name.Kind.COLUMN_METADATA && name.kind != CFDefinition.Name.Kind.VALUE_ALIAS)
+                throw new InvalidRequestException(String.format("Invalid identifier %s for deletion (should not be a PRIMARY KEY part)", name));
+
+            Operation op = deletion.prepare(name);
+            op.collectMarkerSpecification(boundNames);
+            toRemove.add(op);
+        }
+
+        return new ParsedStatement.Prepared(this, Arrays.<ColumnSpecification>asList(boundNames));
     }
 
     public ParsedStatement.Prepared prepare() throws InvalidRequestException
     {
-        CFDefinition.Name[] boundNames = new CFDefinition.Name[getBoundsTerms()];
+        ColumnSpecification[] boundNames = new ColumnSpecification[getBoundsTerms()];
         return prepare(boundNames);
     }
 
     public String toString()
     {
-        return String.format("DeleteStatement(name=%s, columns=%s, consistency=%s keys=%s)",
+        return String.format("DeleteStatement(name=%s, columns=%s, keys=%s)",
                              cfName,
-                             columns,
-                             cLevel,
+                             deletions,
                              whereClause);
     }
 }

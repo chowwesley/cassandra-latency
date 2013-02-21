@@ -84,7 +84,7 @@ public abstract class Operation
             int times = session.getColumnSize() / hash.length();
             int sumReminder = session.getColumnSize() % hash.length();
 
-            String value = new StringBuilder(multiplyString(hash, times)).append(hash.substring(0, sumReminder)).toString();
+            String value = multiplyString(hash, times) + hash.substring(0, sumReminder);
             values.add(ByteBuffer.wrap(value.getBytes()));
         }
 
@@ -211,7 +211,7 @@ public abstract class Operation
     protected ByteBuffer columnName(int index, boolean timeUUIDComparator)
     {
         return timeUUIDComparator
-                ? TimeUUIDType.instance.decompose(UUIDGen.makeType1UUIDFromHost(Session.getLocalAddress()))
+                ? TimeUUIDType.instance.decompose(UUIDGen.getTimeUUID())
                 : ByteBufferUtil.bytes(String.format("C%d", index));
     }
 
@@ -230,24 +230,27 @@ public abstract class Operation
             System.err.println(message);
     }
 
-    protected String getUnQuotedCqlBlob(String term)
+    protected String getUnQuotedCqlBlob(String term, boolean isCQL3)
     {
-        return getUnQuotedCqlBlob(term.getBytes());
+        return getUnQuotedCqlBlob(term.getBytes(), isCQL3);
     }
 
-    protected String getUnQuotedCqlBlob(byte[] term)
+    protected String getUnQuotedCqlBlob(byte[] term, boolean isCQL3)
     {
-        return Hex.bytesToHex(term);
+        return isCQL3
+             ? "0x" + Hex.bytesToHex(term)
+             : Hex.bytesToHex(term);
     }
 
     protected List<ByteBuffer> queryParamsAsByteBuffer(List<String> queryParams)
     {
         return Lists.transform(queryParams, new Function<String, ByteBuffer>()
         {
-            @Override
             public ByteBuffer apply(String param)
             {
-                return ByteBufferUtil.bytes(param);
+                if (param.startsWith("0x"))
+                    param = param.substring(2);
+                return ByteBufferUtil.hexToBytes(param);
             }
         });
     }
@@ -262,7 +265,7 @@ public abstract class Operation
      */
     protected static String formatCqlQuery(String query, List<String> parms)
     {
-        int marker = 0, position = 0;
+        int marker, position = 0;
         StringBuilder result = new StringBuilder();
 
         if (-1 == (marker = query.indexOf('?')) || parms.size() == 0)
@@ -271,7 +274,7 @@ public abstract class Operation
         for (String parm : parms)
         {
             result.append(query.substring(position, marker));
-            result.append('\'').append(parm).append('\'');
+            result.append(parm);
 
             position = marker + 1;
             if (-1 == (marker = query.indexOf('?', position + 1)))
@@ -295,5 +298,12 @@ public abstract class Operation
         }
 
         return statementId;
+    }
+
+    protected String wrapInQuotesIfRequired(String string)
+    {
+        return session.cqlVersion.startsWith("3")
+                ? "\"" + string + "\""
+                : string;
     }
 }

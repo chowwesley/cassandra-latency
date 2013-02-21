@@ -18,7 +18,6 @@
 */
 package org.apache.cassandra.db;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Set;
@@ -26,11 +25,10 @@ import java.util.SortedSet;
 
 import org.junit.Test;
 
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.db.index.PerColumnSecondaryIndex;
 import org.apache.cassandra.db.index.PerRowSecondaryIndex;
 import org.apache.cassandra.db.index.SecondaryIndexSearcher;
-import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.utils.ByteBufferUtil;
 
 import static org.junit.Assert.assertFalse;
@@ -41,33 +39,30 @@ public class SecondaryIndexColumnSizeTest
     @Test
     public void test64kColumn()
     {
-        Column column = new Column();
-        column.name = ByteBufferUtil.bytes("test");
-     
         // a byte buffer more than 64k
         ByteBuffer buffer = ByteBuffer.allocate(1024 * 65);
         buffer.clear();
-        
+
         //read more than 64k
         for (int i=0; i<1024*64/4 + 1; i++)
             buffer.putInt(0);
-        
+
         // for read
-        buffer.flip(); 
-        column.value = buffer;
+        buffer.flip();
+        Column column = new Column(ByteBufferUtil.bytes("test"), buffer, 0);
 
         MockRowIndex mockRowIndex = new MockRowIndex();
         MockColumnIndex mockColumnIndex = new MockColumnIndex();
-        
+
         assertTrue(mockRowIndex.validate(column));
         assertFalse(mockColumnIndex.validate(column));
-        
+
         // test less than 64k value
         buffer.flip();
         buffer.clear();
         buffer.putInt(20);
         buffer.flip();
-        
+
         assertTrue(mockRowIndex.validate(column));
         assertTrue(mockColumnIndex.validate(column));
     }
@@ -75,67 +70,69 @@ public class SecondaryIndexColumnSizeTest
     private class MockRowIndex extends PerRowSecondaryIndex
     {
         @Override
-        public void applyIndexUpdates(ByteBuffer rowKey, ColumnFamily cf, SortedSet<ByteBuffer> mutatedIndexedColumns, ColumnFamily oldIndexedColumns) throws IOException 
+        public void init()
         {
         }
 
         @Override
-        public void init() 
-        {           
-        }
-
-        @Override
-        public void validateOptions() throws ConfigurationException 
+        public void validateOptions() throws ConfigurationException
         {
         }
 
         @Override
-        public String getIndexName() 
+        public String getIndexName()
         {
             return null;
         }
 
         @Override
-        protected SecondaryIndexSearcher createSecondaryIndexSearcher(Set<ByteBuffer> columns) 
+        protected SecondaryIndexSearcher createSecondaryIndexSearcher(Set<ByteBuffer> columns)
         {
             return null;
         }
 
         @Override
-        public void forceBlockingFlush() throws IOException 
+        public void forceBlockingFlush()
         {
         }
 
         @Override
-        public long getLiveSize() 
+        public long getLiveSize()
         {
             return 0;
         }
 
         @Override
-        public ColumnFamilyStore getIndexCfs() 
+        public ColumnFamilyStore getIndexCfs()
         {
             return null;
         }
 
         @Override
-        public void removeIndex(ByteBuffer columnName) throws IOException 
+        public void removeIndex(ByteBuffer columnName)
         {
         }
 
         @Override
-        public void invalidate() 
+        public void invalidate()
         {
         }
 
         @Override
-        public void truncate(long truncatedAt) 
+        public void truncate(long truncatedAt)
         {
         }
 
-        @Override
-        public void deleteFromIndex(DecoratedKey<?> key, List<IColumn> indexedColumnsInRow)
-        {  
+        public void index(ByteBuffer rowKey, ColumnFamily cf)
+        {
+        }
+
+        public void index(ByteBuffer rowKey)
+        {
+        }
+
+        public void delete(DecoratedKey key)
+        {
         }
 
         @Override
@@ -143,76 +140,76 @@ public class SecondaryIndexColumnSizeTest
         {
         }
     }
-    
-    
+
+
     private class MockColumnIndex extends PerColumnSecondaryIndex
     {
         @Override
-        public void init() 
+        public void init()
         {
         }
 
         @Override
-        public void validateOptions() throws ConfigurationException 
+        public void validateOptions() throws ConfigurationException
         {
         }
 
         @Override
-        public String getIndexName() 
-        {
-            return null;
-        }
-
-        @Override
-        protected SecondaryIndexSearcher createSecondaryIndexSearcher(Set<ByteBuffer> columns) 
+        public String getIndexName()
         {
             return null;
         }
 
         @Override
-        public void forceBlockingFlush() throws IOException 
+        protected SecondaryIndexSearcher createSecondaryIndexSearcher(Set<ByteBuffer> columns)
+        {
+            return null;
+        }
+
+        @Override
+        public void forceBlockingFlush()
         {
         }
 
         @Override
-        public long getLiveSize() 
+        public long getLiveSize()
         {
             return 0;
         }
 
         @Override
-        public ColumnFamilyStore getIndexCfs() 
+        public ColumnFamilyStore getIndexCfs()
         {
             return null;
         }
 
         @Override
-        public void removeIndex(ByteBuffer columnName) throws IOException 
+        public void removeIndex(ByteBuffer columnName)
         {
         }
 
         @Override
-        public void invalidate() 
+        public void invalidate()
         {
         }
 
         @Override
-        public void truncate(long truncatedAt) 
+        public void truncate(long truncatedAt)
         {
         }
 
         @Override
-        public void deleteColumn(DecoratedKey valueKey, ByteBuffer rowKey, IColumn col) throws IOException
-        {  
+        public void delete(ByteBuffer rowKey, Column col)
+        {
         }
 
         @Override
-        public void insertColumn(DecoratedKey valueKey, ByteBuffer rowKey, IColumn col) throws IOException
-        {  
+        public void insert(ByteBuffer rowKey, Column col)
+        {
         }
 
         @Override
-        public void updateColumn(DecoratedKey valueKey, ByteBuffer rowKey, IColumn col) throws IOException
+        public void update(ByteBuffer rowKey, Column col)
         {
         }
 

@@ -1,5 +1,4 @@
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -8,15 +7,13 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cql;
 
@@ -24,9 +21,10 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import org.apache.cassandra.db.IMutation;
-import org.apache.cassandra.service.ClientState;
-import org.apache.cassandra.thrift.ConsistencyLevel;
-import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.db.ConsistencyLevel;
+import org.apache.cassandra.exceptions.InvalidRequestException;
+import org.apache.cassandra.exceptions.UnauthorizedException;
+import org.apache.cassandra.thrift.ThriftClientState;
 
 public abstract class AbstractModification
 {
@@ -79,9 +77,9 @@ public abstract class AbstractModification
         return cLevel != null;
     }
 
-    public long getTimestamp(ClientState clientState)
+    public long getTimestamp(ThriftClientState clientState)
     {
-        return timestamp == null ? clientState.getTimestamp() : timestamp;
+        return timestamp == null ? clientState.getQueryState().getTimestamp() : timestamp;
     }
 
     public boolean isSetTimestamp()
@@ -104,8 +102,8 @@ public abstract class AbstractModification
      *
      * @throws InvalidRequestException on the wrong request
      */
-    public abstract List<IMutation> prepareRowMutations(String keyspace, ClientState clientState, List<ByteBuffer> variables)
-            throws org.apache.cassandra.thrift.InvalidRequestException;
+    public abstract List<IMutation> prepareRowMutations(String keyspace, ThriftClientState clientState, List<ByteBuffer> variables)
+    throws InvalidRequestException, UnauthorizedException;
 
     /**
      * Convert statement into a list of mutations to apply on the server
@@ -118,6 +116,6 @@ public abstract class AbstractModification
      *
      * @throws InvalidRequestException on the wrong request
      */
-    public abstract List<IMutation> prepareRowMutations(String keyspace, ClientState clientState, Long timestamp, List<ByteBuffer> variables)
-            throws org.apache.cassandra.thrift.InvalidRequestException;
+    public abstract List<IMutation> prepareRowMutations(String keyspace, ThriftClientState clientState, Long timestamp, List<ByteBuffer> variables)
+    throws InvalidRequestException, UnauthorizedException;
 }

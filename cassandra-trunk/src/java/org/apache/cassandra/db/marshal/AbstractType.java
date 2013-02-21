@@ -1,6 +1,4 @@
-package org.apache.cassandra.db.marshal;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,25 +7,27 @@ package org.apache.cassandra.db.marshal;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.db.marshal;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.cassandra.config.ConfigurationException;
-import org.apache.cassandra.db.IColumn;
+import org.apache.cassandra.cql3.CQL3Type;
+import org.apache.cassandra.exceptions.SyntaxException;
+import org.apache.cassandra.db.Column;
+import org.apache.cassandra.db.OnDiskAtom;
+import org.apache.cassandra.db.RangeTombstone;
 import static org.apache.cassandra.io.sstable.IndexHelper.IndexInfo;
 
 /**
@@ -42,8 +42,9 @@ public abstract class AbstractType<T> implements Comparator<ByteBuffer>
 {
     public final Comparator<IndexInfo> indexComparator;
     public final Comparator<IndexInfo> indexReverseComparator;
-    public final Comparator<IColumn> columnComparator;
-    public final Comparator<IColumn> columnReverseComparator;
+    public final Comparator<Column> columnComparator;
+    public final Comparator<Column> columnReverseComparator;
+    public final Comparator<OnDiskAtom> onDiskAtomComparator;
     public final Comparator<ByteBuffer> reverseComparator;
 
     protected AbstractType()
@@ -62,18 +63,53 @@ public abstract class AbstractType<T> implements Comparator<ByteBuffer>
                 return AbstractType.this.compare(o1.firstName, o2.firstName);
             }
         };
-        columnComparator = new Comparator<IColumn>()
+        columnComparator = new Comparator<Column>()
         {
-            public int compare(IColumn c1, IColumn c2)
+            public int compare(Column c1, Column c2)
             {
                 return AbstractType.this.compare(c1.name(), c2.name());
             }
         };
-        columnReverseComparator = new Comparator<IColumn>()
+        columnReverseComparator = new Comparator<Column>()
         {
-            public int compare(IColumn c1, IColumn c2)
+            public int compare(Column c1, Column c2)
             {
                 return AbstractType.this.compare(c2.name(), c1.name());
+            }
+        };
+        onDiskAtomComparator = new Comparator<OnDiskAtom>()
+        {
+            public int compare(OnDiskAtom c1, OnDiskAtom c2)
+            {
+                int comp = AbstractType.this.compare(c1.name(), c2.name());
+                if (comp != 0)
+                    return comp;
+
+                if (c1 instanceof RangeTombstone)
+                {
+                    if (c2 instanceof RangeTombstone)
+                    {
+                        RangeTombstone t1 = (RangeTombstone)c1;
+                        RangeTombstone t2 = (RangeTombstone)c2;
+                        int comp2 = AbstractType.this.compare(t1.max, t2.max);
+                        if (comp2 == 0)
+                            return t1.data.compareTo(t2.data);
+                        else
+                            return comp2;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+                else if (c2 instanceof RangeTombstone)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         };
         reverseComparator = new Comparator<ByteBuffer>()
@@ -104,8 +140,20 @@ public abstract class AbstractType<T> implements Comparator<ByteBuffer>
     /** get a byte representation of the given string. */
     public abstract ByteBuffer fromString(String source) throws MarshalException;
 
+    /** for compatibility with TimeUUID in CQL2. See TimeUUIDType (that overrides it). */
+    public ByteBuffer fromStringCQL2(String source) throws MarshalException
+    {
+        return fromString(source);
+    }
+
     /* validate that the byte array is a valid sequence for the type we are supposed to be comparing */
     public abstract void validate(ByteBuffer bytes) throws MarshalException;
+
+    /* Most of our internal type should override that. */
+    public CQL3Type asCQL3Type()
+    {
+        return new CQL3Type.Custom(this);
+    }
 
     /** @deprecated use reverseComparator field instead */
     public Comparator<ByteBuffer> getReverseComparator()
@@ -125,10 +173,10 @@ public abstract class AbstractType<T> implements Comparator<ByteBuffer>
     }
 
     /* convenience method */
-    public String getColumnsString(Collection<IColumn> columns)
+    public String getColumnsString(Collection<Column> columns)
     {
         StringBuilder builder = new StringBuilder();
-        for (IColumn column : columns)
+        for (Column column : columns)
         {
             builder.append(column.getString(this)).append(",");
         }
@@ -140,7 +188,7 @@ public abstract class AbstractType<T> implements Comparator<ByteBuffer>
         return false;
     }
 
-    public static AbstractType<?> parseDefaultParameters(AbstractType<?> baseType, TypeParser parser) throws ConfigurationException
+    public static AbstractType<?> parseDefaultParameters(AbstractType<?> baseType, TypeParser parser) throws SyntaxException
     {
         Map<String, String> parameters = parser.getKeyValueParameters();
         String reversed = parameters.get("reversed");
@@ -167,6 +215,34 @@ public abstract class AbstractType<T> implements Comparator<ByteBuffer>
     public boolean isCompatibleWith(AbstractType<?> previous)
     {
         return this == previous;
+    }
+
+    /**
+     * An alternative comparison function used by CollectionsType in conjunction with CompositeType.
+     *
+     * This comparator is only called to compare components of a CompositeType. It gets the value of the
+     * previous component as argument (or null if it's the first component of the composite).
+     *
+     * Unless you're doing something very similar to CollectionsType, you shouldn't override this.
+     */
+    public int compareCollectionMembers(ByteBuffer v1, ByteBuffer v2, ByteBuffer collectionName)
+    {
+        return compare(v1, v2);
+    }
+
+    /**
+     * An alternative validation function used by CollectionsType in conjunction with CompositeType.
+     *
+     * This is similar to the compare function above.
+     */
+    public void validateCollectionMember(ByteBuffer bytes, ByteBuffer collectionName) throws MarshalException
+    {
+        validate(bytes);
+    }
+
+    public boolean isCollection()
+    {
+        return false;
     }
 
     /**

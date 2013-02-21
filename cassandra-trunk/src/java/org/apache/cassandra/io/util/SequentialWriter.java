@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,23 +7,22 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.io.util;
 
 import java.io.*;
 import java.nio.channels.ClosedChannelException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import org.apache.cassandra.config.DatabaseDescriptor;
+import org.apache.cassandra.io.FSReadError;
+import org.apache.cassandra.io.FSWriteError;
 import org.apache.cassandra.utils.CLibrary;
 
 public class SequentialWriter extends OutputStream
@@ -59,11 +58,18 @@ public class SequentialWriter extends OutputStream
     private int bytesSinceTrickleFsync = 0;
 
     public final DataOutputStream stream;
-    private MessageDigest digest;
+    private DataIntegrityMetadata.ChecksumWriter metadata;
 
-    public SequentialWriter(File file, int bufferSize, boolean skipIOCache) throws IOException
+    public SequentialWriter(File file, int bufferSize, boolean skipIOCache)
     {
-        out = new RandomAccessFile(file, "rw");
+        try
+        {
+            out = new RandomAccessFile(file, "rw");
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
 
         filePath = file.getAbsolutePath();
 
@@ -71,38 +77,47 @@ public class SequentialWriter extends OutputStream
         this.skipIOCache = skipIOCache;
         this.trickleFsync = DatabaseDescriptor.getTrickleFsync();
         this.trickleFsyncByteInterval = DatabaseDescriptor.getTrickleFsyncIntervalInKb() * 1024;
-        fd = CLibrary.getfd(out.getFD());
+
+        try
+        {
+            fd = CLibrary.getfd(out.getFD());
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e); // shouldn't happen
+        }
+
         directoryFD = CLibrary.tryOpenDirectory(file.getParent());
         stream = new DataOutputStream(this);
     }
 
-    public static SequentialWriter open(File file) throws IOException
+    public static SequentialWriter open(File file)
     {
         return open(file, RandomAccessReader.DEFAULT_BUFFER_SIZE, false);
     }
 
-    public static SequentialWriter open(File file, boolean skipIOCache) throws IOException
+    public static SequentialWriter open(File file, boolean skipIOCache)
     {
         return open(file, RandomAccessReader.DEFAULT_BUFFER_SIZE, skipIOCache);
     }
 
-    public static SequentialWriter open(File file, int bufferSize, boolean skipIOCache) throws IOException
+    public static SequentialWriter open(File file, int bufferSize, boolean skipIOCache)
     {
         return new SequentialWriter(file, bufferSize, skipIOCache);
     }
 
-    public void write(int value) throws IOException
+    public void write(int value) throws ClosedChannelException
     {
         singleByteBuffer[0] = (byte) value;
         write(singleByteBuffer, 0, 1);
     }
 
-    public void write(byte[] buffer) throws IOException
+    public void write(byte[] buffer) throws ClosedChannelException
     {
         write(buffer, 0, buffer.length);
     }
 
-    public void write(byte[] data, int offset, int length) throws IOException
+    public void write(byte[] data, int offset, int length) throws ClosedChannelException
     {
         if (buffer == null)
             throw new ClosedChannelException();
@@ -122,7 +137,7 @@ public class SequentialWriter extends OutputStream
      * return the number of bytes written. caller is responsible for setting
      * isDirty.
      */
-    private int writeAtMost(byte[] data, int offset, int length) throws IOException
+    private int writeAtMost(byte[] data, int offset, int length)
     {
         if (current >= bufferOffset + buffer.length)
             reBuffer();
@@ -147,19 +162,25 @@ public class SequentialWriter extends OutputStream
 
     /**
      * Synchronize file contents with disk.
-     * @throws java.io.IOException on any I/O error.
      */
-    public void sync() throws IOException
+    public void sync()
     {
         syncInternal();
     }
 
-    protected void syncDataOnlyInternal() throws IOException
+    protected void syncDataOnlyInternal()
     {
-        out.getFD().sync();
+        try
+        {
+            out.getFD().sync();
+        }
+        catch (IOException e)
+        {
+            throw new FSWriteError(e, getPath());
+        }
     }
 
-    protected void syncInternal() throws IOException
+    protected void syncInternal()
     {
         if (syncNeeded)
         {
@@ -180,16 +201,14 @@ public class SequentialWriter extends OutputStream
      * If buffer is dirty, flush it's contents to the operating system. Does not imply fsync().
      *
      * Currently, for implementation reasons, this also invalidates the buffer.
-     *
-     * @throws java.io.IOException on any I/O error.
      */
     @Override
-    public void flush() throws IOException
+    public void flush()
     {
         flushInternal();
     }
 
-    protected void flushInternal() throws IOException
+    protected void flushInternal()
     {
         if (isDirty)
         {
@@ -231,13 +250,21 @@ public class SequentialWriter extends OutputStream
 
     /**
      * Override this method instead of overriding flush()
-     * @throws IOException on any I/O error.
+     * @throws FSWriteError on any I/O error.
      */
-    protected void flushData() throws IOException
+    protected void flushData()
     {
-        out.write(buffer, 0, validBufferBytes);
-        if (digest != null)
-            digest.update(buffer, 0, validBufferBytes);
+        try
+        {
+            out.write(buffer, 0, validBufferBytes);
+        }
+        catch (IOException e)
+        {
+            throw new FSWriteError(e, getPath());
+        }
+
+        if (metadata != null)
+            metadata.append(buffer, 0, validBufferBytes);
     }
 
     public long getFilePointer()
@@ -252,14 +279,21 @@ public class SequentialWriter extends OutputStream
      * Furthermore, for compressed files, this value refers to compressed data, while the
      * writer getFilePointer() refers to uncompressedFile
      */
-    public long getOnDiskFilePointer() throws IOException
+    public long getOnDiskFilePointer()
     {
         return getFilePointer();
     }
 
-    public long length() throws IOException
+    public long length()
     {
-        return Math.max(Math.max(current, out.length()), bufferOffset + validBufferBytes);
+        try
+        {
+            return Math.max(Math.max(current, out.length()), bufferOffset + validBufferBytes);
+        }
+        catch (IOException e)
+        {
+            throw new FSReadError(e, getPath());
+        }
     }
 
     public String getPath()
@@ -267,7 +301,7 @@ public class SequentialWriter extends OutputStream
         return filePath;
     }
 
-    protected void reBuffer() throws IOException
+    protected void reBuffer()
     {
         flushInternal();
         resetBuffer();
@@ -289,7 +323,7 @@ public class SequentialWriter extends OutputStream
         return new BufferedFileWriterMark(current);
     }
 
-    public void resetAndTruncate(FileMark mark) throws IOException
+    public void resetAndTruncate(FileMark mark)
     {
         assert mark instanceof BufferedFileWriterMark;
 
@@ -310,18 +344,32 @@ public class SequentialWriter extends OutputStream
         truncate(current);
 
         // reset channel position
-        out.seek(current);
+        try
+        {
+            out.seek(current);
+        }
+        catch (IOException e)
+        {
+            throw new FSReadError(e, getPath());
+        }
 
         resetBuffer();
     }
 
-    public void truncate(long toSize) throws IOException
+    public void truncate(long toSize)
     {
-        out.getChannel().truncate(toSize);
+        try
+        {
+            out.getChannel().truncate(toSize);
+        }
+        catch (IOException e)
+        {
+            throw new FSWriteError(e, getPath());
+        }
     }
 
     @Override
-    public void close() throws IOException
+    public void close()
     {
         if (buffer == null)
             return; // already closed
@@ -333,7 +381,16 @@ public class SequentialWriter extends OutputStream
         if (skipIOCache && bytesSinceCacheFlush > 0)
             CLibrary.trySkipCache(fd, 0, 0);
 
-        out.close();
+        try
+        {
+            out.close();
+        }
+        catch (IOException e)
+        {
+            throw new FSWriteError(e, getPath());
+        }
+
+        FileUtils.closeQuietly(metadata);
         CLibrary.tryCloseFD(directoryFD);
     }
 
@@ -342,34 +399,12 @@ public class SequentialWriter extends OutputStream
      * This can only be called before any data is written to this write,
      * otherwise an IllegalStateException is thrown.
      */
-    public void setComputeDigest()
+    public void setDataIntegratyWriter(DataIntegrityMetadata.ChecksumWriter writer)
     {
         if (current != 0)
             throw new IllegalStateException();
-
-        try
-        {
-            digest = MessageDigest.getInstance("SHA-1");
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            // SHA-1 is standard in java 6
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Return the digest associated to this file or null if no digest was
-     * created.
-     * This can only be called once the file is fully created, i.e. after
-     * close() has been called. Otherwise an IllegalStateException is thrown.
-     */
-    public byte[] digest()
-    {
-        if (buffer != null)
-            throw new IllegalStateException();
-
-        return digest == null ? null : digest.digest();
+        metadata = writer;
+        metadata.writeChunkSize(buffer.length);
     }
 
     /**
@@ -377,7 +412,7 @@ public class SequentialWriter extends OutputStream
      */
     protected static class BufferedFileWriterMark implements FileMark
     {
-        long pointer;
+        final long pointer;
 
         public BufferedFileWriterMark(long pointer)
         {

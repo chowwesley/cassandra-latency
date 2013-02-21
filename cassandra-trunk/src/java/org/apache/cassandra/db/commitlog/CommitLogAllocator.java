@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,15 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db.commitlog;
 
 import java.io.File;
 
-import java.io.IOError;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +37,7 @@ import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.db.ColumnFamilyStore;
 import org.apache.cassandra.db.Table;
 import org.apache.cassandra.io.util.FileUtils;
+import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.utils.WrappedRunnable;
 
@@ -178,18 +177,12 @@ public class CommitLogAllocator
     public void recycleSegment(final File file)
     {
         // check against SEGMENT_SIZE avoids recycling odd-sized or empty segments from old C* versions and unit tests
-        if (isCapExceeded() || file.length() != DatabaseDescriptor.getCommitLogSegmentSize())
+        if (isCapExceeded() || file.length() != DatabaseDescriptor.getCommitLogSegmentSize()
+                || CommitLogDescriptor.fromFileName(file.getName()).getMessagingVersion() != MessagingService.current_version)
         {
             // (don't decrease managed size, since this was never a "live" segment)
-            try
-            {
-                logger.debug("(Unopened) segment {} is no longer needed and will be deleted now", file);
-                FileUtils.deleteWithConfirm(file);
-            }
-            catch (IOException e)
-            {
-                throw new IOError(e);
-            }
+            logger.debug("(Unopened) segment {} is no longer needed and will be deleted now", file);
+            FileUtils.deleteWithConfirm(file);
             return;
         }
 
@@ -301,7 +294,7 @@ public class CommitLogAllocator
 
         if (oldestSegment != null)
         {
-            for (Integer dirtyCFId : oldestSegment.getDirtyCFIDs())
+            for (UUID dirtyCFId : oldestSegment.getDirtyCFIDs())
             {
                 String keypace = Schema.instance.getCF(dirtyCFId).left;
                 final ColumnFamilyStore cfs = Table.open(keypace).getColumnFamilyStore(dirtyCFId);

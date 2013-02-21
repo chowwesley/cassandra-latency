@@ -1,7 +1,4 @@
-package org.apache.cassandra.security;
-
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -10,16 +7,16 @@ package org.apache.cassandra.security;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.security;
+
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,6 +29,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.cassandra.config.EncryptionOptions;
@@ -48,15 +46,16 @@ import com.google.common.collect.Sets;
  */
 public final class SSLFactory
 {
-    private static final Logger logger_ = LoggerFactory.getLogger(SSLFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(SSLFactory.class);
 
     public static SSLServerSocket getServerSocket(EncryptionOptions options, InetAddress address, int port) throws IOException
     {
-        SSLContext ctx = createSSLContext(options);
+        SSLContext ctx = createSSLContext(options, true);
         SSLServerSocket serverSocket = (SSLServerSocket)ctx.getServerSocketFactory().createServerSocket();
         serverSocket.setReuseAddress(true);
         String[] suits = filterCipherSuites(serverSocket.getSupportedCipherSuites(), options.cipher_suites);
         serverSocket.setEnabledCipherSuites(suits);
+        serverSocket.setNeedClientAuth(options.require_client_auth);
         serverSocket.bind(new InetSocketAddress(address, port), 100);
         return serverSocket;
     }
@@ -64,7 +63,7 @@ public final class SSLFactory
     /** Create a socket and connect */
     public static SSLSocket getSocket(EncryptionOptions options, InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException
     {
-        SSLContext ctx = createSSLContext(options);
+        SSLContext ctx = createSSLContext(options, true);
         SSLSocket socket = (SSLSocket) ctx.getSocketFactory().createSocket(address, port, localAddress, localPort);
         String[] suits = filterCipherSuites(socket.getSupportedCipherSuites(), options.cipher_suites);
         socket.setEnabledCipherSuites(suits);
@@ -74,7 +73,7 @@ public final class SSLFactory
     /** Create a socket and connect, using any local address */
     public static SSLSocket getSocket(EncryptionOptions options, InetAddress address, int port) throws IOException
     {
-        SSLContext ctx = createSSLContext(options);
+        SSLContext ctx = createSSLContext(options, true);
         SSLSocket socket = (SSLSocket) ctx.getSocketFactory().createSocket(address, port);
         String[] suits = filterCipherSuites(socket.getSupportedCipherSuites(), options.cipher_suites);
         socket.setEnabledCipherSuites(suits);
@@ -84,35 +83,40 @@ public final class SSLFactory
     /** Just create a socket */
     public static SSLSocket getSocket(EncryptionOptions options) throws IOException
     {
-        SSLContext ctx = createSSLContext(options);
+        SSLContext ctx = createSSLContext(options, true);
         SSLSocket socket = (SSLSocket) ctx.getSocketFactory().createSocket();
         String[] suits = filterCipherSuites(socket.getSupportedCipherSuites(), options.cipher_suites);
         socket.setEnabledCipherSuites(suits);
         return socket;
     }
 
-    private static SSLContext createSSLContext(EncryptionOptions options) throws IOException
+    public static SSLContext createSSLContext(EncryptionOptions options, boolean buildTruststore) throws IOException
     {
-        FileInputStream tsf = new FileInputStream(options.truststore);
-        FileInputStream ksf = new FileInputStream(options.keystore);
+        FileInputStream tsf = null;
+        FileInputStream ksf = null;
         SSLContext ctx;
         try
         {
             ctx = SSLContext.getInstance(options.protocol);
-            TrustManagerFactory tmf;
-            KeyManagerFactory kmf;
+            TrustManager[] trustManagers = null;
 
-            tmf = TrustManagerFactory.getInstance(options.algorithm);
-            KeyStore ts = KeyStore.getInstance(options.store_type);
-            ts.load(tsf, options.truststore_password.toCharArray());
-            tmf.init(ts);
+            if(buildTruststore)
+            {
+                tsf = new FileInputStream(options.truststore);
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(options.algorithm);
+                KeyStore ts = KeyStore.getInstance(options.store_type);
+                ts.load(tsf, options.truststore_password.toCharArray());
+                tmf.init(ts);
+                trustManagers = tmf.getTrustManagers();
+            }
 
-            kmf = KeyManagerFactory.getInstance(options.algorithm);
+            ksf = new FileInputStream(options.keystore);
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(options.algorithm);
             KeyStore ks = KeyStore.getInstance(options.store_type);
             ks.load(ksf, options.keystore_password.toCharArray());
             kmf.init(ks, options.keystore_password.toCharArray());
 
-            ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+            ctx.init(kmf.getKeyManagers(), trustManagers, null);
 
         }
         catch (Exception e)
@@ -130,9 +134,9 @@ public final class SSLFactory
     private static String[] filterCipherSuites(String[] supported, String[] desired)
     {
         Set<String> des = Sets.newHashSet(desired);
-        Set<String> return_ = Sets.intersection(Sets.newHashSet(supported), des);
-        if (des.size() > return_.size())
-            logger_.warn("Filtering out {} as it isnt supported by the socket", StringUtils.join(Sets.difference(des, return_), ","));
-        return return_.toArray(new String[return_.size()]);
+        Set<String> toReturn = Sets.intersection(Sets.newHashSet(supported), des);
+        if (des.size() > toReturn.size())
+            logger.warn("Filtering out {} as it isnt supported by the socket", StringUtils.join(Sets.difference(des, toReturn), ","));
+        return toReturn.toArray(new String[toReturn.size()]);
     }
 }

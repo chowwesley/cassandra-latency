@@ -30,7 +30,7 @@ import org.apache.cassandra.config.Schema;
 import org.junit.Test;
 
 import org.apache.cassandra.SchemaLoader;
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.config.KSMetaData;
 import org.apache.cassandra.db.Table;
 import org.apache.cassandra.dht.*;
@@ -163,16 +163,6 @@ public class SimpleStrategyTest extends SchemaLoader
         }
 
         StorageServiceAccessor.setTokenMetadata(oldTmd);
-    }
-
-    private AbstractReplicationStrategy getStrategyWithNewTokenMetadata(AbstractReplicationStrategy strategy, TokenMetadata newTmd) throws ConfigurationException
-    {
-        return AbstractReplicationStrategy.createReplicationStrategy(
-                strategy.table,
-                strategy.getClass().getName(),
-                newTmd,
-                strategy.snitch,
-                strategy.configOptions);
     }
 
     private AbstractReplicationStrategy getStrategy(String table, TokenMetadata tmd) throws ConfigurationException

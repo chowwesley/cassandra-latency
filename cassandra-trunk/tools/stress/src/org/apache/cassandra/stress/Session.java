@@ -25,8 +25,14 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Histogram;
+import org.apache.cassandra.cli.transport.FramedTransportFactory;
 import org.apache.cassandra.config.CFMetaData;
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.config.EncryptionOptions;
+import org.apache.cassandra.config.EncryptionOptions.ClientEncryptionOptions;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.exceptions.SyntaxException;
 import org.apache.cassandra.db.marshal.*;
 import org.apache.commons.cli.*;
 
@@ -37,23 +43,31 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportFactory;
 
 public class Session implements Serializable
 {
     // command line options
     public static final Options availableOptions = new Options();
 
+    public static final String KEYSPACE_NAME = "Keyspace1";
     public static final String DEFAULT_COMPARATOR = "AsciiType";
     public static final String DEFAULT_VALIDATOR  = "BytesType";
 
     private static InetAddress localInetAddress;
 
-    public final AtomicInteger operations;
-    public final AtomicInteger keys;
-    public final AtomicLong    latency;
+    public final AtomicInteger operations = new AtomicInteger();
+    public final AtomicInteger keys = new AtomicInteger();
+    public final com.yammer.metrics.core.Timer latency = Metrics.newTimer(Session.class, "latency");
+
+    private static final String SSL_TRUSTSTORE = "truststore";
+    private static final String SSL_TRUSTSTORE_PW = "truststore-password";
+    private static final String SSL_PROTOCOL = "ssl-protocol";
+    private static final String SSL_ALGORITHM = "ssl-alg";
+    private static final String SSL_STORE_TYPE = "store-type";
+    private static final String SSL_CIPHER_SUITES = "ssl-ciphers";
 
     static
     {
@@ -71,7 +85,6 @@ public class Session implements Serializable
         availableOptions.addOption("r",  "random",               false,  "Use random key generator (STDEV will have no effect), default:false");
         availableOptions.addOption("f",  "file",                 true,   "Write output to given file");
         availableOptions.addOption("p",  "port",                 true,   "Thrift port, default:9160");
-        availableOptions.addOption("m",  "unframed",             false,  "Use unframed transport, default:false");
         availableOptions.addOption("o",  "operation",            true,   "Operation to perform (INSERT, READ, RANGE_SLICE, INDEXED_RANGE_SLICE, MULTI_GET, COUNTER_ADD, COUNTER_GET), default:INSERT");
         availableOptions.addOption("u",  "supercolumns",         true,   "Number of super columns per key, default:1");
         availableOptions.addOption("y",  "family-type",          true,   "Column Family Type (Super, Standard), default:Standard");
@@ -80,7 +93,8 @@ public class Session implements Serializable
         availableOptions.addOption("i",  "progress-interval",    true,   "Progress Report Interval (seconds), default:10");
         availableOptions.addOption("g",  "keys-per-call",        true,   "Number of keys to get_range_slices or multiget per call, default:1000");
         availableOptions.addOption("l",  "replication-factor",   true,   "Replication Factor to use when creating needed column families, default:1");
-        availableOptions.addOption("L",  "enable-cql",           false,  "Perform queries using CQL (Cassandra Query Language).");
+        availableOptions.addOption("L",  "enable-cql",           false,  "Perform queries using CQL2 (Cassandra Query Language v 2.0.0)");
+        availableOptions.addOption("L3", "enable-cql3",          false,  "Perform queries using CQL3 (Cassandra Query Language v 3.0.0)");
         availableOptions.addOption("P",  "use-prepared-statements", false, "Perform queries using prepared statements (only applicable to CQL).");
         availableOptions.addOption("e",  "consistency-level",    true,   "Consistency Level to use (ONE, QUORUM, LOCAL_QUORUM, EACH_QUORUM, ALL, ANY), default:ONE");
         availableOptions.addOption("x",  "create-index",         true,   "Type of index to create on needed column families (KEYS)");
@@ -93,6 +107,14 @@ public class Session implements Serializable
         availableOptions.addOption("Q",  "query-names",          true,   "Comma-separated list of column names to retrieve from each row.");
         availableOptions.addOption("Z",  "compaction-strategy",  true,   "CompactionStrategy to use.");
         availableOptions.addOption("U",  "comparator",           true,   "Column Comparator to use. Currently supported types are: TimeUUIDType, AsciiType, UTF8Type.");
+        availableOptions.addOption("tf", "transport-factory",    true,   "Fully-qualified TTransportFactory class name for creating a connection. Note: For Thrift over SSL, use org.apache.cassandra.stress.SSLTransportFactory.");
+        availableOptions.addOption("ns", "no-statistics",        false,  "Turn off the aggegate statistics that is normally output after completion.");
+        availableOptions.addOption("ts", SSL_TRUSTSTORE,         true, "SSL: full path to truststore");
+        availableOptions.addOption("tspw", SSL_TRUSTSTORE_PW,    true, "SSL: full path to truststore");
+        availableOptions.addOption("prtcl", SSL_PROTOCOL,        true, "SSL: connections protocol to use (default: TLS)");
+        availableOptions.addOption("alg", SSL_ALGORITHM,         true, "SSL: algorithm (default: SunX509)");
+        availableOptions.addOption("st", SSL_STORE_TYPE,         true, "SSL: type of store");
+        availableOptions.addOption("ciphers", SSL_CIPHER_SUITES, true, "SSL: comma-separated list of encryption suites to use");
     }
 
     private int numKeys          = 1000 * 1000;
@@ -102,11 +124,10 @@ public class Session implements Serializable
     private int columns          = 5;
     private int columnSize       = 34;
     private int cardinality      = 50;
-    private String[] nodes       = new String[] { "127.0.0.1" };
+    public String[] nodes        = new String[] { "127.0.0.1" };
     private boolean random       = false;
-    private boolean unframed     = false;
     private int retryTimes       = 10;
-    private int port             = 9160;
+    public int port              = 9160;
     private int superColumns     = 1;
     private String compression   = null;
     private String compactionStrategy = null;
@@ -117,6 +138,8 @@ public class Session implements Serializable
     private boolean ignoreErrors  = false;
     private boolean enable_cql    = false;
     private boolean use_prepared  = false;
+    private boolean trace         = false;
+    private boolean captureStatistics = true;
 
     private final String outFileName;
 
@@ -130,6 +153,8 @@ public class Session implements Serializable
     // if we know exactly column names that we want to read (set by -Q option)
     public final List<ByteBuffer> columnNames;
 
+    public String cqlVersion;
+
     public final boolean averageSizeValues;
 
     // required by Gaussian distribution.
@@ -139,8 +164,11 @@ public class Session implements Serializable
     public final InetAddress sendToDaemon;
     public final String comparator;
     public final boolean timeUUIDComparator;
+    public double traceProbability = 0.0;
+    public EncryptionOptions encOptions = new ClientEncryptionOptions();
+    public TTransportFactory transportFactory = new FramedTransportFactory();
 
-    public Session(String[] arguments) throws IllegalArgumentException
+    public Session(String[] arguments) throws IllegalArgumentException, SyntaxException
     {
         float STDev = 0.1f;
         CommandLineParser parser = new PosixParser();
@@ -216,9 +244,6 @@ public class Session implements Serializable
             if (cmd.hasOption("p"))
                 port = Integer.parseInt(cmd.getOptionValue("p"));
 
-            if (cmd.hasOption("m"))
-                unframed = Boolean.parseBoolean(cmd.getOptionValue("m"));
-
             if (cmd.hasOption("o"))
                 operation = Stress.Operations.valueOf(cmd.getOptionValue("o").toUpperCase());
 
@@ -266,7 +291,17 @@ public class Session implements Serializable
                 replicationStrategyOptions.put("replication_factor", "1");
 
             if (cmd.hasOption("L"))
+            {
                 enable_cql = true;
+                cqlVersion = "2.0.0";
+            }
+
+            if (cmd.hasOption("L3"))
+            {
+                enable_cql = true;
+                cqlVersion = "3.0.0";
+            }
+
 
             if (cmd.hasOption("P"))
             {
@@ -371,6 +406,33 @@ public class Session implements Serializable
                 comparator = null;
                 timeUUIDComparator = false;
             }
+
+            if (cmd.hasOption("ns"))
+            {
+                captureStatistics = false;
+            }
+
+            if(cmd.hasOption(SSL_TRUSTSTORE))
+                encOptions.truststore = cmd.getOptionValue(SSL_TRUSTSTORE);
+
+            if(cmd.hasOption(SSL_TRUSTSTORE_PW))
+                encOptions.truststore_password = cmd.getOptionValue(SSL_TRUSTSTORE_PW);
+
+            if(cmd.hasOption(SSL_PROTOCOL))
+                encOptions.protocol = cmd.getOptionValue(SSL_PROTOCOL);
+
+            if(cmd.hasOption(SSL_ALGORITHM))
+                encOptions.algorithm = cmd.getOptionValue(SSL_ALGORITHM);
+
+            if(cmd.hasOption(SSL_STORE_TYPE))
+                encOptions.store_type = cmd.getOptionValue(SSL_STORE_TYPE);
+
+            if(cmd.hasOption(SSL_CIPHER_SUITES))
+                encOptions.cipher_suites = cmd.getOptionValue(SSL_CIPHER_SUITES).split(",");
+
+            if (cmd.hasOption("tf"))
+                transportFactory = validateAndSetTransportFactory(cmd.getOptionValue("tf"));
+
         }
         catch (ParseException e)
         {
@@ -383,10 +445,24 @@ public class Session implements Serializable
 
         mean  = numDifferentKeys / 2;
         sigma = numDifferentKeys * STDev;
+    }
 
-        operations = new AtomicInteger();
-        keys = new AtomicInteger();
-        latency = new AtomicLong();
+    private TTransportFactory validateAndSetTransportFactory(String transportFactory)
+    {
+        try
+        {
+            Class factory = Class.forName(transportFactory);
+
+            if(!TTransportFactory.class.isAssignableFrom(factory))
+                throw new IllegalArgumentException(String.format("transport factory '%s' " +
+                        "not derived from TTransportFactory", transportFactory));
+
+            return (TTransportFactory) factory.newInstance();
+        }
+        catch (Exception e)
+        {
+            throw new IllegalArgumentException(String.format("Cannot create a transport factory '%s'.", transportFactory), e);
+        }
     }
 
     public int getCardinality()
@@ -397,11 +473,6 @@ public class Session implements Serializable
     public int getColumnSize()
     {
         return columnSize;
-    }
-
-    public boolean isUnframed()
-    {
-        return unframed;
     }
 
     public int getColumnsPerKey()
@@ -518,8 +589,13 @@ public class Session implements Serializable
         return use_prepared;
     }
 
+    public boolean outputStatistics()
+    {
+        return captureStatistics;
+    }
+
     /**
-     * Create Keyspace1 with Standard1 and Super1 column families
+     * Create Keyspace with Standard and Super/Counter column families
      */
     public void createKeySpaces()
     {
@@ -527,7 +603,7 @@ public class Session implements Serializable
         String defaultComparator = comparator == null ? DEFAULT_COMPARATOR : comparator;
 
         // column family for standard columns
-        CfDef standardCfDef = new CfDef("Keyspace1", "Standard1");
+        CfDef standardCfDef = new CfDef(KEYSPACE_NAME, "Standard1");
         Map<String, String> compressionOptions = new HashMap<String, String>();
         if (compression != null)
             compressionOptions.put("sstable_compression", compression);
@@ -535,6 +611,14 @@ public class Session implements Serializable
         standardCfDef.setComparator_type(defaultComparator)
                      .setDefault_validation_class(DEFAULT_VALIDATOR)
                      .setCompression_options(compressionOptions);
+
+        if (!timeUUIDComparator)
+        {
+            for (int i = 0; i < getColumnsPerKey(); i++)
+            {
+                standardCfDef.addToColumn_metadata(new ColumnDef(ByteBufferUtil.bytes("C" + i), "BytesType"));
+            }
+        }
 
         if (indexType != null)
         {
@@ -544,19 +628,27 @@ public class Session implements Serializable
         }
 
         // column family with super columns
-        CfDef superCfDef = new CfDef("Keyspace1", "Super1").setColumn_type("Super");
+        CfDef superCfDef = new CfDef(KEYSPACE_NAME, "Super1").setColumn_type("Super");
         superCfDef.setComparator_type(DEFAULT_COMPARATOR)
                   .setSubcomparator_type(defaultComparator)
                   .setDefault_validation_class(DEFAULT_VALIDATOR)
                   .setCompression_options(compressionOptions);
 
         // column family for standard counters
-        CfDef counterCfDef = new CfDef("Keyspace1", "Counter1").setDefault_validation_class("CounterColumnType").setReplicate_on_write(replicateOnWrite).setCompression_options(compressionOptions);
+        CfDef counterCfDef = new CfDef(KEYSPACE_NAME, "Counter1").setComparator_type(defaultComparator)
+                                                                 .setComparator_type(defaultComparator)
+                                                                 .setDefault_validation_class("CounterColumnType")
+                                                                 .setReplicate_on_write(replicateOnWrite)
+                                                                 .setCompression_options(compressionOptions);
 
         // column family with counter super columns
-        CfDef counterSuperCfDef = new CfDef("Keyspace1", "SuperCounter1").setDefault_validation_class("CounterColumnType").setReplicate_on_write(replicateOnWrite).setColumn_type("Super").setCompression_options(compressionOptions);
+        CfDef counterSuperCfDef = new CfDef(KEYSPACE_NAME, "SuperCounter1").setComparator_type(defaultComparator)
+                                                                           .setDefault_validation_class("CounterColumnType")
+                                                                           .setReplicate_on_write(replicateOnWrite)
+                                                                           .setColumn_type("Super")
+                                                                           .setCompression_options(compressionOptions);
 
-        keyspace.setName("Keyspace1");
+        keyspace.setName(KEYSPACE_NAME);
         keyspace.setStrategy_class(replicationStrategy);
 
         if (!replicationStrategyOptions.isEmpty())
@@ -579,6 +671,17 @@ public class Session implements Serializable
         try
         {
             client.system_add_keyspace(keyspace);
+
+            /* CQL3 counter cf */
+            client.set_cql_version("3.0.0"); // just to create counter cf for cql3
+
+            client.set_keyspace(KEYSPACE_NAME);
+            client.execute_cql3_query(createCounterCFStatementForCQL3(), Compression.NONE, ConsistencyLevel.ONE);
+
+            if (enable_cql)
+                client.set_cql_version(cqlVersion);
+            /* end */
+
             System.out.println(String.format("Created keyspaces. Sleeping %ss for propagation.", nodes.length));
             Thread.sleep(nodes.length * 1000); // seconds
         }
@@ -611,12 +714,16 @@ public class Session implements Serializable
         String currentNode = nodes[Stress.randomizer.nextInt(nodes.length)];
 
         TSocket socket = new TSocket(currentNode, port);
-        TTransport transport = (isUnframed()) ? socket : new TFramedTransport(socket);
+        TTransport transport = transportFactory.getTransport(socket);
         CassandraClient client = new CassandraClient(new TBinaryProtocol(transport));
 
         try
         {
-            transport.open();
+            if(!transport.isOpen())
+                transport.open();
+
+            if (enable_cql)
+                client.set_cql_version(cqlVersion);
 
             if (setKeyspace)
             {
@@ -650,5 +757,20 @@ public class Session implements Serializable
         }
 
         return localInetAddress;
+    }
+
+    private ByteBuffer createCounterCFStatementForCQL3()
+    {
+        StringBuilder counter3 = new StringBuilder("CREATE TABLE \"Counter3\" (KEY blob PRIMARY KEY, ");
+
+        for (int i = 0; i < getColumnsPerKey(); i++)
+        {
+            counter3.append("c").append(i).append(" counter");
+            if (i != getColumnsPerKey() - 1)
+                counter3.append(", ");
+        }
+        counter3.append(");");
+
+        return ByteBufferUtil.bytes(counter3.toString());
     }
 }

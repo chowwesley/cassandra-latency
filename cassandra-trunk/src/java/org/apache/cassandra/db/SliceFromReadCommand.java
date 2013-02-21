@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,75 +17,77 @@
  */
 package org.apache.cassandra.db;
 
-import java.io.*;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 
-import org.apache.cassandra.db.filter.QueryFilter;
-import org.apache.cassandra.db.filter.QueryPath;
-import org.apache.cassandra.io.IVersionedSerializer;
-import org.apache.cassandra.service.RepairCallback;
-import org.apache.cassandra.service.StorageService;
-import org.apache.cassandra.thrift.ColumnParent;
-import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.FBUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.apache.cassandra.config.CFMetaData;
+import org.apache.cassandra.config.Schema;
+import org.apache.cassandra.db.filter.IDiskAtomFilter;
+import org.apache.cassandra.db.filter.QueryFilter;
+import org.apache.cassandra.db.filter.QueryPath;
+import org.apache.cassandra.db.filter.SliceQueryFilter;
+import org.apache.cassandra.db.marshal.AbstractType;
+import org.apache.cassandra.db.marshal.CompositeType;
+import org.apache.cassandra.io.IVersionedSerializer;
+import org.apache.cassandra.net.MessagingService;
+import org.apache.cassandra.service.RowDataResolver;
+import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.utils.ByteBufferUtil;
 
 public class SliceFromReadCommand extends ReadCommand
 {
     static final Logger logger = LoggerFactory.getLogger(SliceFromReadCommand.class);
 
-    public final ByteBuffer start, finish;
-    public final boolean reversed;
-    public final int count;
+    static final SliceFromReadCommandSerializer serializer = new SliceFromReadCommandSerializer();
 
-    public SliceFromReadCommand(String table, ByteBuffer key, ColumnParent column_parent, ByteBuffer start, ByteBuffer finish, boolean reversed, int count)
-    {
-        this(table, key, new QueryPath(column_parent), start, finish, reversed, count);
-    }
+    public final SliceQueryFilter filter;
 
-    public SliceFromReadCommand(String table, ByteBuffer key, QueryPath path, ByteBuffer start, ByteBuffer finish, boolean reversed, int count)
+    public SliceFromReadCommand(String table, ByteBuffer key, String cfName, SliceQueryFilter filter)
     {
-        super(table, key, path, CMD_TYPE_GET_SLICE);
-        this.start = start;
-        this.finish = finish;
-        this.reversed = reversed;
-        this.count = count;
+        super(table, key, cfName, Type.GET_SLICES);
+        this.filter = filter;
     }
 
     public ReadCommand copy()
     {
-        ReadCommand readCommand = new SliceFromReadCommand(table, key, queryPath, start, finish, reversed, count);
+        ReadCommand readCommand = new SliceFromReadCommand(table, key, cfName, filter);
         readCommand.setDigestQuery(isDigestQuery());
         return readCommand;
     }
 
-    public Row getRow(Table table) throws IOException
+    public Row getRow(Table table)
     {
-        DecoratedKey<?> dk = StorageService.getPartitioner().decorateKey(key);
-        return table.getRow(QueryFilter.getSliceFilter(dk, queryPath, start, finish, reversed, count));
+        DecoratedKey dk = StorageService.getPartitioner().decorateKey(key);
+        return table.getRow(new QueryFilter(dk, cfName, filter));
     }
 
     @Override
-    public ReadCommand maybeGenerateRetryCommand(RepairCallback handler, Row row)
+    public ReadCommand maybeGenerateRetryCommand(RowDataResolver resolver, Row row)
     {
-        int maxLiveColumns = handler.getMaxLiveColumns();
-        int liveColumnsInRow = row != null ? row.getLiveColumnCount() : 0;
+        int maxLiveColumns = resolver.getMaxLiveCount();
 
+        int count = filter.count;
         assert maxLiveColumns <= count;
         // We generate a retry if at least one node reply with count live columns but after merge we have less
         // than the total number of column we are interested in (which may be < count on a retry)
-        if ((maxLiveColumns == count) && (liveColumnsInRow < getOriginalRequestedCount()))
+        if (maxLiveColumns != count)
+            return null;
+
+        int liveCountInRow = row == null || row.cf == null ? 0 : filter.getLiveCount(row.cf);
+        if (liveCountInRow < getOriginalRequestedCount())
         {
-            // We asked t (= count) live columns and got l (=liveColumnsInRow) ones.
+            // We asked t (= count) live columns and got l (=liveCountInRow) ones.
             // From that, we can estimate that on this row, for x requested
             // columns, only l/t end up live after reconciliation. So for next
             // round we want to ask x column so that x * (l/t) == t, i.e. x = t^2/l.
-            int retryCount = liveColumnsInRow == 0 ? count + 1 : ((count * count) / liveColumnsInRow) + 1;
-            return new RetriedSliceFromReadCommand(table, key, queryPath, start, finish, reversed, getOriginalRequestedCount(), retryCount);
+            int retryCount = liveCountInRow == 0 ? count + 1 : ((count * count) / liveCountInRow) + 1;
+            SliceQueryFilter newFilter = filter.withUpdatedCount(retryCount);
+            return new RetriedSliceFromReadCommand(table, key, cfName, newFilter, getOriginalRequestedCount());
         }
 
         return null;
@@ -97,35 +99,12 @@ public class SliceFromReadCommand extends ReadCommand
         if ((row == null) || (row.cf == null))
             return;
 
-        int liveColumnsInRow = row.cf.getLiveColumnCount();
+        filter.trim(row.cf, getOriginalRequestedCount());
+    }
 
-        if (liveColumnsInRow > getOriginalRequestedCount())
-        {
-            int columnsToTrim = liveColumnsInRow - getOriginalRequestedCount();
-
-            logger.debug("trimming {} live columns to the originally requested {}", row.cf.getLiveColumnCount(), getOriginalRequestedCount());
-
-            Collection<IColumn> columns;
-            if (reversed)
-                columns = row.cf.getSortedColumns();
-            else
-                columns = row.cf.getReverseSortedColumns();
-
-            Collection<ByteBuffer> toRemove = new HashSet<ByteBuffer>();
-
-            Iterator<IColumn> columnIterator = columns.iterator();
-            while (columnIterator.hasNext() && (toRemove.size() < columnsToTrim))
-            {
-                IColumn column = columnIterator.next();
-                if (column.isLive())
-                    toRemove.add(column.name());
-            }
-
-            for (ByteBuffer columnName : toRemove)
-            {
-                row.cf.remove(columnName);
-            }
-        }
+    public IDiskAtomFilter filter()
+    {
+        return filter;
     }
 
     /**
@@ -135,7 +114,7 @@ public class SliceFromReadCommand extends ReadCommand
      */
     protected int getOriginalRequestedCount()
     {
-        return count;
+        return filter.count;
     }
 
     @Override
@@ -144,11 +123,8 @@ public class SliceFromReadCommand extends ReadCommand
         return "SliceFromReadCommand(" +
                "table='" + table + '\'' +
                ", key='" + ByteBufferUtil.bytesToHex(key) + '\'' +
-               ", column_parent='" + queryPath + '\'' +
-               ", start='" + getComparator().getString(start) + '\'' +
-               ", finish='" + getComparator().getString(finish) + '\'' +
-               ", reversed=" + reversed +
-               ", count=" + count +
+               ", cfName='" + cfName + '\'' +
+               ", filter='" + filter + '\'' +
                ')';
     }
 }
@@ -157,42 +133,87 @@ class SliceFromReadCommandSerializer implements IVersionedSerializer<ReadCommand
 {
     public void serialize(ReadCommand rm, DataOutput dos, int version) throws IOException
     {
+        serialize(rm, null, dos, version);
+    }
+
+    public void serialize(ReadCommand rm, ByteBuffer superColumn, DataOutput dos, int version) throws IOException
+    {
         SliceFromReadCommand realRM = (SliceFromReadCommand)rm;
         dos.writeBoolean(realRM.isDigestQuery());
         dos.writeUTF(realRM.table);
         ByteBufferUtil.writeWithShortLength(realRM.key, dos);
-        realRM.queryPath.serialize(dos);
-        ByteBufferUtil.writeWithShortLength(realRM.start, dos);
-        ByteBufferUtil.writeWithShortLength(realRM.finish, dos);
-        dos.writeBoolean(realRM.reversed);
-        dos.writeInt(realRM.count);
+
+        if (version < MessagingService.VERSION_20)
+            new QueryPath(realRM.cfName, superColumn).serialize(dos);
+        else
+            dos.writeUTF(realRM.cfName);
+
+        SliceQueryFilter.serializer.serialize(realRM.filter, dos, version);
     }
 
     public ReadCommand deserialize(DataInput dis, int version) throws IOException
     {
         boolean isDigest = dis.readBoolean();
-        SliceFromReadCommand rm = new SliceFromReadCommand(dis.readUTF(),
-                                                           ByteBufferUtil.readWithShortLength(dis),
-                                                           QueryPath.deserialize(dis),
-                                                           ByteBufferUtil.readWithShortLength(dis),
-                                                           ByteBufferUtil.readWithShortLength(dis),
-                                                           dis.readBoolean(),
-                                                           dis.readInt());
-        rm.setDigestQuery(isDigest);
-        return rm;
+        String table = dis.readUTF();
+        ByteBuffer key = ByteBufferUtil.readWithShortLength(dis);
+
+        String cfName;
+        ByteBuffer sc = null;
+        if (version < MessagingService.VERSION_20)
+        {
+            QueryPath path = QueryPath.deserialize(dis);
+            cfName = path.columnFamilyName;
+            sc = path.superColumnName;
+        }
+        else
+        {
+            cfName = dis.readUTF();
+        }
+
+        CFMetaData metadata = Schema.instance.getCFMetaData(table, cfName);
+        SliceQueryFilter filter;
+        if (version < MessagingService.VERSION_20)
+        {
+            filter = SliceQueryFilter.serializer.deserialize(dis, version);
+
+            if (metadata.cfType == ColumnFamilyType.Super)
+                filter = SuperColumns.fromSCSliceFilter((CompositeType)metadata.comparator, sc, filter);
+        }
+        else
+        {
+            filter = SliceQueryFilter.serializer.deserialize(dis, version);
+        }
+
+        ReadCommand command = new SliceFromReadCommand(table, key, cfName, filter);
+        command.setDigestQuery(isDigest);
+        return command;
     }
 
     public long serializedSize(ReadCommand cmd, int version)
     {
+        return serializedSize(cmd, null, version);
+    }
+
+    public long serializedSize(ReadCommand cmd, ByteBuffer superColumn, int version)
+    {
+        TypeSizes sizes = TypeSizes.NATIVE;
         SliceFromReadCommand command = (SliceFromReadCommand) cmd;
-        int size = DBConstants.boolSize;
-        size += DBConstants.shortSize + FBUtilities.encodedUTF8Length(command.table);
-        size += DBConstants.shortSize + command.key.remaining();
-        size += command.queryPath.serializedSize();
-        size += DBConstants.shortSize + command.start.remaining();
-        size += DBConstants.shortSize + command.finish.remaining();
-        size += DBConstants.boolSize;
-        size += DBConstants.intSize;
+        int keySize = command.key.remaining();
+
+        int size = sizes.sizeof(cmd.isDigestQuery()); // boolean
+        size += sizes.sizeof(command.table);
+        size += sizes.sizeof((short) keySize) + keySize;
+
+        if (version < MessagingService.VERSION_20)
+        {
+            size += new QueryPath(command.cfName, superColumn).serializedSize(sizes);
+        }
+        else
+        {
+            size += sizes.sizeof(command.cfName);
+        }
+
+        size += SliceQueryFilter.serializer.serializedSize(command.filter, version);
         return size;
     }
 }

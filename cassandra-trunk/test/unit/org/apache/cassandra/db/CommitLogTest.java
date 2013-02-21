@@ -21,15 +21,19 @@ package org.apache.cassandra.db;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.UUID;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
+
+import junit.framework.Assert;
 
 import org.junit.Test;
 
 import org.apache.cassandra.SchemaLoader;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.commitlog.CommitLog;
-import org.apache.cassandra.db.filter.QueryPath;
+import org.apache.cassandra.db.commitlog.CommitLogDescriptor;
+import org.apache.cassandra.net.MessagingService;
 
 import static org.apache.cassandra.utils.ByteBufferUtil.bytes;
 
@@ -96,7 +100,7 @@ public class CommitLogTest extends SchemaLoader
         CommitLog.instance.resetUnsafe();
         // Roughly 32 MB mutation
         RowMutation rm = new RowMutation("Keyspace1", bytes("k"));
-        rm.add(new QueryPath("Standard1", null, bytes("c1")), ByteBuffer.allocate(DatabaseDescriptor.getCommitLogSegmentSize()/4), 0);
+        rm.add("Standard1", bytes("c1"), ByteBuffer.allocate(DatabaseDescriptor.getCommitLogSegmentSize()/4), 0);
 
         // Adding it 5 times
         CommitLog.instance.add(rm);
@@ -107,12 +111,12 @@ public class CommitLogTest extends SchemaLoader
 
         // Adding new mutation on another CF
         RowMutation rm2 = new RowMutation("Keyspace1", bytes("k"));
-        rm2.add(new QueryPath("Standard2", null, bytes("c1")), ByteBuffer.allocate(4), 0);
+        rm2.add("Standard2", bytes("c1"), ByteBuffer.allocate(4), 0);
         CommitLog.instance.add(rm2);
 
         assert CommitLog.instance.activeSegments() == 2 : "Expecting 2 segments, got " + CommitLog.instance.activeSegments();
 
-        int cfid2 = rm2.getColumnFamilyIds().iterator().next();
+        UUID cfid2 = rm2.getColumnFamilyIds().iterator().next();
         CommitLog.instance.discardCompletedSegments(cfid2, CommitLog.instance.getContext().get());
 
         // Assert we still have both our segment
@@ -125,7 +129,7 @@ public class CommitLogTest extends SchemaLoader
         CommitLog.instance.resetUnsafe();
         // Roughly 32 MB mutation
         RowMutation rm = new RowMutation("Keyspace1", bytes("k"));
-        rm.add(new QueryPath("Standard1", null, bytes("c1")), ByteBuffer.allocate(DatabaseDescriptor.getCommitLogSegmentSize()/4), 0);
+        rm.add("Standard1", bytes("c1"), ByteBuffer.allocate(DatabaseDescriptor.getCommitLogSegmentSize()/4), 0);
 
         // Adding it twice (won't change segment)
         CommitLog.instance.add(rm);
@@ -134,14 +138,14 @@ public class CommitLogTest extends SchemaLoader
         assert CommitLog.instance.activeSegments() == 1 : "Expecting 1 segment, got " + CommitLog.instance.activeSegments();
 
         // "Flush": this won't delete anything
-        int cfid1 = rm.getColumnFamilyIds().iterator().next();
+        UUID cfid1 = rm.getColumnFamilyIds().iterator().next();
         CommitLog.instance.discardCompletedSegments(cfid1, CommitLog.instance.getContext().get());
 
         assert CommitLog.instance.activeSegments() == 1 : "Expecting 1 segment, got " + CommitLog.instance.activeSegments();
 
         // Adding new mutation on another CF, large enough (including CL entry overhead) that a new segment is created
         RowMutation rm2 = new RowMutation("Keyspace1", bytes("k"));
-        rm2.add(new QueryPath("Standard2", null, bytes("c1")), ByteBuffer.allocate(DatabaseDescriptor.getCommitLogSegmentSize()/2), 0);
+        rm2.add("Standard2", bytes("c1"), ByteBuffer.allocate(DatabaseDescriptor.getCommitLogSegmentSize()/2), 0);
         CommitLog.instance.add(rm2);
         // also forces a new segment, since each entry-with-overhead is just over half the CL size
         CommitLog.instance.add(rm2);
@@ -152,7 +156,7 @@ public class CommitLogTest extends SchemaLoader
         // "Flush" second cf: The first segment should be deleted since we
         // didn't write anything on cf1 since last flush (and we flush cf2)
 
-        int cfid2 = rm2.getColumnFamilyIds().iterator().next();
+        UUID cfid2 = rm2.getColumnFamilyIds().iterator().next();
         CommitLog.instance.discardCompletedSegments(cfid2, CommitLog.instance.getContext().get());
 
         // Assert we still have both our segment
@@ -166,7 +170,7 @@ public class CommitLogTest extends SchemaLoader
         CommitLog.instance.resetUnsafe();
 
         RowMutation rm = new RowMutation("Keyspace1", bytes("k"));
-        rm.add(new QueryPath("Standard1", null, bytes("c1")), ByteBuffer.allocate((DatabaseDescriptor.getCommitLogSegmentSize()) - 83), 0);
+        rm.add("Standard1", bytes("c1"), ByteBuffer.allocate((DatabaseDescriptor.getCommitLogSegmentSize()) - 83), 0);
         CommitLog.instance.add(rm);
     }
 
@@ -190,7 +194,7 @@ public class CommitLogTest extends SchemaLoader
 
     protected File tmpFile() throws IOException
     {
-        File logFile = File.createTempFile("testRecoveryWithPartiallyWrittenHeaderTestFile", null);
+        File logFile = File.createTempFile("CommitLog-" + CommitLogDescriptor.current_version + "-", ".log");
         logFile.deleteOnExit();
         assert logFile.length() == 0;
         return logFile;
@@ -203,5 +207,23 @@ public class CommitLogTest extends SchemaLoader
         lout.write(logData);
         //statics make it annoying to test things correctly
         CommitLog.instance.recover(new File[]{ logFile }); //CASSANDRA-1119 / CASSANDRA-1179 throw on failure*/
+    }
+
+    @Test
+    public void testVersions()
+    {
+        Assert.assertTrue(CommitLogDescriptor.isValid("CommitLog-1340512736956320000.log"));
+        Assert.assertTrue(CommitLogDescriptor.isValid("CommitLog-2-1340512736956320000.log"));
+        Assert.assertFalse(CommitLogDescriptor.isValid("CommitLog--1340512736956320000.log"));
+        Assert.assertFalse(CommitLogDescriptor.isValid("CommitLog--2-1340512736956320000.log"));
+        Assert.assertFalse(CommitLogDescriptor.isValid("CommitLog-2-1340512736956320000-123.log"));
+
+        Assert.assertEquals(1340512736956320000L, CommitLogDescriptor.fromFileName("CommitLog-2-1340512736956320000.log").id);
+        Assert.assertEquals(1340512736956320000L, CommitLogDescriptor.fromFileName("CommitLog-1340512736956320000.log").id);
+
+        Assert.assertEquals(MessagingService.current_version, new CommitLogDescriptor(1340512736956320000L).getMessagingVersion());
+        String newCLName = "CommitLog-" + CommitLogDescriptor.current_version + "-1340512736956320000.log";
+        Assert.assertEquals(MessagingService.current_version, CommitLogDescriptor.fromFileName(newCLName).getMessagingVersion());
+        Assert.assertEquals(MessagingService.VERSION_11, CommitLogDescriptor.fromFileName("CommitLog-1340512736956320000.log").getMessagingVersion());
     }
 }

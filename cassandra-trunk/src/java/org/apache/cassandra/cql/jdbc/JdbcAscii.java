@@ -1,6 +1,4 @@
-package org.apache.cassandra.cql.jdbc;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,28 +7,26 @@ package org.apache.cassandra.cql.jdbc;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.cql.jdbc;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 import java.sql.Types;
-
-import com.google.common.base.Charsets;
 
 import org.apache.cassandra.utils.ByteBufferUtil;
 
 public class JdbcAscii extends AbstractJdbcType<String>
 {
+    private static final Charset US_ASCII = Charset.forName("US-ASCII");
     public static final JdbcAscii instance = new JdbcAscii();
 
     JdbcAscii() {}
@@ -74,7 +70,7 @@ public class JdbcAscii extends AbstractJdbcType<String>
     {
         try
         {
-            return ByteBufferUtil.string(bytes, Charsets.US_ASCII);
+            return ByteBufferUtil.string(bytes, US_ASCII);
         }
         catch (CharacterCodingException e)
         {
@@ -99,6 +95,6 @@ public class JdbcAscii extends AbstractJdbcType<String>
 
     public ByteBuffer decompose(String value)
     {
-        return ByteBufferUtil.bytes(value, Charsets.US_ASCII);
+        return ByteBufferUtil.bytes(value, US_ASCII);
     }
 }

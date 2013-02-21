@@ -1,6 +1,4 @@
-/**
- * Copyright 2011 The Apache Software Foundation
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -43,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SlabAllocator extends Allocator
 {
-    private static Logger logger = LoggerFactory.getLogger(SlabAllocator.class);
+    private static final Logger logger = LoggerFactory.getLogger(SlabAllocator.class);
 
     private final static int REGION_SIZE = 1024 * 1024;
     private final static int MAX_CLONED_SIZE = 128 * 1024; // bigger than this don't go in the region
@@ -97,7 +95,7 @@ public class SlabAllocator extends Allocator
                 // we won race - now we need to actually do the expensive allocation step
                 region.init();
                 regionCount++;
-                logger.debug("{} regions now allocated in {}", regionCount, this);
+                logger.trace("{} regions now allocated in {}", regionCount, this);
                 return region;
             }
             // someone else won race - that's fine, we'll try to grab theirs

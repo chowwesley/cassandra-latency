@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,11 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.service;
 
 import java.net.InetAddress;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -33,9 +34,9 @@ public class LoadBroadcaster implements IEndpointStateChangeSubscriber
 
     public static final LoadBroadcaster instance = new LoadBroadcaster();
 
-    private static final Logger logger_ = LoggerFactory.getLogger(LoadBroadcaster.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoadBroadcaster.class);
 
-    private Map<InetAddress, Double> loadInfo_ = new HashMap<InetAddress, Double>();
+    private ConcurrentMap<InetAddress, Double> loadInfo = new ConcurrentHashMap<InetAddress, java.lang.Double>();
 
     private LoadBroadcaster()
     {
@@ -46,7 +47,7 @@ public class LoadBroadcaster implements IEndpointStateChangeSubscriber
     {
         if (state != ApplicationState.LOAD)
             return;
-        loadInfo_.put(endpoint, Double.valueOf(value.value));
+        loadInfo.put(endpoint, Double.valueOf(value.value));
     }
 
     public void onJoin(InetAddress endpoint, EndpointState epState)
@@ -66,12 +67,12 @@ public class LoadBroadcaster implements IEndpointStateChangeSubscriber
 
     public void onRemove(InetAddress endpoint)
     {
-        loadInfo_.remove(endpoint);
+        loadInfo.remove(endpoint);
     }
 
     public Map<InetAddress, Double> getLoadInfo()
     {
-        return loadInfo_;
+        return Collections.unmodifiableMap(loadInfo);
     }
 
     public void startBroadcasting()
@@ -82,8 +83,8 @@ public class LoadBroadcaster implements IEndpointStateChangeSubscriber
         {
             public void run()
             {
-                if (logger_.isDebugEnabled())
-                    logger_.debug("Disseminating load info ...");
+                if (logger.isDebugEnabled())
+                    logger.debug("Disseminating load info ...");
                 Gossiper.instance.addLocalApplicationState(ApplicationState.LOAD,
                                                            StorageService.instance.valueFactory.load(StorageService.instance.getLoad()));
             }

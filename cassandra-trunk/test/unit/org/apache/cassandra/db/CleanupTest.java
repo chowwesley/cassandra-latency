@@ -29,11 +29,10 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.cassandra.SchemaLoader;
 import org.apache.cassandra.Util;
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.db.filter.IDiskAtomFilter;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.db.columniterator.IdentityQueryFilter;
 import org.apache.cassandra.db.compaction.CompactionManager;
-import org.apache.cassandra.db.filter.IFilter;
-import org.apache.cassandra.db.filter.QueryPath;
 import org.apache.cassandra.db.index.SecondaryIndex;
 import org.apache.cassandra.dht.BytesToken;
 import org.apache.cassandra.dht.IPartitioner;
@@ -44,7 +43,7 @@ import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
 import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.NodeId;
+import org.apache.cassandra.utils.CounterId;
 import org.junit.Test;
 
 public class CleanupTest extends SchemaLoader
@@ -81,7 +80,7 @@ public class CleanupTest extends SchemaLoader
         assertEquals(LOOPS, rows.size());
 
         // with one token in the ring, owned by the local node, cleanup should be a no-op
-        CompactionManager.instance.performCleanup(cfs, new NodeId.OneShotRenewer());
+        CompactionManager.instance.performCleanup(cfs, new CounterId.OneShotRenewer());
 
         // ensure max timestamp of the sstables are retained post-cleanup
         assert expectedMaxTimestamps.equals(getMaxTimestampList(cfs));
@@ -96,7 +95,6 @@ public class CleanupTest extends SchemaLoader
     {
         Table table = Table.open(TABLE1);
         ColumnFamilyStore cfs = table.getColumnFamilyStore(CF1);
-        assertEquals(cfs.indexManager.getIndexedColumns().iterator().next(), COLUMN);
 
         List<Row> rows;
 
@@ -113,7 +111,7 @@ public class CleanupTest extends SchemaLoader
         // verify we get it back w/ index query too
         IndexExpression expr = new IndexExpression(COLUMN, IndexOperator.EQ, VALUE);
         List<IndexExpression> clause = Arrays.asList(expr);
-        IFilter filter = new IdentityQueryFilter();
+        IDiskAtomFilter filter = new IdentityQueryFilter();
         IPartitioner p = StorageService.getPartitioner();
         Range<RowPosition> range = Util.range("", "");
         rows = table.getColumnFamilyStore(CF1).search(clause, range, Integer.MAX_VALUE, filter);
@@ -128,7 +126,7 @@ public class CleanupTest extends SchemaLoader
         tmd.updateNormalToken(new BytesToken(tk1), InetAddress.getByName("127.0.0.1"));
         tmd.updateNormalToken(new BytesToken(tk2), InetAddress.getByName("127.0.0.2"));
 
-        CompactionManager.instance.performCleanup(cfs, new NodeId.OneShotRenewer());
+        CompactionManager.instance.performCleanup(cfs, new CounterId.OneShotRenewer());
 
         // row data should be gone
         rows = Util.getRangeSlice(cfs);
@@ -152,7 +150,7 @@ public class CleanupTest extends SchemaLoader
             // create a row and update the birthdate value, test that the index query fetches the new version
             RowMutation rm;
             rm = new RowMutation(TABLE1, ByteBufferUtil.bytes(key));
-            rm.add(new QueryPath(cfs.getColumnFamilyName(), null, COLUMN), VALUE, System.currentTimeMillis());
+            rm.add(cfs.name, COLUMN, VALUE, System.currentTimeMillis());
             rm.applyUnsafe();
         }
 

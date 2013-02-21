@@ -1,6 +1,4 @@
-package org.apache.cassandra.service;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,45 +7,35 @@ package org.apache.cassandra.service;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.service;
 
-
-import java.io.DataInputStream;
-import java.io.IOError;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Set;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.cliffc.high_scale_lib.NonBlockingHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.db.DecoratedKey;
 import org.apache.cassandra.db.ReadResponse;
 import org.apache.cassandra.db.Row;
-import org.apache.cassandra.io.util.FastByteArrayInputStream;
-import org.apache.cassandra.net.Message;
-import org.apache.cassandra.utils.FBUtilities;
-import org.cliffc.high_scale_lib.NonBlockingHashMap;
+import org.apache.cassandra.net.MessageIn;
 
-public abstract class AbstractRowResolver implements IResponseResolver<Row>
+public abstract class AbstractRowResolver implements IResponseResolver<ReadResponse, Row>
 {
-    protected static Logger logger = LoggerFactory.getLogger(AbstractRowResolver.class);
-
-    private static final Message FAKE_MESSAGE = new Message(FBUtilities.getBroadcastAddress(), StorageService.Verb.INTERNAL_RESPONSE, ArrayUtils.EMPTY_BYTE_ARRAY, -1);
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractRowResolver.class);
 
     protected final String table;
-    protected final ConcurrentMap<Message, ReadResponse> replies = new NonBlockingHashMap<Message, ReadResponse>();
-    protected final DecoratedKey<?> key;
+    protected final Set<MessageIn<ReadResponse>> replies = new NonBlockingHashSet<MessageIn<ReadResponse>>();
+    protected final DecoratedKey key;
 
     public AbstractRowResolver(ByteBuffer key, String table)
     {
@@ -55,37 +43,31 @@ public abstract class AbstractRowResolver implements IResponseResolver<Row>
         this.table = table;
     }
 
-    public void preprocess(Message message)
+    public boolean preprocess(MessageIn<ReadResponse> message)
     {
-        byte[] body = message.getMessageBody();
-        FastByteArrayInputStream bufIn = new FastByteArrayInputStream(body);
-        try
+        MessageIn<ReadResponse> toReplace = null;
+        for (MessageIn<ReadResponse> reply : replies)
         {
-            ReadResponse result = ReadResponse.serializer().deserialize(new DataInputStream(bufIn), message.getVersion());
-            if (logger.isDebugEnabled())
-                logger.debug("Preprocessed {} response", result.isDigestQuery() ? "digest" : "data");
-            replies.put(message, result);
+            if (reply.from.equals(message.from))
+            {
+                if (!message.payload.isDigestQuery())
+                    toReplace = reply;
+                break;
+            }
         }
-        catch (IOException e)
+        // replace old message
+        if (toReplace != null)
         {
-            throw new IOError(e);
+            replies.remove(toReplace);
+            replies.add(message);
+            return false;
         }
+        replies.add(message);
+        return true;
     }
 
-    /** hack so local reads don't force de/serialization of an extra real Message */
-    public void injectPreProcessed(ReadResponse result)
+    public Iterable<MessageIn<ReadResponse>> getMessages()
     {
-        assert replies.get(FAKE_MESSAGE) == null; // should only be one local reply
-        replies.put(FAKE_MESSAGE, result);
-    }
-
-    public Iterable<Message> getMessages()
-    {
-        return replies.keySet();
-    }
-
-    public int getMaxLiveColumns()
-    {
-        throw new UnsupportedOperationException();
+        return replies;
     }
 }

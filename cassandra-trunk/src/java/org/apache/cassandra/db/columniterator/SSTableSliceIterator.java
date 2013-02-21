@@ -1,6 +1,4 @@
-package org.apache.cassandra.db.columniterator;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,64 +7,41 @@ package org.apache.cassandra.db.columniterator;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.db.columniterator;
 
-
-import java.io.IOError;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
-import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.ColumnFamily;
 import org.apache.cassandra.db.DecoratedKey;
-import org.apache.cassandra.db.IColumn;
+import org.apache.cassandra.db.OnDiskAtom;
+import org.apache.cassandra.db.RowIndexEntry;
+import org.apache.cassandra.db.filter.ColumnSlice;
 import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.io.util.FileDataInput;
-import org.apache.cassandra.utils.ByteBufferUtil;
 
 /**
  *  A Column Iterator over SSTable
  */
 public class SSTableSliceIterator implements ISSTableColumnIterator
 {
-    private final FileDataInput fileToClose;
-    private IColumnIterator reader;
+    private final OnDiskAtomIterator reader;
+    private final DecoratedKey key;
     private final SSTableReader sstable;
-    private DecoratedKey key;
 
-    public SSTableSliceIterator(SSTableReader sstable, DecoratedKey key, ByteBuffer startColumn, ByteBuffer finishColumn, boolean reversed)
+    public SSTableSliceIterator(SSTableReader sstable, DecoratedKey key, ColumnSlice[] slices, boolean reversed)
     {
         this.sstable = sstable;
         this.key = key;
-        fileToClose = sstable.getFileDataInput(this.key);
-        if (fileToClose == null)
-            return;
-
-        try
-        {
-            DecoratedKey keyInDisk = SSTableReader.decodeKey(sstable.partitioner,
-                                                             sstable.descriptor,
-                                                             ByteBufferUtil.readWithShortLength(fileToClose));
-            assert keyInDisk.equals(key)
-                   : String.format("%s != %s in %s", keyInDisk, key, fileToClose.getPath());
-            SSTableReader.readRowSize(fileToClose, sstable.descriptor);
-        }
-        catch (IOException e)
-        {
-            sstable.markSuspect();
-            throw new IOError(e);
-        }
-
-        reader = createReader(sstable, fileToClose, startColumn, finishColumn, reversed);
+        RowIndexEntry indexEntry = sstable.getPosition(key, SSTableReader.Operator.EQ);
+        this.reader = indexEntry == null ? null : createReader(sstable, indexEntry, null, slices, reversed);
     }
 
     /**
@@ -77,23 +52,22 @@ public class SSTableSliceIterator implements ISSTableColumnIterator
      * If a caller passes a non-null argument, this class will NOT close the underlying file when the iterator is closed (i.e. the caller is responsible for closing the file)
      * In all cases the caller should explicitly #close() this iterator.
      * @param key The key the requested slice resides under
-     * @param startColumn The start of the slice
-     * @param finishColumn The end of the slice
+     * @param slices the column slices
      * @param reversed Results are returned in reverse order iff reversed is true.
+     * @param indexEntry position of the row
      */
-    public SSTableSliceIterator(SSTableReader sstable, FileDataInput file, DecoratedKey key, ByteBuffer startColumn, ByteBuffer finishColumn, boolean reversed)
+    public SSTableSliceIterator(SSTableReader sstable, FileDataInput file, DecoratedKey key, ColumnSlice[] slices, boolean reversed, RowIndexEntry indexEntry)
     {
         this.sstable = sstable;
         this.key = key;
-        fileToClose = null;
-        reader = createReader(sstable, file, startColumn, finishColumn, reversed);
+        reader = createReader(sstable, indexEntry, file, slices, reversed);
     }
 
-    private static IColumnIterator createReader(SSTableReader sstable, FileDataInput file, ByteBuffer startColumn, ByteBuffer finishColumn, boolean reversed)
+    private static OnDiskAtomIterator createReader(SSTableReader sstable, RowIndexEntry indexEntry, FileDataInput file, ColumnSlice[] slices, boolean reversed)
     {
-        return startColumn.remaining() == 0 && !reversed
-                 ? new SimpleSliceReader(sstable, file, finishColumn)
-                 : new IndexedSliceReader(sstable, file, startColumn, finishColumn, reversed);
+        return slices.length == 1 && slices[0].start.remaining() == 0 && !reversed
+             ? new SimpleSliceReader(sstable, indexEntry, file, slices[0].finish)
+             : new IndexedSliceReader(sstable, indexEntry, file, slices, reversed);
     }
 
     public SSTableReader getSStable()
@@ -116,7 +90,7 @@ public class SSTableSliceIterator implements ISSTableColumnIterator
         return reader != null && reader.hasNext();
     }
 
-    public IColumn next()
+    public OnDiskAtom next()
     {
         return reader.next();
     }
@@ -128,8 +102,8 @@ public class SSTableSliceIterator implements ISSTableColumnIterator
 
     public void close() throws IOException
     {
-        if (fileToClose != null)
-            fileToClose.close();
+        if (reader != null)
+            reader.close();
     }
 
 }

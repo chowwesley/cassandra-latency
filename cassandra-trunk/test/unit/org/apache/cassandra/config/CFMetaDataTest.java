@@ -18,12 +18,13 @@
  */
 package org.apache.cassandra.config;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.cassandra.SchemaLoader;
-import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.cql3.QueryProcessor;
 import org.apache.cassandra.cql3.UntypedResultSet;
 import org.apache.cassandra.db.ColumnFamilyStore;
@@ -45,9 +46,6 @@ import org.apache.cassandra.utils.ByteBufferUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.Map;
-import java.nio.ByteBuffer;
 
 public class CFMetaDataTest extends SchemaLoader
 {
@@ -127,13 +125,25 @@ public class CFMetaDataTest extends SchemaLoader
     {
         DecoratedKey k = StorageService.getPartitioner().decorateKey(ByteBufferUtil.bytes(cfm.ksName));
 
+        // This is a nasty hack to work around the fact that non-null componentIndex 
+        // are only used by CQL (so far) so we don't expose them through thrift
+        // There is a CFM with componentIndex defined in Keyspace2 which is used by 
+        // ColumnFamilyStoreTest to verify index repair (CASSANDRA-2897)
+        for (Map.Entry<ByteBuffer, ColumnDefinition> cMeta: cfm.column_metadata.entrySet())
+        {
+            // Non-null componentIndex are only used by CQL (so far) so we don't expose
+            // them through thrift
+            if (cMeta.getValue().componentIndex != null)
+                cfm.column_metadata.remove(cMeta.getKey());
+        }
+
         // Test thrift conversion
         assert cfm.equals(CFMetaData.fromThrift(cfm.toThrift())) : String.format("\n%s\n!=\n%s", cfm, CFMetaData.fromThrift(cfm.toThrift()));
 
         // Test schema conversion
         RowMutation rm = cfm.toSchema(System.currentTimeMillis());
-        ColumnFamily serializedCf = rm.getColumnFamily(Schema.instance.getId(Table.SYSTEM_TABLE, SystemTable.SCHEMA_COLUMNFAMILIES_CF));
-        ColumnFamily serializedCD = rm.getColumnFamily(Schema.instance.getId(Table.SYSTEM_TABLE, SystemTable.SCHEMA_COLUMNS_CF));
+        ColumnFamily serializedCf = rm.getColumnFamily(Schema.instance.getId(Table.SYSTEM_KS, SystemTable.SCHEMA_COLUMNFAMILIES_CF));
+        ColumnFamily serializedCD = rm.getColumnFamily(Schema.instance.getId(Table.SYSTEM_KS, SystemTable.SCHEMA_COLUMNS_CF));
         UntypedResultSet.Row result = QueryProcessor.resultify("SELECT * FROM system.schema_columnfamilies", new Row(k, serializedCf)).one();
         CFMetaData newCfm = CFMetaData.addColumnDefinitionSchema(CFMetaData.fromSchemaNoColumns(result), new Row(k, serializedCD));
         assert cfm.equals(newCfm) : String.format("\n%s\n!=\n%s", cfm, newCfm);

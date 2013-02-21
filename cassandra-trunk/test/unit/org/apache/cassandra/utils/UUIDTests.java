@@ -37,15 +37,15 @@ public class UUIDTests
     public void verifyType1() throws UnknownHostException
     {
 
-        UUID uuid = UUIDGen.makeType1UUIDFromHost(InetAddress.getByName("127.0.0.1"));
+        UUID uuid = UUIDGen.getTimeUUID();
         assert uuid.version() == 1;
     }
 
     @Test
     public void verifyOrdering1() throws UnknownHostException
     {
-        UUID one = UUIDGen.makeType1UUIDFromHost(InetAddress.getByName("127.0.0.1"));
-        UUID two = UUIDGen.makeType1UUIDFromHost(InetAddress.getByName("127.0.0.2"));
+        UUID one = UUIDGen.getTimeUUID();
+        UUID two = UUIDGen.getTimeUUID();
         assert one.timestamp() < two.timestamp();
     }
 
@@ -53,7 +53,7 @@ public class UUIDTests
     @Test
     public void testDecomposeAndRaw() throws UnknownHostException
     {
-        UUID a = UUIDGen.makeType1UUIDFromHost(InetAddress.getByName("127.0.0.1"));
+        UUID a = UUIDGen.getTimeUUID();
         byte[] decomposed = UUIDGen.decompose(a);
         UUID b = UUIDGen.getUUID(ByteBuffer.wrap(decomposed));
         assert a.equals(b);
@@ -63,12 +63,24 @@ public class UUIDTests
     public void testTimeUUIDType() throws UnknownHostException
     {
         TimeUUIDType comp = TimeUUIDType.instance;
-        ByteBuffer first = ByteBuffer.wrap(UUIDGen.decompose(UUIDGen.makeType1UUIDFromHost(InetAddress.getByName("127.0.0.1"))));
-        ByteBuffer second = ByteBuffer.wrap(UUIDGen.decompose(UUIDGen.makeType1UUIDFromHost(InetAddress.getByName("127.0.0.1"))));
+        ByteBuffer first = ByteBuffer.wrap(UUIDGen.getTimeUUIDBytes());
+        ByteBuffer second = ByteBuffer.wrap(UUIDGen.getTimeUUIDBytes());
         assert comp.compare(first, second) < 0;
         assert comp.compare(second, first) > 0;
         ByteBuffer sameAsFirst = ByteBuffer.wrap(UUIDGen.decompose(UUIDGen.getUUID(first)));
         assert comp.compare(first, sameAsFirst) == 0;
+    }
+
+    @Test
+    public void testUUIDTimestamp() throws UnknownHostException
+    {
+        InetAddress addr = InetAddress.getByName("127.0.0.1");
+        long now = System.currentTimeMillis();
+        UUID uuid = UUIDGen.getTimeUUID();
+        long tstamp = UUIDGen.getAdjustedTimestamp(uuid);
+
+        // I'll be damn is the uuid timestamp is more than 10ms after now
+        assert now <= tstamp && now >= tstamp - 10 : "now = " + now + ", timestamp = " + tstamp;
     }
 
     private void assertNonZero(BigInteger i)

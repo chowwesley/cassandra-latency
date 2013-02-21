@@ -1,6 +1,4 @@
-package org.apache.cassandra.hadoop;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,17 +7,15 @@ package org.apache.cassandra.hadoop;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.hadoop;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -35,27 +31,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
+import org.apache.thrift.TApplicationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.db.IColumn;
+import org.apache.cassandra.db.Column;
 import org.apache.cassandra.dht.IPartitioner;
 import org.apache.cassandra.dht.Range;
 import org.apache.cassandra.dht.Token;
-import org.apache.cassandra.thrift.Cassandra;
-import org.apache.cassandra.thrift.InvalidRequestException;
-import org.apache.cassandra.thrift.KeyRange;
-import org.apache.cassandra.thrift.TokenRange;
-import org.apache.commons.lang.StringUtils;
+import org.apache.cassandra.thrift.*;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.mapreduce.InputFormat;
-import org.apache.hadoop.mapreduce.InputSplit;
-import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.RecordReader;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapreduce.*;
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Hadoop InputFormat allowing map/reduce against Cassandra rows within one ColumnFamily.
@@ -63,8 +54,8 @@ import org.slf4j.LoggerFactory;
  * At minimum, you need to set the CF and predicate (description of columns to extract from each row)
  * in your Hadoop job Configuration.  The ConfigHelper class is provided to make this
  * simple:
- *   ConfigHelper.setColumnFamily
- *   ConfigHelper.setSlicePredicate
+ *   ConfigHelper.setInputColumnFamily
+ *   ConfigHelper.setInputSlicePredicate
  *
  * You can also configure the number of rows per InputSplit with
  *   ConfigHelper.setInputSplitSize
@@ -74,8 +65,8 @@ import org.slf4j.LoggerFactory;
  *
  * The default split size is 64k rows.
  */
-public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<ByteBuffer, IColumn>>
-    implements org.apache.hadoop.mapred.InputFormat<ByteBuffer, SortedMap<ByteBuffer, IColumn>>
+public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<ByteBuffer, Column>>
+    implements org.apache.hadoop.mapred.InputFormat<ByteBuffer, SortedMap<ByteBuffer, Column>>
 {
     private static final Logger logger = LoggerFactory.getLogger(ColumnFamilyInputFormat.class);
 
@@ -95,16 +86,16 @@ public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<B
     {
         if (ConfigHelper.getInputKeyspace(conf) == null || ConfigHelper.getInputColumnFamily(conf) == null)
         {
-            throw new UnsupportedOperationException("you must set the keyspace and columnfamily with setColumnFamily()");
+            throw new UnsupportedOperationException("you must set the keyspace and columnfamily with setInputColumnFamily()");
         }
         if (ConfigHelper.getInputSlicePredicate(conf) == null)
         {
-            throw new UnsupportedOperationException("you must set the predicate with setPredicate");
+            throw new UnsupportedOperationException("you must set the predicate with setInputSlicePredicate");
         }
         if (ConfigHelper.getInputInitialAddress(conf) == null)
-            throw new UnsupportedOperationException("You must set the initial output address to a Cassandra node");
+            throw new UnsupportedOperationException("You must set the initial output address to a Cassandra node with setInputInitialAddress");
         if (ConfigHelper.getInputPartitioner(conf) == null)
-            throw new UnsupportedOperationException("You must set the Cassandra partitioner class");
+            throw new UnsupportedOperationException("You must set the Cassandra partitioner class with setInputPartitioner");
     }
 
     public List<InputSplit> getSplits(JobContext context) throws IOException
@@ -208,7 +199,7 @@ public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<B
         public List<InputSplit> call() throws Exception
         {
             ArrayList<InputSplit> splits = new ArrayList<InputSplit>();
-            List<String> tokens = getSubSplits(keyspace, cfName, range, conf);
+            List<CfSplit> subSplits = getSubSplits(keyspace, cfName, range, conf);
             assert range.rpc_endpoints.size() == range.endpoints.size() : "rpc_endpoints size must match endpoints size";
             // turn the sub-ranges into InputSplits
             String[] endpoints = range.endpoints.toArray(new String[range.endpoints.size()]);
@@ -217,21 +208,27 @@ public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<B
             for (String endpoint: range.rpc_endpoints)
             {
                 String endpoint_address = endpoint;
-		        if (endpoint_address == null || endpoint_address.equals("0.0.0.0"))
-			        endpoint_address = range.endpoints.get(endpointIndex);
-		        endpoints[endpointIndex++] = InetAddress.getByName(endpoint_address).getHostName();
+                if (endpoint_address == null || endpoint_address.equals("0.0.0.0"))
+                    endpoint_address = range.endpoints.get(endpointIndex);
+                endpoints[endpointIndex++] = InetAddress.getByName(endpoint_address).getHostName();
             }
 
             Token.TokenFactory factory = partitioner.getTokenFactory();
-            for (int i = 1; i < tokens.size(); i++)
+            for (CfSplit subSplit : subSplits)
             {
-                Token left = factory.fromString(tokens.get(i - 1));
-                Token right = factory.fromString(tokens.get(i));
+                Token left = factory.fromString(subSplit.getStart_token());
+                Token right = factory.fromString(subSplit.getEnd_token());
                 Range<Token> range = new Range<Token>(left, right, partitioner);
                 List<Range<Token>> ranges = range.isWrapAround() ? range.unwrap() : ImmutableList.of(range);
                 for (Range<Token> subrange : ranges)
                 {
-                    ColumnFamilySplit split = new ColumnFamilySplit(factory.toString(subrange.left), factory.toString(subrange.right), endpoints);
+                    ColumnFamilySplit split =
+                            new ColumnFamilySplit(
+                                    factory.toString(subrange.left),
+                                    factory.toString(subrange.right),
+                                    subSplit.getRow_count(),
+                                    endpoints);
+
                     logger.debug("adding " + split);
                     splits.add(split);
                 }
@@ -240,7 +237,7 @@ public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<B
         }
     }
 
-    private List<String> getSubSplits(String keyspace, String cfName, TokenRange range, Configuration conf) throws IOException
+    private List<CfSplit> getSubSplits(String keyspace, String cfName, TokenRange range, Configuration conf) throws IOException
     {
         int splitsize = ConfigHelper.getInputSplitSize(conf);
         for (int i = 0; i < range.rpc_endpoints.size(); i++)
@@ -254,22 +251,45 @@ public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<B
             {
                 Cassandra.Client client = ConfigHelper.createConnection(conf, host, ConfigHelper.getInputRpcPort(conf));
                 client.set_keyspace(keyspace);
-                return client.describe_splits(cfName, range.start_token, range.end_token, splitsize);
+
+                try
+                {
+                    return client.describe_splits_ex(cfName, range.start_token, range.end_token, splitsize);
+                }
+                catch (TApplicationException e)
+                {
+                    // fallback to guessing split size if talking to a server without describe_splits_ex method
+                    if (e.getType() == TApplicationException.UNKNOWN_METHOD)
+                    {
+                        List<String> splitPoints = client.describe_splits(cfName, range.start_token, range.end_token, splitsize);
+                        return tokenListToSplits(splitPoints, splitsize);
+                    }
+                    throw e;
+                }
             }
             catch (IOException e)
             {
                 logger.debug("failed connect to endpoint " + host, e);
             }
-            catch (TException e)
+            catch (InvalidRequestException e)
             {
                 throw new RuntimeException(e);
             }
-            catch (InvalidRequestException e)
+            catch (TException e)
             {
                 throw new RuntimeException(e);
             }
         }
         throw new IOException("failed connecting to all endpoints " + StringUtils.join(range.endpoints, ","));
+    }
+
+
+    private List<CfSplit> tokenListToSplits(List<String> splitTokens, int splitsize)
+    {
+        List<CfSplit> splits = Lists.newArrayListWithExpectedSize(splitTokens.size() - 1);
+        for (int j = 0; j < splitTokens.size() - 1; j++)
+            splits.add(new CfSplit(splitTokens.get(j), splitTokens.get(j + 1), splitsize));
+        return splits;
     }
 
 
@@ -282,18 +302,18 @@ public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<B
         {
             map = client.describe_ring(ConfigHelper.getInputKeyspace(conf));
         }
-        catch (TException e)
+        catch (InvalidRequestException e)
         {
             throw new RuntimeException(e);
         }
-        catch (InvalidRequestException e)
+        catch (TException e)
         {
             throw new RuntimeException(e);
         }
         return map;
     }
 
-    public RecordReader<ByteBuffer, SortedMap<ByteBuffer, IColumn>> createRecordReader(InputSplit inputSplit, TaskAttemptContext taskAttemptContext) throws IOException, InterruptedException
+    public RecordReader<ByteBuffer, SortedMap<ByteBuffer, Column>> createRecordReader(InputSplit inputSplit, TaskAttemptContext taskAttemptContext) throws IOException, InterruptedException
     {
         return new ColumnFamilyRecordReader();
     }
@@ -312,7 +332,7 @@ public class ColumnFamilyInputFormat extends InputFormat<ByteBuffer, SortedMap<B
         return oldInputSplits;
     }
 
-    public org.apache.hadoop.mapred.RecordReader<ByteBuffer, SortedMap<ByteBuffer, IColumn>> getRecordReader(org.apache.hadoop.mapred.InputSplit split, JobConf jobConf, final Reporter reporter) throws IOException
+    public org.apache.hadoop.mapred.RecordReader<ByteBuffer, SortedMap<ByteBuffer, Column>> getRecordReader(org.apache.hadoop.mapred.InputSplit split, JobConf jobConf, final Reporter reporter) throws IOException
     {
         TaskAttemptContext tac = new TaskAttemptContext(jobConf, TaskAttemptID.forName(jobConf.get(MAPRED_TASK_ID)))
         {

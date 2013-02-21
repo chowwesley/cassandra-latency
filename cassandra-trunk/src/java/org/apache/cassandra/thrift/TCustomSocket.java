@@ -1,20 +1,19 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
+ * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.thrift;
 
@@ -44,22 +43,22 @@ public class TCustomSocket extends TIOStreamTransport {
   /**
    * Wrapped Socket object
    */
-  private Socket socket_ = null;
+  private Socket socket = null;
 
   /**
    * Remote host
    */
-  private String host_  = null;
+  private String host  = null;
 
   /**
    * Remote port
    */
-  private int port_ = 0;
+  private int port = 0;
 
   /**
    * Socket timeout
    */
-  private int timeout_ = 0;
+  private int timeout = 0;
 
   /**
    * Constructor that takes an already created socket.
@@ -68,18 +67,18 @@ public class TCustomSocket extends TIOStreamTransport {
    * @throws TTransportException if there is an error setting up the streams
    */
   public TCustomSocket(Socket socket) throws TTransportException {
-    socket_ = socket;
+    this.socket = socket;
     try {
-      socket_.setSoLinger(false, 0);
-      socket_.setTcpNoDelay(true);
+      socket.setSoLinger(false, 0);
+      socket.setTcpNoDelay(true);
     } catch (SocketException sx) {
       LOGGER.warn("Could not configure socket.", sx);
     }
 
     if (isOpen()) {
       try {
-        inputStream_ = new BufferedInputStream(socket_.getInputStream(), 1024);
-        outputStream_ = new BufferedOutputStream(socket_.getOutputStream(), 1024);
+        inputStream_ = new BufferedInputStream(socket.getInputStream(), 1024);
+        outputStream_ = new BufferedOutputStream(socket.getOutputStream(), 1024);
       } catch (IOException iox) {
         close();
         throw new TTransportException(TTransportException.NOT_OPEN, iox);
@@ -107,9 +106,9 @@ public class TCustomSocket extends TIOStreamTransport {
    * @param timeout Socket timeout
    */
   public TCustomSocket(String host, int port, int timeout) {
-    host_ = host;
-    port_ = port;
-    timeout_ = timeout;
+    this.host = host;
+    this.port = port;
+    this.timeout = timeout;
     initSocket();
   }
 
@@ -117,11 +116,11 @@ public class TCustomSocket extends TIOStreamTransport {
    * Initializes the socket object
    */
   private void initSocket() {
-    socket_ = new Socket();
+    socket = new Socket();
     try {
-      socket_.setSoLinger(false, 0);
-      socket_.setTcpNoDelay(true);
-      socket_.setSoTimeout(timeout_);
+      socket.setSoLinger(false, 0);
+      socket.setTcpNoDelay(true);
+      socket.setSoTimeout(timeout);
     } catch (SocketException sx) {
       LOGGER.error("Could not configure socket.", sx);
     }
@@ -133,9 +132,9 @@ public class TCustomSocket extends TIOStreamTransport {
    * @param timeout Milliseconds timeout
    */
   public void setTimeout(int timeout) {
-    timeout_ = timeout;
+    this.timeout = timeout;
     try {
-      socket_.setSoTimeout(timeout);
+      socket.setSoTimeout(timeout);
     } catch (SocketException sx) {
       LOGGER.warn("Could not set socket timeout.", sx);
     }
@@ -145,20 +144,20 @@ public class TCustomSocket extends TIOStreamTransport {
    * Returns a reference to the underlying socket.
    */
   public Socket getSocket() {
-    if (socket_ == null) {
+    if (socket == null) {
       initSocket();
     }
-    return socket_;
+    return socket;
   }
 
   /**
    * Checks whether the socket is connected.
    */
   public boolean isOpen() {
-    if (socket_ == null) {
+    if (socket == null) {
       return false;
     }
-    return socket_.isConnected();
+    return socket.isConnected();
   }
 
   /**
@@ -169,21 +168,21 @@ public class TCustomSocket extends TIOStreamTransport {
       throw new TTransportException(TTransportException.ALREADY_OPEN, "Socket already connected.");
     }
 
-    if (host_.length() == 0) {
+    if (host.length() == 0) {
       throw new TTransportException(TTransportException.NOT_OPEN, "Cannot open null host.");
     }
-    if (port_ <= 0) {
+    if (port <= 0) {
       throw new TTransportException(TTransportException.NOT_OPEN, "Cannot open without port.");
     }
 
-    if (socket_ == null) {
+    if (socket == null) {
       initSocket();
     }
 
     try {
-      socket_.connect(new InetSocketAddress(host_, port_), timeout_);
-      inputStream_ = new BufferedInputStream(socket_.getInputStream(), 1024);
-      outputStream_ = new BufferedOutputStream(socket_.getOutputStream(), 1024);
+      socket.connect(new InetSocketAddress(host, port), timeout);
+      inputStream_ = new BufferedInputStream(socket.getInputStream(), 1024);
+      outputStream_ = new BufferedOutputStream(socket.getOutputStream(), 1024);
     } catch (IOException iox) {
       close();
       throw new TTransportException(TTransportException.NOT_OPEN, iox);
@@ -198,13 +197,13 @@ public class TCustomSocket extends TIOStreamTransport {
     super.close();
 
     // Close the socket
-    if (socket_ != null) {
+    if (socket != null) {
       try {
-        socket_.close();
+        socket.close();
       } catch (IOException iox) {
         LOGGER.warn("Could not close socket.", iox);
       }
-      socket_ = null;
+      socket = null;
     }
   }
 

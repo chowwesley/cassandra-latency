@@ -22,38 +22,28 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.Checksum;
 
+import com.google.common.collect.Ordering;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.cassandra.concurrent.Stage;
 import org.apache.cassandra.concurrent.StageManager;
 import org.apache.cassandra.config.Schema;
-import org.apache.cassandra.db.ColumnFamily;
-import org.apache.cassandra.db.ColumnFamilyStore;
-import org.apache.cassandra.db.RowMutation;
-import org.apache.cassandra.db.Table;
-import org.apache.cassandra.db.UnknownColumnFamilyException;
-import org.apache.cassandra.io.IColumnSerializer;
+import org.apache.cassandra.db.*;
 import org.apache.cassandra.io.util.FastByteArrayInputStream;
 import org.apache.cassandra.io.util.FileUtils;
 import org.apache.cassandra.io.util.RandomAccessReader;
-import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.utils.FBUtilities;
 import org.apache.cassandra.utils.PureJavaCrc32;
 import org.apache.cassandra.utils.WrappedRunnable;
-import org.apache.commons.lang.StringUtils;
 import org.cliffc.high_scale_lib.NonBlockingHashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Ordering;
 
 public class CommitLogReplayer
 {
@@ -62,9 +52,9 @@ public class CommitLogReplayer
 
     private final Set<Table> tablesRecovered;
     private final List<Future<?>> futures;
-    private final Map<Integer, AtomicInteger> invalidMutations;
-private final AtomicInteger replayedCount;
-    private final Map<Integer, ReplayPosition> cfPositions;
+    private final Map<UUID, AtomicInteger> invalidMutations;
+    private final AtomicInteger replayedCount;
+    private final Map<UUID, ReplayPosition> cfPositions;
     private final ReplayPosition globalPosition;
     private final Checksum checksum;
     private byte[] buffer;
@@ -74,21 +64,31 @@ private final AtomicInteger replayedCount;
         this.tablesRecovered = new NonBlockingHashSet<Table>();
         this.futures = new ArrayList<Future<?>>();
         this.buffer = new byte[4096];
-        this.invalidMutations = new HashMap<Integer, AtomicInteger>();
+        this.invalidMutations = new HashMap<UUID, AtomicInteger>();
         // count the number of replayed mutation. We don't really care about atomicity, but we need it to be a reference.
         this.replayedCount = new AtomicInteger();
+        this.checksum = new PureJavaCrc32();
+
         // compute per-CF and global replay positions
-        this.cfPositions = new HashMap<Integer, ReplayPosition>();
+        cfPositions = new HashMap<UUID, ReplayPosition>();
+        Ordering<ReplayPosition> replayPositionOrdering = Ordering.from(ReplayPosition.comparator);
+        Map<UUID, ReplayPosition> truncationPositions = SystemTable.getTruncationPositions();
         for (ColumnFamilyStore cfs : ColumnFamilyStore.all())
         {
             // it's important to call RP.gRP per-cf, before aggregating all the positions w/ the Ordering.min call
             // below: gRP will return NONE if there are no flushed sstables, which is important to have in the
             // list (otherwise we'll just start replay from the first flush position that we do have, which is not correct).
             ReplayPosition rp = ReplayPosition.getReplayPosition(cfs.getSSTables());
+
+            // but, if we've truncted the cf in question, then we need to need to start replay after the truncation
+            ReplayPosition truncatedAt = truncationPositions.get(cfs.metadata.cfId);
+            if (truncatedAt != null)
+                rp = replayPositionOrdering.max(Arrays.asList(rp, truncatedAt));
+
             cfPositions.put(cfs.metadata.cfId, rp);
         }
-        this.globalPosition = Ordering.from(ReplayPosition.comparator).min(cfPositions.values());
-        this.checksum = new PureJavaCrc32();
+        globalPosition = replayPositionOrdering.min(cfPositions.values());
+        logger.debug("Global replay position is {} from columnfamilies {}", globalPosition, FBUtilities.toString(cfPositions));
     }
 
     public void recover(File[] clogs) throws IOException
@@ -97,10 +97,10 @@ private final AtomicInteger replayedCount;
             recover(file);
     }
 
-    public int blockForWrites() throws IOException
+    public int blockForWrites()
     {
-        for (Map.Entry<Integer, AtomicInteger> entry : invalidMutations.entrySet())
-            logger.info(String.format("Skipped %d mutations from unknown (probably removed) CF with id %d", entry.getValue().intValue(), entry.getKey()));
+        for (Map.Entry<UUID, AtomicInteger> entry : invalidMutations.entrySet())
+            logger.info(String.format("Skipped %d mutations from unknown (probably removed) CF with id %s", entry.getValue().intValue(), entry.getKey()));
 
         // wait for all the writes to finish on the mutation stage
         FBUtilities.waitOnFutures(futures);
@@ -117,31 +117,31 @@ private final AtomicInteger replayedCount;
     public void recover(File file) throws IOException
     {
         logger.info("Replaying " + file.getPath());
-        final long segment = CommitLogSegment.idFromFilename(file.getName());
+        CommitLogDescriptor desc = CommitLogDescriptor.fromFileName(file.getName());
+        final long segment = desc.id;
+        int version = desc.getMessagingVersion();
         RandomAccessReader reader = RandomAccessReader.open(new File(file.getAbsolutePath()), true);
         try
         {
             assert reader.length() <= Integer.MAX_VALUE;
             int replayPosition;
             if (globalPosition.segment < segment)
-                replayPosition = 0;
-            else if (globalPosition.segment == segment)
-                replayPosition = globalPosition.position;
-            else
-                replayPosition = (int) reader.length();
-
-            if (replayPosition < 0 || replayPosition >= reader.length())
             {
-                // replayPosition > reader.length() can happen if some data gets flushed before it is written to the commitlog
-                // (see https://issues.apache.org/jira/browse/CASSANDRA-2285)
+                replayPosition = 0;
+            }
+            else if (globalPosition.segment == segment)
+            {
+                replayPosition = globalPosition.position;
+            }
+            else
+            {
                 logger.debug("skipping replay of fully-flushed {}", file);
                 return;
             }
 
-            reader.seek(replayPosition);
-
             if (logger.isDebugEnabled())
-                logger.debug("Replaying " + file + " starting at " + reader.getFilePointer());
+                logger.debug("Replaying " + file + " starting at " + replayPosition);
+            reader.seek(replayPosition);
 
             /* read the logs populate RowMutation and apply */
             while (!reader.isEOF())
@@ -167,9 +167,14 @@ private final AtomicInteger replayedCount;
                     // This prevents CRC by being fooled by special-case garbage in the file; see CASSANDRA-2128
                     if (serializedSize < 10)
                         break;
+
                     long claimedSizeChecksum = reader.readLong();
                     checksum.reset();
-                    checksum.update(serializedSize);
+                    if (CommitLogDescriptor.current_version < CommitLogDescriptor.VERSION_20)
+                        checksum.update(serializedSize);
+                    else
+                        FBUtilities.updateChecksumInt(checksum, serializedSize);
+
                     if (checksum.getValue() != claimedSizeChecksum)
                         break; // entry wasn't synced correctly/fully. that's
                                // ok.
@@ -199,10 +204,12 @@ private final AtomicInteger replayedCount;
                 {
                     // assuming version here. We've gone to lengths to make sure what gets written to the CL is in
                     // the current version. so do make sure the CL is drained prior to upgrading a node.
-                    rm = RowMutation.serializer().deserialize(new DataInputStream(bufIn), MessagingService.version_, IColumnSerializer.Flag.LOCAL);
+                    rm = RowMutation.serializer.deserialize(new DataInputStream(bufIn), version, ColumnSerializer.Flag.LOCAL);
                 }
                 catch (UnknownColumnFamilyException ex)
                 {
+                    if (ex.cfId == null)
+                        continue;
                     AtomicInteger i = invalidMutations.get(ex.cfId);
                     if (i == null)
                     {

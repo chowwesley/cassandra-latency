@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.service;
 
 import java.io.*;
@@ -27,31 +26,28 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.concurrent.*;
+import org.apache.cassandra.concurrent.JMXConfigurableThreadPoolExecutor;
+import org.apache.cassandra.concurrent.NamedThreadFactory;
+import org.apache.cassandra.concurrent.Stage;
+import org.apache.cassandra.concurrent.StageManager;
 import org.apache.cassandra.config.DatabaseDescriptor;
-import org.apache.cassandra.db.ColumnFamilyStore;
+import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.compaction.AbstractCompactedRow;
 import org.apache.cassandra.db.compaction.CompactionManager;
-import org.apache.cassandra.db.DecoratedKey;
-import org.apache.cassandra.db.Table;
-import org.apache.cassandra.db.SnapshotCommand;
 import org.apache.cassandra.dht.AbstractBounds;
 import org.apache.cassandra.dht.RandomPartitioner;
 import org.apache.cassandra.dht.Range;
 import org.apache.cassandra.dht.Token;
 import org.apache.cassandra.gms.*;
-import org.apache.cassandra.io.util.FastByteArrayInputStream;
-import org.apache.cassandra.io.util.FastByteArrayOutputStream;
-import org.apache.cassandra.net.CompactEndpointSerializationHelper;
-import org.apache.cassandra.net.IAsyncCallback;
-import org.apache.cassandra.net.IVerbHandler;
-import org.apache.cassandra.net.Message;
-import org.apache.cassandra.net.MessagingService;
-import org.apache.cassandra.streaming.*;
+import org.apache.cassandra.io.IVersionedSerializer;
+import org.apache.cassandra.locator.TokenMetadata;
+import org.apache.cassandra.net.*;
+import org.apache.cassandra.streaming.StreamingRepairTask;
 import org.apache.cassandra.utils.*;
 
 /**
@@ -104,6 +100,11 @@ public class AntiEntropyService
                                                          "internal");
     }
 
+    public static enum Status
+    {
+        STARTED, SESSION_SUCCESS, SESSION_FAILED, FINISHED
+    }
+
     /**
      * A map of active session.
      */
@@ -119,10 +120,15 @@ public class AntiEntropyService
 
     /**
      * Requests repairs for the given table and column families, and blocks until all repairs have been completed.
+     *
+     * @return Future for asynchronous call or null if there is no need to repair
      */
-    public RepairFuture submitRepairSession(Range<Token> range, String tablename, boolean isSequential, String... cfnames)
+    public RepairFuture submitRepairSession(Range<Token> range, String tablename, boolean isSequential, boolean isLocal, String... cfnames)
     {
-        RepairFuture futureTask = new RepairSession(range, tablename, isSequential, cfnames).getFuture();
+        RepairSession session = new RepairSession(range, tablename, isSequential, isLocal, cfnames);
+        if (session.endpoints.isEmpty())
+            return null;
+        RepairFuture futureTask = session.getFuture();
         executor.execute(futureTask);
         return futureTask;
     }
@@ -146,8 +152,14 @@ public class AntiEntropyService
 
     /**
      * Return all of the neighbors with whom we share the provided range.
+     *
+     * @param table table to repair
+     * @param toRepair token to repair
+     * @param isLocal need to use only nodes from local datacenter
+     *
+     * @return neighbors with whom we share the provided range
      */
-    static Set<InetAddress> getNeighbors(String table, Range<Token> toRepair)
+    static Set<InetAddress> getNeighbors(String table, Range<Token> toRepair, boolean isLocal)
     {
         StorageService ss = StorageService.instance;
         Map<Range<Token>, List<InetAddress>> replicaSets = ss.getRangeToAddressMap(table);
@@ -169,18 +181,14 @@ public class AntiEntropyService
 
         Set<InetAddress> neighbors = new HashSet<InetAddress>(replicaSets.get(rangeSuperSet));
         neighbors.remove(FBUtilities.getBroadcastAddress());
-        // Excluding all node with version <= 0.7 since they don't know how to
-        // create a correct merkle tree (they build it over the full range)
-        Iterator<InetAddress> iter = neighbors.iterator();
-        while (iter.hasNext())
+
+        if (isLocal)
         {
-            InetAddress endpoint = iter.next();
-            if (Gossiper.instance.getVersion(endpoint) <= MessagingService.VERSION_07)
-            {
-                logger.info("Excluding " + endpoint + " from repair because it is on version 0.7 or sooner. You should consider updating this node before running repair again.");
-                iter.remove();
-            }
+            TokenMetadata.Topology topology = ss.getTokenMetadata().cloneOnlyTokenMap().getTopology();
+            Set<InetAddress> localEndpoints = Sets.newHashSet(topology.getDatacenterEndpoints().get(DatabaseDescriptor.getLocalDataCenter()));
+            return Sets.intersection(neighbors, localEndpoints);
         }
+
         return neighbors;
     }
 
@@ -234,10 +242,9 @@ public class AntiEntropyService
 
         try
         {
-            Message message = TreeResponseVerbHandler.makeVerb(local, validator);
             if (!validator.request.endpoint.equals(FBUtilities.getBroadcastAddress()))
                 logger.info(String.format("[repair #%s] Sending completed merkle tree to %s for %s", validator.request.sessionid, validator.request.endpoint, validator.request.cf));
-            ms.sendOneWay(message, validator.request.endpoint);
+            ms.sendOneWay(validator.createMessage(), validator.request.endpoint);
         }
         catch (Exception e)
         {
@@ -265,6 +272,7 @@ public class AntiEntropyService
         private transient DecoratedKey lastKey;
 
         public final static MerkleTree.RowHash EMPTY_ROW = new MerkleTree.RowHash(null, new byte[0]);
+        public static ValidatorSerializer serializer = new ValidatorSerializer();
 
         public Validator(TreeRequest request)
         {
@@ -405,77 +413,60 @@ public class AntiEntropyService
             // respond to the request that triggered this validation
             AntiEntropyService.instance.respond(this, FBUtilities.getBroadcastAddress());
         }
+
+        public MessageOut<Validator> createMessage()
+        {
+            return new MessageOut<Validator>(MessagingService.Verb.TREE_RESPONSE, this, Validator.serializer);
+        }
+
+        public static class ValidatorSerializer implements IVersionedSerializer<Validator>
+        {
+            public void serialize(Validator validator, DataOutput dos, int version) throws IOException
+            {
+                TreeRequest.serializer.serialize(validator.request, dos, version);
+                MerkleTree.serializer.serialize(validator.tree, dos, version);
+            }
+
+            public Validator deserialize(DataInput dis, int version) throws IOException
+            {
+                final TreeRequest request = TreeRequest.serializer.deserialize(dis, version);
+                try
+                {
+                    return new Validator(request, MerkleTree.serializer.deserialize(dis, version));
+                }
+                catch(Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            public long serializedSize(Validator validator, int version)
+            {
+                return TreeRequest.serializer.serializedSize(validator.request, version)
+                       + MerkleTree.serializer.serializedSize(validator.tree, version);
+            }
+        }
     }
 
     /**
      * Handler for requests from remote nodes to generate a valid tree.
      * The payload is a CFPair representing the columnfamily to validate.
      */
-    public static class TreeRequestVerbHandler implements IVerbHandler
+    public static class TreeRequestVerbHandler implements IVerbHandler<TreeRequest>
     {
-        public static final TreeRequestVerbHandler SERIALIZER = new TreeRequestVerbHandler();
-        static Message makeVerb(TreeRequest request, int version)
-        {
-            try
-            {
-                FastByteArrayOutputStream bos = new FastByteArrayOutputStream();
-                DataOutputStream dos = new DataOutputStream(bos);
-                SERIALIZER.serialize(request, dos, version);
-                return new Message(FBUtilities.getBroadcastAddress(), StorageService.Verb.TREE_REQUEST, bos.toByteArray(), version);
-            }
-            catch(IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public void serialize(TreeRequest request, DataOutput dos, int version) throws IOException
-        {
-            dos.writeUTF(request.sessionid);
-            CompactEndpointSerializationHelper.serialize(request.endpoint, dos);
-            dos.writeUTF(request.cf.left);
-            dos.writeUTF(request.cf.right);
-            if (version > MessagingService.VERSION_07)
-                AbstractBounds.serializer().serialize(request.range, dos, version);
-        }
-
-        public TreeRequest deserialize(DataInput dis, int version) throws IOException
-        {
-            String sessId = dis.readUTF();
-            InetAddress endpoint = CompactEndpointSerializationHelper.deserialize(dis);
-            CFPair cfpair = new CFPair(dis.readUTF(), dis.readUTF());
-            Range<Token> range;
-            if (version > MessagingService.VERSION_07)
-                range = (Range<Token>) AbstractBounds.serializer().deserialize(dis, version);
-            else
-                range = new Range<Token>(StorageService.getPartitioner().getMinimumToken(), StorageService.getPartitioner().getMinimumToken());
-
-            return new TreeRequest(sessId, endpoint, range, cfpair);
-        }
-
         /**
          * Trigger a validation compaction which will return the tree upon completion.
          */
-        public void doVerb(Message message, String id)
+        public void doVerb(MessageIn<TreeRequest> message, String id)
         {
-            byte[] bytes = message.getMessageBody();
+            TreeRequest remotereq = message.payload;
+            TreeRequest request = new TreeRequest(remotereq.sessionid, message.from, remotereq.range, remotereq.cf);
 
-            DataInputStream buffer = new DataInputStream(new FastByteArrayInputStream(bytes));
-            try
-            {
-                TreeRequest remotereq = this.deserialize(buffer, message.getVersion());
-                TreeRequest request = new TreeRequest(remotereq.sessionid, message.getFrom(), remotereq.range, remotereq.cf);
-
-                // trigger readonly-compaction
-                ColumnFamilyStore store = Table.open(request.cf.left).getColumnFamilyStore(request.cf.right);
-                Validator validator = new Validator(request);
-                logger.debug("Queueing validation compaction for " + request);
-                CompactionManager.instance.submitValidation(store, validator);
-            }
-            catch (IOException e)
-            {
-                throw new IOError(e);
-            }
+            // trigger read-only compaction
+            ColumnFamilyStore store = Table.open(request.cf.left).getColumnFamilyStore(request.cf.right);
+            Validator validator = new Validator(request);
+            logger.debug("Queueing validation compaction for " + request);
+            CompactionManager.instance.submitValidation(store, validator);
         }
     }
 
@@ -483,63 +474,14 @@ public class AntiEntropyService
      * Handler for responses from remote nodes which contain a valid tree.
      * The payload is a completed Validator object from the remote endpoint.
      */
-    public static class TreeResponseVerbHandler implements IVerbHandler
+    public static class TreeResponseVerbHandler implements IVerbHandler<Validator>
     {
-        public static final TreeResponseVerbHandler SERIALIZER = new TreeResponseVerbHandler();
-        static Message makeVerb(InetAddress local, Validator validator)
+        public void doVerb(MessageIn<Validator> message, String id)
         {
-            try
-            {
-                FastByteArrayOutputStream bos = new FastByteArrayOutputStream();
-                DataOutputStream dos = new DataOutputStream(bos);
-                SERIALIZER.serialize(validator, dos, Gossiper.instance.getVersion(validator.request.endpoint));
-                return new Message(local,
-                                   StorageService.Verb.TREE_RESPONSE,
-                                   bos.toByteArray(),
-                                   Gossiper.instance.getVersion(validator.request.endpoint));
-            }
-            catch(IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public void serialize(Validator v, DataOutputStream dos, int version) throws IOException
-        {
-            TreeRequestVerbHandler.SERIALIZER.serialize(v.request, dos, version);
-            MerkleTree.serializer.serialize(v.tree, dos, version);
-            dos.flush();
-        }
-
-        public Validator deserialize(DataInputStream dis, int version) throws IOException
-        {
-            final TreeRequest request = TreeRequestVerbHandler.SERIALIZER.deserialize(dis, version);
-            try
-            {
-                return new Validator(request, MerkleTree.serializer.deserialize(dis, version));
-            }
-            catch(Exception e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public void doVerb(Message message, String id)
-        {
-            byte[] bytes = message.getMessageBody();
-            DataInputStream buffer = new DataInputStream(new FastByteArrayInputStream(bytes));
-
-            try
-            {
-                // deserialize the remote tree, and register it
-                Validator response = this.deserialize(buffer, message.getVersion());
-                TreeRequest request = new TreeRequest(response.request.sessionid, message.getFrom(), response.request.range, response.request.cf);
-                AntiEntropyService.instance.rendezvous(request, response.tree);
-            }
-            catch (IOException e)
-            {
-                throw new IOError(e);
-            }
+            // deserialize the remote tree, and register it
+            Validator response = message.payload;
+            TreeRequest request = new TreeRequest(response.request.sessionid, message.from, response.request.range, response.request.cf);
+            AntiEntropyService.instance.rendezvous(request, response.tree);
         }
     }
 
@@ -560,6 +502,8 @@ public class AntiEntropyService
      */
     public static class TreeRequest
     {
+        public static final TreeRequestSerializer serializer = new TreeRequestSerializer();
+
         public final String sessionid;
         public final InetAddress endpoint;
         public final Range<Token> range;
@@ -594,6 +538,43 @@ public class AntiEntropyService
         {
             return "#<TreeRequest " + sessionid + ", " + endpoint + ", " + cf + ", " + range + ">";
         }
+
+        public MessageOut<TreeRequest> createMessage()
+        {
+            return new MessageOut<TreeRequest>(MessagingService.Verb.TREE_REQUEST, this, TreeRequest.serializer);
+        }
+
+        public static class TreeRequestSerializer implements IVersionedSerializer<TreeRequest>
+        {
+            public void serialize(TreeRequest request, DataOutput dos, int version) throws IOException
+            {
+                dos.writeUTF(request.sessionid);
+                CompactEndpointSerializationHelper.serialize(request.endpoint, dos);
+                dos.writeUTF(request.cf.left);
+                dos.writeUTF(request.cf.right);
+                AbstractBounds.serializer.serialize(request.range, dos, version);
+            }
+
+            public TreeRequest deserialize(DataInput dis, int version) throws IOException
+            {
+                String sessId = dis.readUTF();
+                InetAddress endpoint = CompactEndpointSerializationHelper.deserialize(dis);
+                CFPair cfpair = new CFPair(dis.readUTF(), dis.readUTF());
+                Range<Token> range;
+                range = (Range<Token>) AbstractBounds.serializer.deserialize(dis, version);
+
+                return new TreeRequest(sessId, endpoint, range, cfpair);
+            }
+
+            public long serializedSize(TreeRequest request, int version)
+            {
+                return TypeSizes.NATIVE.sizeof(request.sessionid)
+                     + CompactEndpointSerializationHelper.serializedSize(request.endpoint)
+                     + TypeSizes.NATIVE.sizeof(request.cf.left)
+                     + TypeSizes.NATIVE.sizeof(request.cf.right)
+                     + AbstractBounds.serializer.serializedSize(request.range, version);
+            }
+        }
     }
 
     /**
@@ -621,16 +602,16 @@ public class AntiEntropyService
 
         public RepairSession(TreeRequest req, String tablename, String... cfnames)
         {
-            this(req.sessionid, req.range, tablename, false, cfnames);
+            this(req.sessionid, req.range, tablename, false, false, cfnames);
             AntiEntropyService.instance.sessions.put(getName(), this);
         }
 
-        public RepairSession(Range<Token> range, String tablename, boolean isSequential, String... cfnames)
+        public RepairSession(Range<Token> range, String tablename, boolean isSequential, boolean isLocal, String... cfnames)
         {
-            this(UUIDGen.makeType1UUIDFromHost(FBUtilities.getBroadcastAddress()).toString(), range, tablename, isSequential, cfnames);
+            this(UUIDGen.getTimeUUID().toString(), range, tablename, isSequential, isLocal, cfnames);
         }
 
-        private RepairSession(String id, Range<Token> range, String tablename, boolean isSequential, String[] cfnames)
+        private RepairSession(String id, Range<Token> range, String tablename, boolean isSequential, boolean isLocal, String[] cfnames)
         {
             this.sessionName = id;
             this.isSequential = isSequential;
@@ -638,12 +619,17 @@ public class AntiEntropyService
             this.cfnames = cfnames;
             assert cfnames.length > 0 : "Repairing no column families seems pointless, doesn't it";
             this.range = range;
-            this.endpoints = AntiEntropyService.getNeighbors(tablename, range);
+            this.endpoints = AntiEntropyService.getNeighbors(tablename, range, isLocal);
         }
 
         public String getName()
         {
             return sessionName;
+        }
+
+        public Range<Token> getRange()
+        {
+            return range;
         }
 
         RepairFuture getFuture()
@@ -677,12 +663,13 @@ public class AntiEntropyService
             {
                 if (!FailureDetector.instance.isAlive(endpoint))
                 {
+                    String message = String.format("Cannot proceed on repair because a neighbor (%s) is dead: session failed", endpoint);
                     differencingDone.signalAll();
-                    logger.info(String.format("[repair #%s] Cannot proceed on repair because a neighbor (%s) is dead: session failed", getName(), endpoint));
-                    return;
+                    logger.error(String.format("[repair #%s] ", getName()) + message);
+                    throw new IOException(message);
                 }
 
-                if (Gossiper.instance.getVersion(endpoint) < MessagingService.VERSION_11 && isSequential)
+                if (MessagingService.instance().getVersion(endpoint) < MessagingService.VERSION_11 && isSequential)
                 {
                     logger.info(String.format("[repair #%s] Cannot repair using snapshots as node %s is pre-1.1", getName(), endpoint));
                     return;
@@ -841,7 +828,7 @@ public class AntiEntropyService
                 {
                     public void send(TreeRequest r)
                     {
-                        MessagingService.instance().sendOneWay(TreeRequestVerbHandler.makeVerb(r, Gossiper.instance.getVersion(r.endpoint)), r.endpoint);
+                        MessagingService.instance().sendOneWay(r.createMessage(), r.endpoint);
                     }
                 };
                 this.differencers = new RequestCoordinator<Differencer>(isSequential)
@@ -880,20 +867,18 @@ public class AntiEntropyService
                     snapshotLatch = new CountDownLatch(endpoints.size());
                     IAsyncCallback callback = new IAsyncCallback()
                     {
-                        @Override
-                            public boolean isLatencyForSnitch()
-                            {
-                                return false;
-                            }
+                        public boolean isLatencyForSnitch()
+                        {
+                            return false;
+                        }
 
-                        @Override
-                            public void response(Message msg)
-                            {
-                                RepairJob.this.snapshotLatch.countDown();
-                            }
+                        public void response(MessageIn msg)
+                        {
+                            RepairJob.this.snapshotLatch.countDown();
+                        }
                     };
                     for (InetAddress endpoint : endpoints)
-                        MessagingService.instance().sendRR(new SnapshotCommand(tablename, cfname, sessionName, false), endpoint, callback);
+                        MessagingService.instance().sendRR(new SnapshotCommand(tablename, cfname, sessionName, false).createMessage(), endpoint, callback);
                     snapshotLatch.await();
                     snapshotLatch = null;
                 }
@@ -974,14 +959,13 @@ public class AntiEntropyService
             public final String cfname;
             public final TreeResponse r1;
             public final TreeResponse r2;
-            public List<Range<Token>> differences;
+            public final List<Range<Token>> differences = new ArrayList<Range<Token>>();
 
             Differencer(String cfname, TreeResponse r1, TreeResponse r2)
             {
                 this.cfname = cfname;
                 this.r1 = r1;
                 this.r2 = r2;
-                this.differences = new ArrayList<Range<Token>>();
             }
 
             /**
@@ -1028,7 +1012,7 @@ public class AntiEntropyService
                 StreamingRepairTask task = StreamingRepairTask.create(r1.endpoint, r2.endpoint, tablename, cfname, differences, callback);
 
                 // Pre 1.0, nodes don't know how to handle forwarded streaming task so don't bother
-                if (task.isLocalTask() || Gossiper.instance.getVersion(task.dst) >= MessagingService.VERSION_10)
+                if (task.isLocalTask() || MessagingService.instance().getVersion(task.dst) >= MessagingService.VERSION_10)
                     task.run();
             }
 

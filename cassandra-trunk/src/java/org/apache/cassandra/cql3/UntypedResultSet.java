@@ -18,50 +18,59 @@
  */
 package org.apache.cassandra.cql3;
 
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.collect.AbstractIterator;
 
-import org.apache.cassandra.db.marshal.BooleanType;
-import org.apache.cassandra.db.marshal.DoubleType;
-import org.apache.cassandra.db.marshal.Int32Type;
-import org.apache.cassandra.db.marshal.UTF8Type;
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.CqlRow;
-import org.apache.hadoop.io.UTF8;
+import org.apache.cassandra.db.marshal.*;
+import org.apache.cassandra.cql3.ResultSet;
 
 /** a utility for doing internal cql-based queries */
 public class UntypedResultSet implements Iterable<UntypedResultSet.Row>
 {
-    private final List<CqlRow> cqlRows;
+    private final ResultSet cqlRows;
 
-    public UntypedResultSet(List<CqlRow> cqlRows)
+    public UntypedResultSet(ResultSet cqlRows)
     {
         this.cqlRows = cqlRows;
     }
 
+    public boolean isEmpty()
+    {
+        return cqlRows.size() == 0;
+    }
+
+    public int size()
+    {
+        return cqlRows.size();
+    }
+
     public Row one()
     {
-        if (cqlRows.size() != 1)
-            throw new IllegalStateException("One row required, " + cqlRows.size() + " found");
-        return new Row(cqlRows.get(0));
+        if (cqlRows.rows.size() != 1)
+            throw new IllegalStateException("One row required, " + cqlRows.rows.size() + " found");
+        return new Row(cqlRows.metadata.names, cqlRows.rows.get(0));
     }
 
     public Iterator<Row> iterator()
     {
         return new AbstractIterator<Row>()
         {
-            Iterator<CqlRow> iter = cqlRows.iterator();
+            Iterator<List<ByteBuffer>> iter = cqlRows.rows.iterator();
 
             protected Row computeNext()
             {
                 if (!iter.hasNext())
                     return endOfData();
-                return new Row(iter.next());
+                return new Row(cqlRows.metadata.names, iter.next());
             }
         };
     }
@@ -70,10 +79,10 @@ public class UntypedResultSet implements Iterable<UntypedResultSet.Row>
     {
         Map<String, ByteBuffer> data = new HashMap<String, ByteBuffer>();
 
-        public Row(CqlRow cqlRow)
+        public Row(List<ColumnSpecification> names, List<ByteBuffer> columns)
         {
-            for (Column column : cqlRow.columns)
-                data.put(UTF8Type.instance.compose(column.name), column.value);
+            for (int i = 0; i < names.size(); i++)
+                data.put(names.get(i).toString(), columns.get(i));
         }
 
         public boolean has(String column)
@@ -105,6 +114,39 @@ public class UntypedResultSet implements Iterable<UntypedResultSet.Row>
         public ByteBuffer getBytes(String column)
         {
             return data.get(column);
+        }
+
+        public InetAddress getInetAddress(String column)
+        {
+            return InetAddressType.instance.compose(data.get(column));
+        }
+
+        public UUID getUUID(String column)
+        {
+            return UUIDType.instance.compose(data.get(column));
+        }
+
+        public Date getTimestamp(String column)
+        {
+            return DateType.instance.compose(data.get(column));
+        }
+
+        public <T> Set<T> getSet(String column, AbstractType<T> type)
+        {
+            ByteBuffer raw = data.get(column);
+            return raw == null ? null : SetType.getInstance(type).compose(raw);
+        }
+
+        public <K, V> Map<K, V> getMap(String column, AbstractType<K> keyType, AbstractType<V> valueType)
+        {
+            ByteBuffer raw = data.get(column);
+            return raw == null ? null : MapType.getInstance(keyType, valueType).compose(raw);
+        }
+
+        @Override
+        public String toString()
+        {
+            return data.toString();
         }
     }
 }

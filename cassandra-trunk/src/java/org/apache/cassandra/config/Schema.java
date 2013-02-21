@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,40 +7,34 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.config;
 
-import java.io.IOError;
 import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import org.apache.cassandra.service.MigrationManager;
+import com.google.common.collect.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.db.ColumnFamilyType;
-import org.apache.cassandra.db.Row;
-import org.apache.cassandra.db.SystemTable;
+import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.Table;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.io.sstable.Descriptor;
+import org.apache.cassandra.service.MigrationManager;
+import org.apache.cassandra.tracing.Tracing;
+import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.utils.Pair;
-
 import org.cliffc.high_scale_lib.NonBlockingHashMap;
 
 public class Schema
@@ -57,9 +51,6 @@ public class Schema
      */
     public static final int NAME_LENGTH = 48;
 
-    private static final int MIN_CF_ID = 1000;
-    private final AtomicInteger cfIdGen = new AtomicInteger(MIN_CF_ID);
-
     /* metadata map for faster table lookup */
     private final Map<String, KSMetaData> tables = new NonBlockingHashMap<String, KSMetaData>();
 
@@ -67,12 +58,15 @@ public class Schema
     private final Map<String, Table> tableInstances = new NonBlockingHashMap<String, Table>();
 
     /* metadata map for faster ColumnFamily lookup */
-    private final BiMap<Pair<String, String>, Integer> cfIdMap = HashBiMap.create();
+    private final BiMap<Pair<String, String>, UUID> cfIdMap = HashBiMap.create();
+    // mapping from old ColumnFamily Id (Integer) to a new version which is UUID
+    private final BiMap<Integer, UUID> oldCfIdMap = HashBiMap.create();
 
     private volatile UUID version;
 
     // 59adb24e-f3cd-3e02-97f0-5b395827453f
     public static final UUID emptyVersion;
+    public static final ImmutableSet<String> systemKeyspaceNames = ImmutableSet.of(Table.SYSTEM_KS, Tracing.TRACE_KS);
 
     static
     {
@@ -121,8 +115,6 @@ public class Schema
 
         setTableDefinition(keyspaceDef);
 
-        fixCFMaxId();
-
         return this;
     }
 
@@ -147,10 +139,10 @@ public class Schema
      */
     public void storeTableInstance(Table table)
     {
-        if (tableInstances.containsKey(table.name))
-            throw new IllegalArgumentException(String.format("Table %s was already initialized.", table.name));
+        if (tableInstances.containsKey(table.getName()))
+            throw new IllegalArgumentException(String.format("Table %s was already initialized.", table.getName()));
 
-        tableInstances.put(table.name, table);
+        tableInstances.put(table.getName(), table);
     }
 
     /**
@@ -199,7 +191,7 @@ public class Schema
      *
      * @return metadata about ColumnFamily
      */
-    public CFMetaData getCFMetaData(Integer cfId)
+    public CFMetaData getCFMetaData(UUID cfId)
     {
         Pair<String,String> cf = getCF(cfId);
         return (cf == null) ? null : getCFMetaData(cf.left, cf.right);
@@ -243,20 +235,6 @@ public class Schema
     }
 
     /**
-     * Get subComparator of the ColumnFamily
-     *
-     * @param ksName The keyspace name
-     * @param cfName The ColumnFamily name
-     *
-     * @return The subComparator of the ColumnFamily
-     */
-    public AbstractType<?> getSubComparator(String ksName, String cfName)
-    {
-        assert ksName != null;
-        return getCFMetaData(ksName, cfName).subcolumnComparator;
-    }
-
-    /**
      * Get value validator for specific column
      *
      * @param ksName The keyspace name
@@ -288,21 +266,7 @@ public class Schema
      */
     public List<String> getNonSystemTables()
     {
-        List<String> tablesList = new ArrayList<String>(tables.keySet());
-        tablesList.remove(Table.SYSTEM_TABLE);
-        return Collections.unmodifiableList(tablesList);
-    }
-
-    /**
-     * Get metadata about table by its name
-     *
-     * @param table The name of the table
-     *
-     * @return The table metadata or null if it wasn't found
-     */
-    public KSMetaData getTableDefinition(String table)
-    {
-        return getKSMetaData(table);
+        return ImmutableList.copyOf(Sets.difference(tables.keySet(), systemKeyspaceNames));
     }
 
     /**
@@ -343,26 +307,40 @@ public class Schema
      */
     public void setTableDefinition(KSMetaData ksm)
     {
-        if (ksm != null)
-            tables.put(ksm.name, ksm);
-    }
-
-    /**
-     * Add a new system table
-     * @param systemTable The metadata describing new system table
-     */
-    public void addSystemTable(KSMetaData systemTable)
-    {
-        tables.put(systemTable.name, systemTable);
+        assert ksm != null;
+        tables.put(ksm.name, ksm);
     }
 
     /* ColumnFamily query/control methods */
+
+    public void addOldCfIdMapping(Integer oldId, UUID newId)
+    {
+        if (oldId == null)
+            return;
+
+        oldCfIdMap.put(oldId, newId);
+    }
+
+    public UUID convertOldCfId(Integer oldCfId) throws UnknownColumnFamilyException
+    {
+        UUID cfId = oldCfIdMap.get(oldCfId);
+
+        if (cfId == null)
+            throw new UnknownColumnFamilyException("ColumnFamily identified by old " + oldCfId + " was not found.", null);
+
+        return cfId;
+    }
+
+    public Integer convertNewCfId(UUID newCfId)
+    {
+        return oldCfIdMap.containsValue(newCfId) ? oldCfIdMap.inverse().get(newCfId) : null;
+    }
 
     /**
      * @param cfId The identifier of the ColumnFamily to lookup
      * @return The (ksname,cfname) pair for the given id, or null if it has been dropped.
      */
-    public Pair<String,String> getCF(Integer cfId)
+    public Pair<String,String> getCF(UUID cfId)
     {
         return cfIdMap.inverse().get(cfId);
     }
@@ -375,9 +353,9 @@ public class Schema
      *
      * @return The id for the given (ksname,cfname) pair, or null if it has been dropped.
      */
-    public Integer getId(String ksName, String cfName)
+    public UUID getId(String ksName, String cfName)
     {
-        return cfIdMap.get(new Pair<String, String>(ksName, cfName));
+        return cfIdMap.get(Pair.create(ksName, cfName));
     }
 
     /**
@@ -385,20 +363,16 @@ public class Schema
      * (to make ColumnFamily lookup faster)
      *
      * @param cfm The ColumnFamily definition to load
-     *
-     * @throws ConfigurationException if ColumnFamily was already loaded
      */
     public void load(CFMetaData cfm)
     {
-        Pair<String, String> key = new Pair<String, String>(cfm.ksName, cfm.cfName);
+        Pair<String, String> key = Pair.create(cfm.ksName, cfm.cfName);
 
         if (cfIdMap.containsKey(key))
             throw new RuntimeException(String.format("Attempting to load already loaded column family %s.%s", cfm.ksName, cfm.cfName));
 
         logger.debug("Adding {} to cfIdMap", cfm);
         cfIdMap.put(key, cfm.cfId);
-
-        fixCFMaxId();
     }
 
     /**
@@ -408,31 +382,7 @@ public class Schema
      */
     public void purge(CFMetaData cfm)
     {
-        cfIdMap.remove(new Pair<String, String>(cfm.ksName, cfm.cfName));
-    }
-
-    /**
-     * This gets called after initialization to make sure that id generation happens properly.
-     */
-    public void fixCFMaxId()
-    {
-        int cval, nval;
-        do
-        {
-            cval = cfIdGen.get();
-            int inMap = cfIdMap.isEmpty() ? 0 : Collections.max(cfIdMap.values()) + 1;
-            // never set it to less than 1000. this ensures that we have enough system CFids for future use.
-            nval = Math.max(Math.max(inMap, cval), MIN_CF_ID);
-        }
-        while (!cfIdGen.compareAndSet(cval, nval));
-    }
-
-    /**
-     * @return identifier for the new ColumnFamily (called primarily by CFMetaData constructor)
-     */
-    public int nextCFId()
-    {
-        return cfIdGen.getAndIncrement();
+        cfIdMap.remove(Pair.create(cfm.ksName, cfm.cfName));
     }
 
     /* Version control */
@@ -457,13 +407,14 @@ public class Schema
 
             for (Row row : SystemTable.serializedSchema())
             {
-                if (row.cf == null || (row.cf.isMarkedForDelete() && row.cf.isEmpty()))
+                if (invalidSchemaRow(row) || ignoredSchemaRow(row))
                     continue;
 
                 row.cf.updateDigest(versionDigest);
             }
 
             version = UUID.nameUUIDFromBytes(versionDigest.digest());
+            SystemTable.updateSchemaVersion(version);
         }
         catch (Exception e)
         {
@@ -487,13 +438,29 @@ public class Schema
     {
         for (String table : getNonSystemTables())
         {
-            KSMetaData ksm = getTableDefinition(table);
+            KSMetaData ksm = getKSMetaData(table);
             for (CFMetaData cfm : ksm.cfMetaData().values())
                 purge(cfm);
             clearTableDefinition(ksm);
         }
 
         updateVersionAndAnnounce();
-        fixCFMaxId();
+    }
+
+    public static boolean invalidSchemaRow(Row row)
+    {
+        return row.cf == null || (row.cf.isMarkedForDelete() && row.cf.isEmpty());
+    }
+
+    public static boolean ignoredSchemaRow(Row row)
+    {
+        try
+        {
+            return systemKeyspaceNames.contains(ByteBufferUtil.string(row.key.key));
+        }
+        catch (CharacterCodingException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

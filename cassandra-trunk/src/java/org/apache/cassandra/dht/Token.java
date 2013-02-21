@@ -1,21 +1,20 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one
-* or more contributor license agreements.  See the NOTICE file
-* distributed with this work for additional information
-* regarding copyright ownership.  The ASF licenses this file
-* to you under the Apache License, Version 2.0 (the
-* "License"); you may not use this file except in compliance
-* with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.cassandra.dht;
 
 import java.io.DataInput;
@@ -24,7 +23,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.db.TypeSizes;
 import org.apache.cassandra.db.RowPosition;
 import org.apache.cassandra.io.ISerializer;
 import org.apache.cassandra.service.StorageService;
@@ -34,11 +34,7 @@ public abstract class Token<T> implements RingPosition<Token<T>>, Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private static final TokenSerializer serializer = new TokenSerializer();
-    public static TokenSerializer serializer()
-    {
-        return serializer;
-    }
+    public static final TokenSerializer serializer = new TokenSerializer();
 
     public final T token;
 
@@ -103,9 +99,11 @@ public abstract class Token<T> implements RingPosition<Token<T>>, Serializable
             return p.getTokenFactory().fromByteArray(ByteBuffer.wrap(bytes));
         }
 
-        public long serializedSize(Token object)
+        public long serializedSize(Token object, TypeSizes typeSizes)
         {
-            throw new UnsupportedOperationException();
+            IPartitioner p = StorageService.getPartitioner();
+            ByteBuffer b = p.getTokenFactory().toByteArray(object);
+            return TypeSizes.NATIVE.sizeof(b.remaining()) + b.remaining();
         }
     }
 
@@ -167,12 +165,12 @@ public abstract class Token<T> implements RingPosition<Token<T>>, Serializable
         return maxKeyBound(StorageService.getPartitioner());
     }
 
-    public <T extends RingPosition> T upperBound(Class<T> klass)
+    public <R extends RingPosition> R upperBound(Class<R> klass)
     {
         if (klass.equals(getClass()))
-            return (T)this;
+            return (R)this;
         else
-            return (T)maxKeyBound();
+            return (R)maxKeyBound();
     }
 
     public static class KeyBound extends RowPosition

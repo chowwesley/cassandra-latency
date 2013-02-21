@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,15 +21,15 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 import org.apache.cassandra.db.*;
-import org.apache.cassandra.db.filter.IFilter;
+import org.apache.cassandra.db.filter.IDiskAtomFilter;
 import org.apache.cassandra.dht.AbstractBounds;
 import org.apache.cassandra.thrift.IndexExpression;
 
 public abstract class SecondaryIndexSearcher
 {
-    protected SecondaryIndexManager    indexManager;
-    protected Set<ByteBuffer> columns;
-    protected ColumnFamilyStore baseCfs;
+    protected final SecondaryIndexManager    indexManager;
+    protected final Set<ByteBuffer> columns;
+    protected final ColumnFamilyStore baseCfs;
 
     public SecondaryIndexSearcher(SecondaryIndexManager indexManager, Set<ByteBuffer> columns)
     {
@@ -38,10 +38,20 @@ public abstract class SecondaryIndexSearcher
         this.baseCfs = indexManager.baseCfs;
     }
 
-    public abstract List<Row> search(List<IndexExpression> clause, AbstractBounds<RowPosition> range, int maxResults, IFilter dataFilter, boolean maxIsColumns);
+    public abstract List<Row> search(List<IndexExpression> clause, AbstractBounds<RowPosition> range, int maxResults, IDiskAtomFilter dataFilter, boolean countCQL3Rows);
 
     /**
      * @return true this index is able to handle given clauses.
      */
     public abstract boolean isIndexing(List<IndexExpression> clause);
+    
+    protected boolean isIndexValueStale(ColumnFamily liveData, ByteBuffer indexedColumnName, ByteBuffer indexedValue)
+    {
+        Column liveColumn = liveData.getColumn(indexedColumnName);
+        if (liveColumn == null || liveColumn.isMarkedForDelete())
+            return true;
+        
+        ByteBuffer liveValue = liveColumn.value();
+        return 0 != liveData.metadata().getValueValidator(indexedColumnName).compare(indexedValue, liveValue);
+    }
 }

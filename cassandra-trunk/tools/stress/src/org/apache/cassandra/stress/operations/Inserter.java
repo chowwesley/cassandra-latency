@@ -17,6 +17,7 @@
  */
 package org.apache.cassandra.stress.operations;
 
+import com.yammer.metrics.core.TimerContext;
 import org.apache.cassandra.stress.Session;
 import org.apache.cassandra.stress.util.CassandraClient;
 import org.apache.cassandra.stress.util.Operation;
@@ -27,10 +28,7 @@ import org.apache.cassandra.utils.FBUtilities;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Inserter extends Operation
 {
@@ -46,8 +44,8 @@ public class Inserter extends Operation
         if (values == null)
             values = generateValues();
 
-        List<Column> columns = new ArrayList<Column>();
-        List<SuperColumn> superColumns = new ArrayList<SuperColumn>();
+        List<Column> columns = new ArrayList<Column>(session.getColumnsPerKey());
+        List<SuperColumn> superColumns = null;
 
         // format used for keys
         String format = "%0" + session.getTotalKeysLength() + "d";
@@ -55,12 +53,13 @@ public class Inserter extends Operation
         for (int i = 0; i < session.getColumnsPerKey(); i++)
         {
             columns.add(new Column(columnName(i, session.timeUUIDComparator))
-                                .setValue(values.get(i % values.size()))
-                                .setTimestamp(FBUtilities.timestampMicros()));
+                            .setValue(values.get(i % values.size()))
+                            .setTimestamp(FBUtilities.timestampMicros()));
         }
 
         if (session.getColumnFamilyType() == ColumnFamilyType.Super)
         {
+            superColumns = new ArrayList<SuperColumn>();
             // supers = [SuperColumn('S' + str(j), columns) for j in xrange(supers_per_key)]
             for (int i = 0; i < session.getSuperColumns(); i++)
             {
@@ -70,17 +69,15 @@ public class Inserter extends Operation
         }
 
         String rawKey = String.format(format, index);
-        Map<ByteBuffer, Map<String, List<Mutation>>> record = new HashMap<ByteBuffer, Map<String, List<Mutation>>>();
+        Map<String, List<Mutation>> row = session.getColumnFamilyType() == ColumnFamilyType.Super
+                                        ? getSuperColumnsMutationMap(superColumns)
+                                        : getColumnsMutationMap(columns);
+        Map<ByteBuffer, Map<String, List<Mutation>>> record = Collections.singletonMap(ByteBufferUtil.bytes(rawKey), row);
 
-        record.put(ByteBufferUtil.bytes(rawKey), session.getColumnFamilyType() == ColumnFamilyType.Super
-                                                                                ? getSuperColumnsMutationMap(superColumns)
-                                                                                : getColumnsMutationMap(columns));
-
-        long start = System.currentTimeMillis();
+        TimerContext context = session.latency.time();
 
         boolean success = false;
         String exceptionMessage = null;
-
         for (int t = 0; t < session.getRetryTimes(); t++)
         {
             if (success)
@@ -109,38 +106,30 @@ public class Inserter extends Operation
 
         session.operations.getAndIncrement();
         session.keys.getAndIncrement();
-        session.latency.getAndAdd(System.currentTimeMillis() - start);
+        context.stop();
     }
 
     private Map<String, List<Mutation>> getSuperColumnsMutationMap(List<SuperColumn> superColumns)
     {
-        List<Mutation> mutations = new ArrayList<Mutation>();
-        Map<String, List<Mutation>> mutationMap = new HashMap<String, List<Mutation>>();
-
+        List<Mutation> mutations = new ArrayList<Mutation>(superColumns.size());
         for (SuperColumn s : superColumns)
         {
             ColumnOrSuperColumn superColumn = new ColumnOrSuperColumn().setSuper_column(s);
             mutations.add(new Mutation().setColumn_or_supercolumn(superColumn));
         }
 
-        mutationMap.put("Super1", mutations);
-
-        return mutationMap;
+        return Collections.singletonMap("Super1", mutations);
     }
 
     private Map<String, List<Mutation>> getColumnsMutationMap(List<Column> columns)
     {
-        List<Mutation> mutations = new ArrayList<Mutation>();
-        Map<String, List<Mutation>> mutationMap = new HashMap<String, List<Mutation>>();
-
+        List<Mutation> mutations = new ArrayList<Mutation>(columns.size());
         for (Column c : columns)
         {
             ColumnOrSuperColumn column = new ColumnOrSuperColumn().setColumn(c);
             mutations.add(new Mutation().setColumn_or_supercolumn(column));
         }
 
-        mutationMap.put("Standard1", mutations);
-
-        return mutationMap;
+        return Collections.singletonMap("Standard1", mutations);
     }
 }

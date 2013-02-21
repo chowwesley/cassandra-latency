@@ -1,6 +1,4 @@
-package org.apache.cassandra.cache;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,35 +7,36 @@ package org.apache.cassandra.cache;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.cache;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.cassandra.metrics.CacheMetrics;
 
 /**
  * Wraps an ICache in requests + hits tracking.
  */
 public class InstrumentingCache<K, V>
 {
-    private final AtomicLong requests = new AtomicLong(0);
-    private final AtomicLong hits = new AtomicLong(0);
-    private final AtomicLong lastRequests = new AtomicLong(0);
-    private final AtomicLong lastHits = new AtomicLong(0);
     private volatile boolean capacitySetManually;
     private final ICache<K, V> map;
+    private final String type;
 
-    public InstrumentingCache(ICache<K, V> map)
+    private CacheMetrics metrics;
+
+    public InstrumentingCache(String type, ICache<K, V> map)
     {
         this.map = map;
+        this.type = type;
+        this.metrics = new CacheMetrics(type, map);
     }
 
     public void put(K key, V value)
@@ -58,9 +57,9 @@ public class InstrumentingCache<K, V>
     public V get(K key)
     {
         V v = map.get(key);
-        requests.incrementAndGet();
+        metrics.requests.mark();
         if (v != null)
-            hits.incrementAndGet();
+            metrics.hits.mark();
         return v;
     }
 
@@ -105,36 +104,10 @@ public class InstrumentingCache<K, V>
         return map.weightedSize();
     }
 
-    public long getHits()
-    {
-        return hits.get();
-    }
-
-    public long getRequests()
-    {
-        return requests.get();
-    }
-
-    public double getRecentHitRate()
-    {
-        long r = requests.get();
-        long h = hits.get();
-        try
-        {
-            return ((double)(h - lastHits.get())) / (r - lastRequests.get());
-        }
-        finally
-        {
-            lastRequests.set(r);
-            lastHits.set(h);
-        }
-    }
-
     public void clear()
     {
         map.clear();
-        requests.set(0);
-        hits.set(0);
+        metrics = new CacheMetrics(type, map);
     }
 
     public Set<K> getKeySet()
@@ -155,5 +128,10 @@ public class InstrumentingCache<K, V>
     public boolean isPutCopying()
     {
         return map.isPutCopying();
+    }
+
+    public CacheMetrics getMetrics()
+    {
+        return metrics;
     }
 }

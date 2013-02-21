@@ -1,6 +1,4 @@
-package org.apache.cassandra.db.compaction;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,34 +7,35 @@ package org.apache.cassandra.db.compaction;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.db.compaction;
 
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.cassandra.utils.CloseableIterator;
 
 public abstract class AbstractCompactionIterable extends CompactionInfo.Holder implements Iterable<AbstractCompactedRow>
 {
-    private static Logger logger = LoggerFactory.getLogger(AbstractCompactionIterable.class);
-
     protected final OperationType type;
     protected final CompactionController controller;
     protected final long totalBytes;
     protected volatile long bytesRead;
     protected final List<ICompactionScanner> scanners;
+    /*
+     * counters for merged rows.
+     * array index represents (number of merged rows - 1), so index 0 is counter for no merge (1 row),
+     * index 1 is counter for 2 rows merged, and so on.
+     */
+    protected final AtomicLong[] mergeCounters;
 
     public AbstractCompactionIterable(CompactionController controller, OperationType type, List<ICompactionScanner> scanners)
     {
@@ -49,6 +48,9 @@ public abstract class AbstractCompactionIterable extends CompactionInfo.Holder i
         for (ICompactionScanner scanner : scanners)
             bytes += scanner.getLengthInBytes();
         this.totalBytes = bytes;
+        mergeCounters = new AtomicLong[scanners.size()];
+        for (int i = 0; i < mergeCounters.length; i++)
+            mergeCounters[i] = new AtomicLong();
     }
 
     public CompactionInfo getCompactionInfo()
@@ -57,6 +59,20 @@ public abstract class AbstractCompactionIterable extends CompactionInfo.Holder i
                                   type,
                                   bytesRead,
                                   totalBytes);
+    }
+
+    protected void updateCounterFor(int rows)
+    {
+        assert rows > 0 && rows - 1 < mergeCounters.length;
+        mergeCounters[rows - 1].incrementAndGet();
+    }
+
+    public long[] getMergedRowCounts()
+    {
+        long[] counters = new long[mergeCounters.length];
+        for (int i = 0; i < counters.length; i++)
+            counters[i] = mergeCounters[i].get();
+        return counters;
     }
 
     public abstract CloseableIterator<AbstractCompactedRow> iterator();

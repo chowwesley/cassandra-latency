@@ -25,15 +25,15 @@ import static org.apache.cassandra.Util.column;
 import static org.apache.cassandra.Util.addMutation;
 
 import java.net.InetAddress;
+import java.sql.Date;
 import java.util.*;
 
 import org.apache.cassandra.SchemaLoader;
 import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.columniterator.IdentityQueryFilter;
 import org.apache.cassandra.db.context.CounterContext;
-import org.apache.cassandra.db.filter.IFilter;
+import org.apache.cassandra.db.filter.IDiskAtomFilter;
 import org.apache.cassandra.db.filter.QueryFilter;
-import org.apache.cassandra.db.filter.QueryPath;
 import org.apache.cassandra.dht.IPartitioner;
 import org.apache.cassandra.dht.Range;
 import org.apache.cassandra.dht.Token;
@@ -42,8 +42,8 @@ import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
+import org.apache.cassandra.utils.CounterId;
 import org.apache.cassandra.utils.FBUtilities;
-import org.apache.cassandra.utils.NodeId;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -71,7 +71,7 @@ public class StreamingTransferTest extends SchemaLoader
     private List<String> createAndTransfer(Table table, ColumnFamilyStore cfs, Mutator mutator) throws Exception
     {
         // write a temporary SSTable, and unregister it
-        logger.debug("Mutating " + cfs.columnFamily);
+        logger.debug("Mutating " + cfs.name);
         long timestamp = 1234;
         for (int i = 1; i <= 3; i++)
             mutator.mutate("key" + i, "col" + i, timestamp);
@@ -82,7 +82,7 @@ public class StreamingTransferTest extends SchemaLoader
         cfs.clearUnsafe();
 
         // transfer the first and last key
-        logger.debug("Transferring " + cfs.columnFamily);
+        logger.debug("Transferring " + cfs.name);
         transfer(table, sstable);
 
         // confirm that a single SSTable was transferred and registered
@@ -96,8 +96,7 @@ public class StreamingTransferTest extends SchemaLoader
         {
             String key = "key" + offs[i];
             String col = "col" + offs[i];
-            assert null != cfs.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk(key),
-                                               new QueryPath(cfs.columnFamily)));
+            assert cfs.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk(key), cfs.name)) != null;
             assert rows.get(i).key.key.equals(ByteBufferUtil.bytes(key));
             assert rows.get(i).cf.getColumn(ByteBufferUtil.bytes(col)) != null;
         }
@@ -109,7 +108,7 @@ public class StreamingTransferTest extends SchemaLoader
         for (int off : offs)
             keys.add("key" + off);
 
-        logger.debug("... everything looks good for " + cfs.columnFamily);
+        logger.debug("... everything looks good for " + cfs.name);
         return keys;
     }
 
@@ -119,7 +118,12 @@ public class StreamingTransferTest extends SchemaLoader
         List<Range<Token>> ranges = new ArrayList<Range<Token>>();
         ranges.add(new Range<Token>(p.getMinimumToken(), p.getToken(ByteBufferUtil.bytes("key1"))));
         ranges.add(new Range<Token>(p.getToken(ByteBufferUtil.bytes("key2")), p.getMinimumToken()));
-        StreamOutSession session = StreamOutSession.create(table.name, LOCAL, null);
+        transfer(table, sstable, ranges);
+    }
+
+    private void transfer(Table table, SSTableReader sstable, List<Range<Token>> ranges) throws Exception
+    {
+        StreamOutSession session = StreamOutSession.create(table.getName(), LOCAL, (IStreamCallback)null);
         StreamOut.transferSSTables(session, Arrays.asList(sstable), ranges, OperationType.BOOTSTRAP);
         session.await();
     }
@@ -136,7 +140,7 @@ public class StreamingTransferTest extends SchemaLoader
             {
                 long val = key.hashCode();
                 RowMutation rm = new RowMutation("Keyspace1", ByteBufferUtil.bytes(key));
-                ColumnFamily cf = ColumnFamily.create(table.name, cfs.columnFamily);
+                ColumnFamily cf = ColumnFamily.create(table.getName(), cfs.name);
                 cf.addColumn(column(col, "v", timestamp));
                 cf.addColumn(new Column(ByteBufferUtil.bytes("birthdate"), ByteBufferUtil.bytes(val), timestamp));
                 rm.add(cf);
@@ -154,29 +158,12 @@ public class StreamingTransferTest extends SchemaLoader
                                                        IndexOperator.EQ,
                                                        ByteBufferUtil.bytes(val));
             List<IndexExpression> clause = Arrays.asList(expr);
-            IFilter filter = new IdentityQueryFilter();
+            IDiskAtomFilter filter = new IdentityQueryFilter();
             Range<RowPosition> range = Util.range("", "");
             List<Row> rows = cfs.search(clause, range, 100, filter);
             assertEquals(1, rows.size());
             assert rows.get(0).key.key.equals(ByteBufferUtil.bytes(key));
         }
-    }
-
-    @Test
-    public void testTransferTableSuper() throws Exception
-    {
-        final Table table = Table.open("Keyspace1");
-        final ColumnFamilyStore cfs = table.getColumnFamilyStore("Super1");
-
-        createAndTransfer(table, cfs, new Mutator()
-        {
-            public void mutate(String key, String col, long timestamp) throws Exception
-            {
-                RowMutation rm = new RowMutation(table.name, ByteBufferUtil.bytes(key));
-                addMutation(rm, cfs.columnFamily, col, 1, "val1", timestamp);
-                rm.apply();
-            }
-        });
     }
 
     @Test
@@ -197,10 +184,10 @@ public class StreamingTransferTest extends SchemaLoader
                 ColumnFamily cf = ColumnFamily.create(cfs.metadata);
                 ColumnFamily cfCleaned = ColumnFamily.create(cfs.metadata);
                 CounterContext.ContextState state = CounterContext.ContextState.allocate(4, 1);
-                state.writeElement(NodeId.fromInt(2), 9L, 3L, true);
-                state.writeElement(NodeId.fromInt(4), 4L, 2L);
-                state.writeElement(NodeId.fromInt(6), 3L, 3L);
-                state.writeElement(NodeId.fromInt(8), 2L, 4L);
+                state.writeElement(CounterId.fromInt(2), 9L, 3L, true);
+                state.writeElement(CounterId.fromInt(4), 4L, 2L);
+                state.writeElement(CounterId.fromInt(6), 3L, 3L);
+                state.writeElement(CounterId.fromInt(8), 2L, 4L);
                 cf.addColumn(new CounterColumn(ByteBufferUtil.bytes(col),
                                                state.context,
                                                timestamp));
@@ -211,8 +198,8 @@ public class StreamingTransferTest extends SchemaLoader
                 entries.put(key, cf);
                 cleanedEntries.put(key, cfCleaned);
                 cfs.addSSTable(SSTableUtils.prepare()
-                    .ks(table.name)
-                    .cf(cfs.columnFamily)
+                    .ks(table.getName())
+                    .cf(cfs.name)
                     .generation(0)
                     .write(entries));
             }
@@ -221,8 +208,8 @@ public class StreamingTransferTest extends SchemaLoader
         // filter pre-cleaned entries locally, and ensure that the end result is equal
         cleanedEntries.keySet().retainAll(keys);
         SSTableReader cleaned = SSTableUtils.prepare()
-            .ks(table.name)
-            .cf(cfs.columnFamily)
+            .ks(table.getName())
+            .cf(cfs.name)
             .generation(0)
             .write(cleanedEntries);
         SSTableReader streamed = cfs.getSSTables().iterator().next();
@@ -261,7 +248,7 @@ public class StreamingTransferTest extends SchemaLoader
         // Acquiring references, transferSSTables needs it
         sstable.acquireReference();
         sstable2.acquireReference();
-        StreamOutSession session = StreamOutSession.create(tablename, LOCAL, null);
+        StreamOutSession session = StreamOutSession.create(tablename, LOCAL, (IStreamCallback) null);
         StreamOut.transferSSTables(session, Arrays.asList(sstable, sstable2), ranges, OperationType.BOOTSTRAP);
         session.await();
 
@@ -275,10 +262,10 @@ public class StreamingTransferTest extends SchemaLoader
         assert rows.get(1).cf.getColumnCount() == 1;
 
         // these keys fall outside of the ranges and should not be transferred
-        assert null == cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("transfer1"), new QueryPath("Standard1")));
-        assert null == cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("transfer2"), new QueryPath("Standard1")));
-        assert null == cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("test2"), new QueryPath("Standard1")));
-        assert null == cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("test3"), new QueryPath("Standard1")));
+        assert cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("transfer1"), "Standard1")) == null;
+        assert cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("transfer2"), "Standard1")) == null;
+        assert cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("test2"), "Standard1")) == null;
+        assert cfstore.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("test3"), "Standard1")) == null;
     }
 
     @Test
@@ -317,7 +304,7 @@ public class StreamingTransferTest extends SchemaLoader
         if (!SSTableReader.acquireReferences(ssTableReaders))
             throw new AssertionError();
 
-        StreamOutSession session = StreamOutSession.create(keyspace, LOCAL, null);
+        StreamOutSession session = StreamOutSession.create(keyspace, LOCAL, (IStreamCallback)null);
         StreamOut.transferSSTables(session, ssTableReaders, ranges, OperationType.BOOTSTRAP);
 
         session.await();
@@ -330,6 +317,42 @@ public class StreamingTransferTest extends SchemaLoader
             assertEquals(rows.toString(), 1, rows.size());
             assertEquals(entry.getKey(), rows.get(0).key);
         }
+    }
+
+    @Test
+    public void testRandomSSTableTransfer() throws Exception
+    {
+        final Table table = Table.open("Keyspace1");
+        final ColumnFamilyStore cfs = table.getColumnFamilyStore("Standard1");
+        Mutator mutator = new Mutator()
+        {
+            public void mutate(String key, String colName, long timestamp) throws Exception
+            {
+                RowMutation rm = new RowMutation("Keyspace1", ByteBufferUtil.bytes(key));
+                ColumnFamily cf = ColumnFamily.create(table.getName(), cfs.name);
+                cf.addColumn(column(colName, "value", timestamp));
+                cf.addColumn(new Column(ByteBufferUtil.bytes("birthdate"), ByteBufferUtil.bytes(new Date(timestamp).toString()), timestamp));
+                rm.add(cf);
+                logger.debug("Applying row to transfer " + rm);
+                rm.apply();
+            }
+        };
+        // write a lot more data so the data is spread in more than 1 chunk.
+        for (int i = 1; i <= 6000; i++)
+            mutator.mutate("key" + i, "col" + i, System.currentTimeMillis());
+        cfs.forceBlockingFlush();
+        Util.compactAll(cfs).get();
+        SSTableReader sstable = cfs.getSSTables().iterator().next();
+        cfs.clearUnsafe();
+
+        IPartitioner p = StorageService.getPartitioner();
+        List<Range<Token>> ranges = new ArrayList<Range<Token>>();
+        ranges.add(new Range<Token>(p.getToken(ByteBufferUtil.bytes("key1")), p.getToken(ByteBufferUtil.bytes("key1000"))));
+        ranges.add(new Range<Token>(p.getToken(ByteBufferUtil.bytes("key5")), p.getToken(ByteBufferUtil.bytes("key500"))));
+        ranges.add(new Range<Token>(p.getToken(ByteBufferUtil.bytes("key9")), p.getToken(ByteBufferUtil.bytes("key900"))));
+        transfer(table, sstable, ranges);
+        assertEquals(1, cfs.getSSTables().size());
+        assertEquals(7, Util.getRangeSlice(cfs).size());
     }
 
     public interface Mutator

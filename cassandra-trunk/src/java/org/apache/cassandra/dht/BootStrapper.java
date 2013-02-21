@@ -1,4 +1,4 @@
- /**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,37 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.dht;
 
- import java.io.IOException;
- import java.net.InetAddress;
- import java.util.*;
- import java.util.concurrent.TimeUnit;
- import java.util.concurrent.locks.Condition;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 
- import com.google.common.base.Charsets;
- import org.apache.cassandra.config.Schema;
- import org.apache.cassandra.gms.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.apache.cassandra.config.Schema;
 
- import org.apache.commons.lang.ArrayUtils;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
-
- import org.apache.cassandra.config.ConfigurationException;
- import org.apache.cassandra.config.DatabaseDescriptor;
- import org.apache.cassandra.db.Table;
- import org.apache.cassandra.locator.AbstractReplicationStrategy;
- import org.apache.cassandra.locator.TokenMetadata;
- import org.apache.cassandra.net.IAsyncCallback;
- import org.apache.cassandra.net.IVerbHandler;
- import org.apache.cassandra.net.Message;
- import org.apache.cassandra.net.MessagingService;
- import org.apache.cassandra.service.StorageService;
- import org.apache.cassandra.streaming.OperationType;
- import org.apache.cassandra.utils.FBUtilities;
- import org.apache.cassandra.utils.SimpleCondition;
-
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.config.DatabaseDescriptor;
+import org.apache.cassandra.db.Table;
+import org.apache.cassandra.locator.AbstractReplicationStrategy;
+import org.apache.cassandra.locator.TokenMetadata;
+import org.apache.cassandra.net.IAsyncCallback;
+import org.apache.cassandra.net.IVerbHandler;
+import org.apache.cassandra.net.MessagingService;
+import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.streaming.OperationType;
+import org.apache.cassandra.utils.FBUtilities;
+import org.apache.cassandra.utils.SimpleCondition;
+import org.apache.cassandra.db.TypeSizes;
+import org.apache.cassandra.gms.FailureDetector;
+import org.apache.cassandra.io.IVersionedSerializer;
+import org.apache.cassandra.net.*;
 
 public class BootStrapper
 {
@@ -54,21 +53,21 @@ public class BootStrapper
     /* endpoint that needs to be bootstrapped */
     protected final InetAddress address;
     /* token of the node being bootstrapped. */
-    protected final Token<?> token;
+    protected final Collection<Token> tokens;
     protected final TokenMetadata tokenMetadata;
     private static final long BOOTSTRAP_TIMEOUT = 30000; // default bootstrap timeout of 30s
 
-    public BootStrapper(InetAddress address, Token token, TokenMetadata tmd)
+    public BootStrapper(InetAddress address, Collection<Token> tokens, TokenMetadata tmd)
     {
         assert address != null;
-        assert token != null;
+        assert tokens != null && !tokens.isEmpty();
 
         this.address = address;
-        this.token = token;
+        this.tokens = tokens;
         tokenMetadata = tmd;
     }
 
-    public void bootstrap() throws IOException
+    public void bootstrap()
     {
         if (logger.isDebugEnabled())
             logger.debug("Beginning bootstrap process");
@@ -79,7 +78,7 @@ public class BootStrapper
         for (String table : Schema.instance.getNonSystemTables())
         {
             AbstractReplicationStrategy strategy = Table.open(table).getReplicationStrategy();
-            streamer.addRanges(table, strategy.getPendingAddressRanges(tokenMetadata, token, address));
+            streamer.addRanges(table, strategy.getPendingAddressRanges(tokenMetadata, tokens, address));
         }
 
         streamer.fetch();
@@ -87,40 +86,50 @@ public class BootStrapper
     }
 
     /**
-     * if initialtoken was specified, use that.
-     * otherwise, pick a token to assume half the load of the most-loaded node.
+     * if initialtoken was specified, use that (split on comma).
+     * otherwise, if num_tokens == 1, pick a token to assume half the load of the most-loaded node.
+     * else choose num_tokens tokens at random
      */
-    public static Token getBootstrapToken(final TokenMetadata metadata, final Map<InetAddress, Double> load) throws IOException, ConfigurationException
+    public static Collection<Token> getBootstrapTokens(final TokenMetadata metadata, Map<InetAddress, Double> load) throws ConfigurationException
     {
-        // if user specified a token, use that
-        if (DatabaseDescriptor.getInitialToken() != null)
+        Collection<String> initialTokens = DatabaseDescriptor.getInitialTokens();
+        // if user specified tokens, use those
+        if (initialTokens.size() > 0)
         {
-            logger.debug("token manually specified as " + DatabaseDescriptor.getInitialToken());
-            Token token = StorageService.getPartitioner().getTokenFactory().fromString(DatabaseDescriptor.getInitialToken());
-            if (metadata.getEndpoint(token) != null)
-                throw new ConfigurationException("Bootstraping to existing token " + token + " is not allowed (decommission/removetoken the old node first).");
-            return token;
-        }
-
-        // if there is a schema, then we're joining an existing cluster so get a "balanced" token
-        for (Map.Entry<InetAddress, EndpointState> entry : Gossiper.instance.getEndpointStates())
-        {
-            if (entry.getKey().equals(FBUtilities.getBroadcastAddress()))
+            logger.debug("tokens manually specified as {}",  initialTokens);
+            List<Token> tokens = new ArrayList<Token>();
+            for (String tokenString : initialTokens)
             {
-                // skip ourselves to avoid confusing the tests, which always load a schema first thing
-                continue;
+                Token token = StorageService.getPartitioner().getTokenFactory().fromString(tokenString);
+                if (metadata.getEndpoint(token) != null)
+                    throw new ConfigurationException("Bootstraping to existing token " + tokenString + " is not allowed (decommission/removetoken the old node first).");
+                tokens.add(token);
             }
-
-            VersionedValue schemaValue = entry.getValue().getApplicationState(ApplicationState.SCHEMA);
-            if (schemaValue != null && !schemaValue.value.equals(Schema.emptyVersion.toString()))
-                return getBalancedToken(metadata, load);
+            return tokens;
         }
 
-        // no schema; pick a random token (so multiple non-seeds starting up simultaneously in a new cluster
-        // don't get the same token; see CASSANDRA-3219)
-        return StorageService.getPartitioner().getRandomToken();
+        int numTokens = DatabaseDescriptor.getNumTokens();
+        if (numTokens < 1)
+            throw new ConfigurationException("num_tokens must be >= 1");
+        if (numTokens == 1)
+            return Collections.singleton(getBalancedToken(metadata, load));
+
+        return getRandomTokens(metadata, numTokens);
     }
 
+    public static Collection<Token> getRandomTokens(TokenMetadata metadata, int numTokens)
+    {
+        Set<Token> tokens = new HashSet<Token>(numTokens);
+        while (tokens.size() < numTokens)
+        {
+            Token token = StorageService.getPartitioner().getRandomToken();
+            if (metadata.getEndpoint(token) == null)
+                tokens.add(token);
+        }
+        return tokens;
+    }
+
+    @Deprecated
     public static Token getBalancedToken(TokenMetadata metadata, Map<InetAddress, Double> load)
     {
         InetAddress maxEndpoint = getBootstrapSource(metadata, load);
@@ -129,13 +138,14 @@ public class BootStrapper
         return t;
     }
 
+    @Deprecated
     static InetAddress getBootstrapSource(final TokenMetadata metadata, final Map<InetAddress, Double> load)
     {
         // sort first by number of nodes already bootstrapping into a source node's range, then by load.
         List<InetAddress> endpoints = new ArrayList<InetAddress>(load.size());
         for (InetAddress endpoint : load.keySet())
         {
-            if (!metadata.isMember(endpoint))
+            if (!metadata.isMember(endpoint) || !FailureDetector.instance.isAlive(endpoint))
                 continue;
             endpoints.add(endpoint);
         }
@@ -172,14 +182,12 @@ public class BootStrapper
         return maxEndpoint;
     }
 
+    @Deprecated
     static Token<?> getBootstrapTokenFrom(InetAddress maxEndpoint)
     {
-        Message message = new Message(FBUtilities.getBroadcastAddress(),
-                                      StorageService.Verb.BOOTSTRAP_TOKEN,
-                                      ArrayUtils.EMPTY_BYTE_ARRAY,
-                                      Gossiper.instance.getVersion(maxEndpoint));
+        MessageOut message = new MessageOut(MessagingService.Verb.BOOTSTRAP_TOKEN);
         int retries = 5;
-        long timeout = Math.max(MessagingService.getDefaultCallbackTimeout(), BOOTSTRAP_TIMEOUT);
+        long timeout = Math.max(DatabaseDescriptor.getRpcTimeout(), BOOTSTRAP_TIMEOUT);
 
         while (retries > 0)
         {
@@ -194,18 +202,20 @@ public class BootStrapper
         throw new RuntimeException("Bootstrap failed, could not obtain token from: " + maxEndpoint);
     }
 
+    @Deprecated
     public static class BootstrapTokenVerbHandler implements IVerbHandler
     {
-        public void doVerb(Message message, String id)
+        public void doVerb(MessageIn message, String id)
         {
             StorageService ss = StorageService.instance;
             String tokenString = StorageService.getPartitioner().getTokenFactory().toString(ss.getBootstrapToken());
-            Message response = message.getInternalReply(tokenString.getBytes(Charsets.UTF_8), message.getVersion());
-            MessagingService.instance().sendReply(response, id, message.getFrom());
+            MessageOut<String> response = new MessageOut<String>(MessagingService.Verb.INTERNAL_RESPONSE, tokenString, StringSerializer.instance);
+            MessagingService.instance().sendReply(response, id, message.from);
         }
     }
 
-    private static class BootstrapTokenCallback implements IAsyncCallback
+    @Deprecated
+    private static class BootstrapTokenCallback implements IAsyncCallback<String>
     {
         private volatile Token<?> token;
         private final Condition condition = new SimpleCondition();
@@ -225,15 +235,35 @@ public class BootStrapper
             return success ? token : null;
         }
 
-        public void response(Message msg)
+        public void response(MessageIn<String> msg)
         {
-            token = StorageService.getPartitioner().getTokenFactory().fromString(new String(msg.getMessageBody(), Charsets.UTF_8));
+            token = StorageService.getPartitioner().getTokenFactory().fromString(msg.payload);
             condition.signalAll();
         }
 
         public boolean isLatencyForSnitch()
         {
             return false;
+        }
+    }
+
+    public static class StringSerializer implements IVersionedSerializer<String>
+    {
+        public static final StringSerializer instance = new StringSerializer();
+
+        public void serialize(String s, DataOutput out, int version) throws IOException
+        {
+            out.writeUTF(s);
+        }
+
+        public String deserialize(DataInput in, int version) throws IOException
+        {
+            return in.readUTF();
+        }
+
+        public long serializedSize(String s, int version)
+        {
+            return TypeSizes.NATIVE.sizeof(s);
         }
     }
 }

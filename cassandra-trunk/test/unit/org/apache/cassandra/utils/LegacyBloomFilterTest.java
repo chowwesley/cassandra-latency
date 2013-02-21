@@ -39,14 +39,14 @@ public class LegacyBloomFilterTest
         bf = LegacyBloomFilter.getFilter(FilterTestHelper.ELEMENTS, FilterTestHelper.MAX_FAILURE_RATE);
     }
 
-    public static Filter testSerialize(LegacyBloomFilter f) throws IOException
+    public static IFilter testSerialize(LegacyBloomFilter f) throws IOException
     {
         f.add(ByteBufferUtil.bytes("a"));
         DataOutputBuffer out = new DataOutputBuffer();
-        f.serializer().serialize(f, out);
+        FilterFactory.serialize(f, out, FilterFactory.Type.SHA);
 
         ByteArrayInputStream in = new ByteArrayInputStream(out.getData(), 0, out.getLength());
-        LegacyBloomFilter f2 = f.serializer().deserialize(new DataInputStream(in));
+        LegacyBloomFilter f2 = (LegacyBloomFilter) FilterFactory.deserialize(new DataInputStream(in), FilterFactory.Type.SHA, false);
 
         assert f2.isPresent(ByteBufferUtil.bytes("a"));
         assert !f2.isPresent(ByteBufferUtil.bytes("b"));

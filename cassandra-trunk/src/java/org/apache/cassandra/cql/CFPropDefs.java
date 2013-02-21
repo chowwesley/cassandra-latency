@@ -1,5 +1,4 @@
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -8,38 +7,35 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.apache.cassandra.cql;
-
-import com.google.common.collect.Sets;
-import org.apache.cassandra.config.CFMetaData;
-import org.apache.cassandra.config.ConfigurationException;
-import org.apache.cassandra.db.compaction.AbstractCompactionStrategy;
-import org.apache.cassandra.db.marshal.AbstractType;
-import org.apache.cassandra.db.marshal.TypeParser;
-import org.apache.cassandra.io.compress.CompressionParameters;
-import org.apache.cassandra.io.compress.SnappyCompressor;
-import org.apache.cassandra.thrift.InvalidRequestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.apache.cassandra.config.CFMetaData;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.db.compaction.AbstractCompactionStrategy;
+import org.apache.cassandra.db.marshal.AbstractType;
+import org.apache.cassandra.db.marshal.TypeParser;
+import org.apache.cassandra.exceptions.InvalidRequestException;
+import org.apache.cassandra.exceptions.SyntaxException;
+
 public class CFPropDefs {
-    private static Logger logger = LoggerFactory.getLogger(CFPropDefs.class);
+    private static final Logger logger = LoggerFactory.getLogger(CFPropDefs.class);
 
     public static final String KW_COMPARATOR = "comparator";
     public static final String KW_COMMENT = "comment";
@@ -52,7 +48,11 @@ public class CFPropDefs {
     public static final String KW_REPLICATEONWRITE = "replicate_on_write";
     public static final String KW_COMPACTION_STRATEGY_CLASS = "compaction_strategy_class";
     public static final String KW_CACHING = "caching";
+    public static final String KW_DEFAULT_TIME_TO_LIVE = "default_time_to_live";
+    public static final String KW_SPECULATIVE_RETRY = "speculative_retry";
+    public static final String KW_POPULATE_IO_CACHE_ON_FLUSH = "populate_io_cache_on_flush";
     public static final String KW_BF_FP_CHANCE = "bloom_filter_fp_chance";
+    public static final String KW_MEMTABLE_FLUSH_PERIOD = "memtable_flush_period_in_ms";
 
     // Maps CQL short names to the respective Cassandra comparator/validator class names
     public static final Map<String, String> comparators = new HashMap<String, String>();
@@ -62,8 +62,6 @@ public class CFPropDefs {
 
     public static final String COMPACTION_OPTIONS_PREFIX = "compaction_strategy_options";
     public static final String COMPRESSION_PARAMETERS_PREFIX = "compression_parameters";
-
-    private static final String DEFAULT_COMPRESSOR = SnappyCompressor.isAvailable() ? SnappyCompressor.class.getCanonicalName() : null;
 
     static
     {
@@ -93,7 +91,11 @@ public class CFPropDefs {
         keywords.add(KW_REPLICATEONWRITE);
         keywords.add(KW_COMPACTION_STRATEGY_CLASS);
         keywords.add(KW_CACHING);
+        keywords.add(KW_DEFAULT_TIME_TO_LIVE);
+        keywords.add(KW_SPECULATIVE_RETRY);
+        keywords.add(KW_POPULATE_IO_CACHE_ON_FLUSH);
         keywords.add(KW_BF_FP_CHANCE);
+        keywords.add(KW_MEMTABLE_FLUSH_PERIOD);
 
         obsoleteKeywords.add("row_cache_size");
         obsoleteKeywords.add("key_cache_size");
@@ -111,24 +113,11 @@ public class CFPropDefs {
     public final Map<String, String> properties = new HashMap<String, String>();
     public Class<? extends AbstractCompactionStrategy> compactionStrategyClass;
     public final Map<String, String> compactionStrategyOptions = new HashMap<String, String>();
-    public final Map<String, String> compressionParameters = new HashMap<String, String>()
-    {{
-        if (CFMetaData.DEFAULT_COMPRESSOR != null)
-            put(CompressionParameters.SSTABLE_COMPRESSION, CFMetaData.DEFAULT_COMPRESSOR);
-    }};
+    public final Map<String, String> compressionParameters = new HashMap<String, String>();
 
-    public void validate() throws InvalidRequestException
+    public void validate() throws InvalidRequestException, ConfigurationException
     {
-        String compStrategy = getPropertyString(KW_COMPACTION_STRATEGY_CLASS, CFMetaData.DEFAULT_COMPACTION_STRATEGY_CLASS);
-
-        try
-        {
-            compactionStrategyClass = CFMetaData.createCompactionStrategy(compStrategy);
-        }
-        catch (ConfigurationException e)
-        {
-            throw new InvalidRequestException(e.getMessage());
-        }
+        compactionStrategyClass = CFMetaData.DEFAULT_COMPACTION_STRATEGY_CLASS;
 
         // we need to remove parent:key = value pairs from the main properties
         Set<String> propsToRemove = new HashSet<String>();
@@ -190,6 +179,19 @@ public class CFPropDefs {
                         KW_MINCOMPACTIONTHRESHOLD,
                         CFMetaData.DEFAULT_MIN_COMPACTION_THRESHOLD));
         }
+
+        Integer defaultTimeToLive = getPropertyInt(KW_DEFAULT_TIME_TO_LIVE, null);
+
+        if (defaultTimeToLive != null)
+        {
+            if (defaultTimeToLive < 0)
+                throw new InvalidRequestException(String.format("%s cannot be smaller than %s, (default %s)",
+                        KW_DEFAULT_TIME_TO_LIVE,
+                        0,
+                        CFMetaData.DEFAULT_DEFAULT_TIME_TO_LIVE));
+        }
+
+        CFMetaData.validateCompactionOptions(compactionStrategyClass, compactionStrategyOptions);
     }
 
     /** Map a keyword to the corresponding value */
@@ -208,14 +210,14 @@ public class CFPropDefs {
      * knows what they are doing (a custom comparator/validator for example), and pass it on as-is.
      */
 
-    public AbstractType<?> getComparator() throws ConfigurationException
+    public AbstractType<?> getComparator() throws ConfigurationException, SyntaxException
     {
         return TypeParser.parse((comparators.get(getPropertyString(KW_COMPARATOR, "text")) != null)
                                   ? comparators.get(getPropertyString(KW_COMPARATOR, "text"))
                                   : getPropertyString(KW_COMPARATOR, "text"));
     }
 
-    public AbstractType<?> getValidator() throws ConfigurationException
+    public AbstractType<?> getValidator() throws ConfigurationException, SyntaxException
     {
         return TypeParser.parse((comparators.get(getPropertyString(KW_DEFAULTVALIDATION, "text")) != null)
                                   ? comparators.get(getPropertyString(KW_DEFAULTVALIDATION, "text"))
@@ -252,7 +254,7 @@ public class CFPropDefs {
         {
             try
             {
-                result = Double.parseDouble(value);
+                result = Double.valueOf(value);
             }
             catch (NumberFormatException e)
             {
@@ -274,7 +276,7 @@ public class CFPropDefs {
         {
             try
             {
-                result = Integer.parseInt(value);
+                result = Integer.valueOf(value);
             }
             catch (NumberFormatException e)
             {

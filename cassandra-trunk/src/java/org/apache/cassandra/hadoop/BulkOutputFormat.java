@@ -1,7 +1,4 @@
-package org.apache.cassandra.hadoop;
-
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -10,22 +7,20 @@ package org.apache.cassandra.hadoop;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.hadoop;
+
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.thrift.Mutation;
 import org.apache.hadoop.conf.Configuration;
@@ -34,8 +29,6 @@ import org.apache.hadoop.mapreduce.*;
 public class BulkOutputFormat extends OutputFormat<ByteBuffer,List<Mutation>>
     implements org.apache.hadoop.mapred.OutputFormat<ByteBuffer,List<Mutation>>
 {
-    private static final Logger logger = LoggerFactory.getLogger(BulkOutputFormat.class);
-
     @Override
     public void checkOutputSpecs(JobContext context)
     {
@@ -44,9 +37,9 @@ public class BulkOutputFormat extends OutputFormat<ByteBuffer,List<Mutation>>
 
     private void checkOutputSpecs(Configuration conf)
     {
-        if (ConfigHelper.getOutputKeyspace(conf) == null || ConfigHelper.getOutputColumnFamily(conf) == null)
+        if (ConfigHelper.getOutputKeyspace(conf) == null)
         {
-            throw new UnsupportedOperationException("you must set the keyspace and columnfamily with setColumnFamily()");
+            throw new UnsupportedOperationException("you must set the keyspace with setColumnFamily()");
         }
     }
 

@@ -21,25 +21,26 @@ package org.apache.cassandra.db;
  */
 
 
+import java.net.InetAddress;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
 import org.apache.cassandra.SchemaLoader;
-import org.apache.cassandra.db.ColumnFamilyStore;
-import org.apache.cassandra.db.HintedHandOffManager;
-import org.apache.cassandra.db.RowMutation;
-import org.apache.cassandra.db.Table;
+import org.apache.cassandra.cql3.UntypedResultSet;
 import org.apache.cassandra.db.compaction.CompactionManager;
 import org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy;
-import org.apache.cassandra.db.filter.QueryPath;
-import org.apache.cassandra.dht.IPartitioner;
-import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.db.marshal.Int32Type;
+import org.apache.cassandra.db.marshal.UUIDType;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.utils.FBUtilities;
 
+import com.google.common.collect.Iterators;
+
 import static junit.framework.Assert.assertEquals;
+import static org.apache.cassandra.cql3.QueryProcessor.processInternal;
 
 public class HintedHandOffTest extends SchemaLoader
 {
@@ -54,7 +55,7 @@ public class HintedHandOffTest extends SchemaLoader
     {
         // prepare hints column family
         Table systemTable = Table.open("system");
-        ColumnFamilyStore hintStore = systemTable.getColumnFamilyStore(HintedHandOffManager.HINTS_CF);
+        ColumnFamilyStore hintStore = systemTable.getColumnFamilyStore(SystemTable.HINTS_CF);
         hintStore.clearUnsafe();
         hintStore.metadata.gcGraceSeconds(36000); // 10 hours
         hintStore.setCompactionStrategyClass(SizeTieredCompactionStrategy.class.getCanonicalName());
@@ -62,13 +63,9 @@ public class HintedHandOffTest extends SchemaLoader
 
         // insert 1 hint
         RowMutation rm = new RowMutation(TABLE4, ByteBufferUtil.bytes(1));
-        rm.add(new QueryPath(STANDARD1_CF,
-                             null,
-                             ByteBufferUtil.bytes(String.valueOf(COLUMN1))),
-               ByteBufferUtil.EMPTY_BYTE_BUFFER,
-               System.currentTimeMillis());
+        rm.add(STANDARD1_CF, ByteBufferUtil.bytes(String.valueOf(COLUMN1)), ByteBufferUtil.EMPTY_BYTE_BUFFER, System.currentTimeMillis());
 
-        RowMutation.hintFor(rm, ByteBufferUtil.bytes("foo")).apply();
+        RowMutation.hintFor(rm, UUID.randomUUID()).apply();
 
         // flush data to disk
         hintStore.forceBlockingFlush();
@@ -82,5 +79,17 @@ public class HintedHandOffTest extends SchemaLoader
         // single row should not be removed because of gc_grace_seconds
         // is 10 hours and there are no any tombstones in sstable
         assertEquals(1, hintStore.getSSTables().size());
+    }
+
+    @Test
+    public void testHintsMetrics() throws Exception
+    {
+        for (int i = 0; i < 99; i++)
+            HintedHandOffManager.instance.metrics.incrPastWindow(InetAddress.getLocalHost());
+        HintedHandOffManager.instance.metrics.log();
+
+        UntypedResultSet rows = processInternal("SELECT hints_dropped FROM system." + SystemTable.PEER_EVENTS_CF);
+        Map<UUID, Integer> returned = rows.one().getMap("hints_dropped", UUIDType.instance, Int32Type.instance);
+        assertEquals(Iterators.getLast(returned.values().iterator()).intValue(), 99);
     }
 }

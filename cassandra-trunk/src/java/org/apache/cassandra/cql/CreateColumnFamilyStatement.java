@@ -1,5 +1,4 @@
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -8,31 +7,31 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cql;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.cassandra.config.CFMetaData;
 import org.apache.cassandra.config.ColumnDefinition;
-import org.apache.cassandra.config.ConfigurationException;
 import org.apache.cassandra.db.ColumnFamilyType;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.db.marshal.TypeParser;
-import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.exceptions.InvalidRequestException;
+import org.apache.cassandra.exceptions.SyntaxException;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.io.compress.CompressionParameters;
 
@@ -41,9 +40,9 @@ public class CreateColumnFamilyStatement
 {
     private final String name;
     private final Map<Term, String> columns = new HashMap<Term, String>();
-    private List<String> keyValidator = new ArrayList<String>();
+    private final List<String> keyValidator = new ArrayList<String>();
     private ByteBuffer keyAlias = null;
-    private CFPropDefs cfProps = new CFPropDefs();
+    private final CFPropDefs cfProps = new CFPropDefs();
 
     public CreateColumnFamilyStatement(String name)
     {
@@ -53,8 +52,6 @@ public class CreateColumnFamilyStatement
     /** Perform validation of parsed params */
     private void validate(List<ByteBuffer> variables) throws InvalidRequestException
     {
-        cfProps.validate();
-
         // Ensure that exactly one key has been specified.
         if (keyValidator.size() < 1)
             throw new InvalidRequestException("You must specify a PRIMARY KEY");
@@ -65,9 +62,14 @@ public class CreateColumnFamilyStatement
 
         try
         {
+            cfProps.validate();
             comparator = cfProps.getComparator();
         }
         catch (ConfigurationException e)
+        {
+            throw new InvalidRequestException(e.toString());
+        }
+        catch (SyntaxException e)
         {
             throw new InvalidRequestException(e.toString());
         }
@@ -128,7 +130,7 @@ public class CreateColumnFamilyStatement
         {
             try
             {
-                ByteBuffer columnName = comparator.fromString(col.getKey().getText());
+                ByteBuffer columnName = comparator.fromStringCQL2(col.getKey().getText());
                 String validatorClassName = CFPropDefs.comparators.containsKey(col.getValue())
                                           ? CFPropDefs.comparators.get(col.getValue())
                                           : col.getValue();
@@ -136,6 +138,12 @@ public class CreateColumnFamilyStatement
                 columnDefs.put(columnName, new ColumnDefinition(columnName, validator, null, null, null, null));
             }
             catch (ConfigurationException e)
+            {
+                InvalidRequestException ex = new InvalidRequestException(e.toString());
+                ex.initCause(e);
+                throw ex;
+            }
+            catch (SyntaxException e)
             {
                 InvalidRequestException ex = new InvalidRequestException(e.toString());
                 ex.initCause(e);
@@ -169,6 +177,9 @@ public class CreateColumnFamilyStatement
                                      comparator,
                                      null);
 
+            if (CFMetaData.DEFAULT_COMPRESSOR != null && cfProps.compressionParameters.isEmpty())
+                cfProps.compressionParameters.put(CompressionParameters.SSTABLE_COMPRESSION, CFMetaData.DEFAULT_COMPRESSOR);
+
             newCFMD.comment(cfProps.getProperty(CFPropDefs.KW_COMMENT))
                    .readRepairChance(getPropertyDouble(CFPropDefs.KW_READREPAIRCHANCE, CFMetaData.DEFAULT_READ_REPAIR_CHANCE))
                    .dcLocalReadRepairChance(getPropertyDouble(CFPropDefs.KW_DCLOCALREADREPAIRCHANCE, CFMetaData.DEFAULT_DCLOCAL_READ_REPAIR_CHANCE))
@@ -179,14 +190,25 @@ public class CreateColumnFamilyStatement
                    .maxCompactionThreshold(getPropertyInt(CFPropDefs.KW_MAXCOMPACTIONTHRESHOLD, CFMetaData.DEFAULT_MAX_COMPACTION_THRESHOLD))
                    .columnMetadata(getColumns(comparator))
                    .keyValidator(TypeParser.parse(CFPropDefs.comparators.get(getKeyType())))
-                   .keyAlias(keyAlias)
                    .compactionStrategyClass(cfProps.compactionStrategyClass)
                    .compactionStrategyOptions(cfProps.compactionStrategyOptions)
                    .compressionParameters(CompressionParameters.create(cfProps.compressionParameters))
                    .caching(CFMetaData.Caching.fromString(getPropertyString(CFPropDefs.KW_CACHING, CFMetaData.DEFAULT_CACHING_STRATEGY.toString())))
-                   .bloomFilterFpChance(getPropertyDouble(CFPropDefs.KW_BF_FP_CHANCE, CFMetaData.DEFAULT_BF_FP_CHANCE));
+                   .speculativeRetry(CFMetaData.SpeculativeRetry.fromString(getPropertyString(CFPropDefs.KW_SPECULATIVE_RETRY, CFMetaData.DEFAULT_SPECULATIVE_RETRY.toString())))
+                   .bloomFilterFpChance(getPropertyDouble(CFPropDefs.KW_BF_FP_CHANCE, null))
+                   .memtableFlushPeriod(getPropertyInt(CFPropDefs.KW_MEMTABLE_FLUSH_PERIOD, 0))
+                   .defaultTimeToLive(getPropertyInt(CFPropDefs.KW_DEFAULT_TIME_TO_LIVE, CFMetaData.DEFAULT_DEFAULT_TIME_TO_LIVE))
+                   .populateIoCacheOnFlush(getPropertyBoolean(CFPropDefs.KW_POPULATE_IO_CACHE_ON_FLUSH, CFMetaData.DEFAULT_POPULATE_IO_CACHE_ON_FLUSH));
+
+            // CQL2 can have null keyAliases
+            if (keyAlias != null)
+                newCFMD.keyAliases(Collections.<ByteBuffer>singletonList(keyAlias));
         }
         catch (ConfigurationException e)
+        {
+            throw new InvalidRequestException(e.toString());
+        }
+        catch (SyntaxException e)
         {
             throw new InvalidRequestException(e.toString());
         }

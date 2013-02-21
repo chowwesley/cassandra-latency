@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.service;
 
 import java.util.List;
@@ -24,31 +23,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.db.*;
-import org.apache.cassandra.db.filter.QueryFilter;
 import org.apache.cassandra.net.IVerbHandler;
-import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessageIn;
 import org.apache.cassandra.net.MessagingService;
+import org.apache.cassandra.thrift.ThriftValidation;
+import org.apache.cassandra.tracing.Tracing;
 
 @Deprecated // 1.1 implements index scan with RangeSliceVerb instead
-public class IndexScanVerbHandler implements IVerbHandler
+public class IndexScanVerbHandler implements IVerbHandler<IndexScanCommand>
 {
     private static final Logger logger = LoggerFactory.getLogger(IndexScanVerbHandler.class);
 
-    public void doVerb(Message message, String id)
+    public void doVerb(MessageIn<IndexScanCommand> message, String id)
     {
         try
         {
-            IndexScanCommand command = IndexScanCommand.read(message);
+            IndexScanCommand command = message.payload;
             ColumnFamilyStore cfs = Table.open(command.keyspace).getColumnFamilyStore(command.column_family);
             List<Row> rows = cfs.search(command.index_clause.expressions,
                                         command.range,
                                         command.index_clause.count,
-                                        QueryFilter.getFilter(command.predicate, cfs.getComparator()));
+                                        ThriftValidation.asIFilter(command.predicate, cfs.metadata, null));
             RangeSliceReply reply = new RangeSliceReply(rows);
-            Message response = reply.getReply(message);
-            if (logger.isDebugEnabled())
-                logger.debug("Sending " + reply+ " to " + id + "@" + message.getFrom());
-            MessagingService.instance().sendReply(response, id, message.getFrom());
+            Tracing.trace("Enqueuing response to {}", message.from);
+            MessagingService.instance().sendReply(reply.createMessage(), id, message.from);
         }
         catch (Exception ex)
         {

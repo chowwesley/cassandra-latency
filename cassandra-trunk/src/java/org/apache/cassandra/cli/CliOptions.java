@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,6 +18,7 @@
 package org.apache.cassandra.cli;
 
 import org.apache.commons.cli.*;
+import org.apache.thrift.transport.TTransportFactory;
 
 /**
  *
@@ -26,7 +27,7 @@ import org.apache.commons.cli.*;
  */
 public class CliOptions
 {
-    private static CLIOptions options = null; // Info about command line options
+    private static final CLIOptions options; // Info about command line options
 
     // Name of the command line tool (used for error messages)
     private static final String TOOL_NAME = "cassandra-cli";
@@ -34,7 +35,7 @@ public class CliOptions
     // Command line options
     private static final String HOST_OPTION = "host";
     private static final String PORT_OPTION = "port";
-    private static final String UNFRAME_OPTION = "unframed";
+    private static final String TRANSPORT_FACTORY = "transport-factory";
     private static final String DEBUG_OPTION = "debug";
     private static final String USERNAME_OPTION = "username";
     private static final String PASSWORD_OPTION = "password";
@@ -43,8 +44,17 @@ public class CliOptions
     private static final String HELP_OPTION = "help";
     private static final String FILE_OPTION = "file";
     private static final String JMX_PORT_OPTION = "jmxport";
+    private static final String JMX_USERNAME_OPTION = "jmxusername";
+    private static final String JMX_PASSWORD_OPTION = "jmxpassword";
     private static final String VERBOSE_OPTION  = "verbose";
     private static final String SCHEMA_MIGRATION_WAIT_TIME = "schema-mwt";
+
+    private static final String SSL_TRUSTSTORE = "truststore";
+    private static final String SSL_TRUSTSTORE_PW = "truststore-password";
+    private static final String SSL_PROTOCOL = "ssl-protocol";
+    private static final String SSL_ALGORITHM = "ssl-alg";
+    private static final String SSL_STORE_TYPE = "store-type";
+    private static final String SSL_CIPHER_SUITES = "ssl-ciphers";
 
     // Default values for optional command line arguments
     private static final String DEFAULT_HOST        = "127.0.0.1";
@@ -63,11 +73,21 @@ public class CliOptions
         options.addOption("k",  KEYSPACE_OPTION, "KEYSPACE", "cassandra keyspace user is authenticated against");
         options.addOption("f",  FILE_OPTION,     "FILENAME", "load statements from the specific file");
         options.addOption(null, JMX_PORT_OPTION, "JMX-PORT", "JMX service port");
+        options.addOption(null, JMX_USERNAME_OPTION, "JMX-USERNAME", "JMX service username");
+        options.addOption(null, JMX_PASSWORD_OPTION, "JMX-PASSWORD", "JMX service password");
         options.addOption(null, SCHEMA_MIGRATION_WAIT_TIME,  "TIME", "Schema migration wait time (secs.), default is 10 secs");
+        options.addOption("tf", TRANSPORT_FACTORY, "TRANSPORT-FACTORY", "Fully-qualified TTransportFactory class name for creating a connection to cassandra");
+
+        // ssl connection-related options
+        options.addOption("ts", SSL_TRUSTSTORE, "TRUSTSTORE", "SSL: full path to truststore");
+        options.addOption("tspw", SSL_TRUSTSTORE_PW, "TRUSTSTORE-PASSWORD", "SSL: full path to truststore");
+        options.addOption("prtcl", SSL_PROTOCOL, "PROTOCOL", "SSL: connections protocol to use (default: TLS)");
+        options.addOption("alg", SSL_ALGORITHM, "ALGORITHM", "SSL: algorithm (default: SunX509)");
+        options.addOption("st", SSL_STORE_TYPE, "STORE-TYPE", "SSL: type of store");
+        options.addOption("ciphers", SSL_CIPHER_SUITES, "CIPHER-SUITES", "SSL: comma-separated list of encryption suites to use");
 
         // options without argument
         options.addOption("B",  BATCH_OPTION,   "enabled batch mode (suppress output; errors are fatal)");
-        options.addOption(null, UNFRAME_OPTION, "use cassandra server's unframed transport");
         options.addOption(null, DEBUG_OPTION,   "display stack-traces (NOTE: We print strack-traces in the places where it makes sense even without --debug)");
         options.addOption("?",  HELP_OPTION,    "usage help");
         options.addOption("v",  VERBOSE_OPTION, "verbose output when using batch mode");
@@ -95,13 +115,11 @@ public class CliOptions
                 css.hostName = DEFAULT_HOST;
             }
 
-            // Look to see if frame has been specified
-            if (cmd.hasOption(UNFRAME_OPTION))
+            if (cmd.hasOption(TRANSPORT_FACTORY))
             {
-                css.framed = false;
+                css.transportFactory = validateAndSetTransportFactory(cmd.getOptionValue(TRANSPORT_FACTORY));
             }
 
-            // Look to see if frame has been specified
             if (cmd.hasOption(DEBUG_OPTION))
             {
                 css.debug = true;
@@ -120,26 +138,18 @@ public class CliOptions
             // Look for authentication credentials (username and password)
             if (cmd.hasOption(USERNAME_OPTION))
             {
-            	css.username = cmd.getOptionValue(USERNAME_OPTION);
-            }
-            else
-            {
-                css.username = "default";
+                css.username = cmd.getOptionValue(USERNAME_OPTION);
             }
 
             if (cmd.hasOption(PASSWORD_OPTION))
             {
-            	css.password = cmd.getOptionValue(PASSWORD_OPTION);
-            }
-            else
-            {
-                css.password = "";
+                css.password = cmd.getOptionValue(PASSWORD_OPTION);
             }
 
             // Look for keyspace
             if (cmd.hasOption(KEYSPACE_OPTION))
             {
-            	css.keyspace = cmd.getOptionValue(KEYSPACE_OPTION);
+                css.keyspace = cmd.getOptionValue(KEYSPACE_OPTION);
             }
 
             if (cmd.hasOption(BATCH_OPTION))
@@ -155,6 +165,16 @@ public class CliOptions
             if (cmd.hasOption(JMX_PORT_OPTION))
             {
                 css.jmxPort = Integer.parseInt(cmd.getOptionValue(JMX_PORT_OPTION));
+            }
+
+            if (cmd.hasOption(JMX_USERNAME_OPTION))
+            {
+                css.jmxUsername = cmd.getOptionValue(JMX_USERNAME_OPTION);
+            }
+
+            if (cmd.hasOption(JMX_PASSWORD_OPTION))
+            {
+                css.jmxPassword = cmd.getOptionValue(JMX_PASSWORD_OPTION);
             }
 
             if (cmd.hasOption(HELP_OPTION))
@@ -173,10 +193,40 @@ public class CliOptions
                 css.schema_mwt = Integer.parseInt(cmd.getOptionValue(SCHEMA_MIGRATION_WAIT_TIME)) * 1000;
             }
 
+            if(cmd.hasOption(SSL_TRUSTSTORE))
+            {
+                css.encOptions.truststore = cmd.getOptionValue(SSL_TRUSTSTORE);
+            }
+
+            if(cmd.hasOption(SSL_TRUSTSTORE_PW))
+            {
+                css.encOptions.truststore_password = cmd.getOptionValue(SSL_TRUSTSTORE_PW);
+            }
+
+            if(cmd.hasOption(SSL_PROTOCOL))
+            {
+                css.encOptions.protocol = cmd.getOptionValue(SSL_PROTOCOL);
+            }
+
+            if(cmd.hasOption(SSL_ALGORITHM))
+            {
+                css.encOptions.algorithm = cmd.getOptionValue(SSL_ALGORITHM);
+            }
+
+            if(cmd.hasOption(SSL_STORE_TYPE))
+            {
+                css.encOptions.store_type = cmd.getOptionValue(SSL_STORE_TYPE);
+            }
+
+            if(cmd.hasOption(SSL_CIPHER_SUITES))
+            {
+                css.encOptions.cipher_suites = cmd.getOptionValue(SSL_CIPHER_SUITES).split(",");
+            }
+
             // Abort if there are any unrecognized arguments left
             if (cmd.getArgs().length > 0)
             {
-                System.err.printf("Unknown argument: %s\n", cmd.getArgs()[0]);
+                System.err.printf("Unknown argument: %s%n", cmd.getArgs()[0]);
                 System.err.println();
                 printUsage();
                 System.exit(1);
@@ -222,4 +272,21 @@ public class CliOptions
         }
     }
 
+    private static TTransportFactory validateAndSetTransportFactory(String transportFactory)
+    {
+        try
+        {
+            Class factory = Class.forName(transportFactory);
+
+            if(!TTransportFactory.class.isAssignableFrom(factory))
+                throw new IllegalArgumentException(String.format("transport factory '%s' " +
+                                                                 "not derived from TTransportFactory", transportFactory));
+
+            return (TTransportFactory) factory.newInstance();
+        }
+        catch (Exception e)
+        {
+            throw new IllegalArgumentException(String.format("Cannot create a transport factory '%s'.", transportFactory), e);
+        }
+    }
 }

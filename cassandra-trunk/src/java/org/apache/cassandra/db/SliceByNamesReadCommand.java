@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,41 +21,39 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 
-import org.apache.cassandra.db.filter.QueryFilter;
-import org.apache.cassandra.db.filter.QueryPath;
+import org.apache.cassandra.config.CFMetaData;
+import org.apache.cassandra.config.Schema;
+import org.apache.cassandra.db.filter.*;
+import org.apache.cassandra.db.marshal.AbstractType;
+import org.apache.cassandra.db.marshal.CompositeType;
 import org.apache.cassandra.io.IVersionedSerializer;
+import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.service.StorageService;
-import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.FBUtilities;
 
 public class SliceByNamesReadCommand extends ReadCommand
 {
-    public final SortedSet<ByteBuffer> columnNames;
+    static final SliceByNamesReadCommandSerializer serializer = new SliceByNamesReadCommandSerializer();
 
-    public SliceByNamesReadCommand(String table, ByteBuffer key, ColumnParent column_parent, Collection<ByteBuffer> columnNames)
-    {
-        this(table, key, new QueryPath(column_parent), columnNames);
-    }
+    public final NamesQueryFilter filter;
 
-    public SliceByNamesReadCommand(String table, ByteBuffer key, QueryPath path, Collection<ByteBuffer> columnNames)
+    public SliceByNamesReadCommand(String table, ByteBuffer key, String cfName, NamesQueryFilter filter)
     {
-        super(table, key, path, CMD_TYPE_GET_SLICE_BY_NAMES);
-        this.columnNames = new TreeSet<ByteBuffer>(getComparator());
-        this.columnNames.addAll(columnNames);
+        super(table, key, cfName, Type.GET_BY_NAMES);
+        this.filter = filter;
     }
 
     public ReadCommand copy()
     {
-        ReadCommand readCommand= new SliceByNamesReadCommand(table, key, queryPath, columnNames);
+        ReadCommand readCommand= new SliceByNamesReadCommand(table, key, cfName, filter);
         readCommand.setDigestQuery(isDigestQuery());
         return readCommand;
     }
 
     public Row getRow(Table table) throws IOException
     {
-        DecoratedKey<?> dk = StorageService.getPartitioner().decorateKey(key);
-        return table.getRow(QueryFilter.getNamesFilter(dk, queryPath, columnNames));
+        DecoratedKey dk = StorageService.getPartitioner().decorateKey(key);
+        return table.getRow(new QueryFilter(dk, cfName, filter));
     }
 
     @Override
@@ -64,63 +62,119 @@ public class SliceByNamesReadCommand extends ReadCommand
         return "SliceByNamesReadCommand(" +
                "table='" + table + '\'' +
                ", key=" + ByteBufferUtil.bytesToHex(key) +
-               ", columnParent='" + queryPath + '\'' +
-               ", columns=[" + getComparator().getString(columnNames) + "]" +
+               ", cfName='" + cfName + '\'' +
+               ", filter=" + filter +
                ')';
     }
 
+    public IDiskAtomFilter filter()
+    {
+        return filter;
+    }
 }
 
 class SliceByNamesReadCommandSerializer implements IVersionedSerializer<ReadCommand>
 {
     public void serialize(ReadCommand cmd, DataOutput dos, int version) throws IOException
     {
+        serialize(cmd, null, dos, version);
+    }
+
+    public void serialize(ReadCommand cmd, ByteBuffer superColumn, DataOutput dos, int version) throws IOException
+    {
         SliceByNamesReadCommand command = (SliceByNamesReadCommand) cmd;
         dos.writeBoolean(command.isDigestQuery());
         dos.writeUTF(command.table);
         ByteBufferUtil.writeWithShortLength(command.key, dos);
-        command.queryPath.serialize(dos);
-        dos.writeInt(command.columnNames.size());
-        if (!command.columnNames.isEmpty())
-        {
-            for (ByteBuffer cName : command.columnNames)
-            {
-                ByteBufferUtil.writeWithShortLength(cName, dos);
-            }
-        }
+
+        if (version < MessagingService.VERSION_20)
+            new QueryPath(command.cfName, superColumn).serialize(dos);
+        else
+            dos.writeUTF(command.cfName);
+
+        NamesQueryFilter.serializer.serialize(command.filter, dos, version);
     }
 
-    public SliceByNamesReadCommand deserialize(DataInput dis, int version) throws IOException
+    public ReadCommand deserialize(DataInput dis, int version) throws IOException
     {
         boolean isDigest = dis.readBoolean();
         String table = dis.readUTF();
         ByteBuffer key = ByteBufferUtil.readWithShortLength(dis);
-        QueryPath columnParent = QueryPath.deserialize(dis);
 
-        int size = dis.readInt();
-        List<ByteBuffer> columns = new ArrayList<ByteBuffer>(size);
-        for (int i = 0; i < size; ++i)
+        String cfName;
+        ByteBuffer sc = null;
+        if (version < MessagingService.VERSION_20)
         {
-            columns.add(ByteBufferUtil.readWithShortLength(dis));
+            QueryPath path = QueryPath.deserialize(dis);
+            cfName = path.columnFamilyName;
+            sc = path.superColumnName;
         }
-        SliceByNamesReadCommand command = new SliceByNamesReadCommand(table, key, columnParent, columns);
+        else
+        {
+            cfName = dis.readUTF();
+        }
+
+        CFMetaData metadata = Schema.instance.getCFMetaData(table, cfName);
+        ReadCommand command;
+        if (version < MessagingService.VERSION_20)
+        {
+            AbstractType<?> comparator;
+            if (metadata.cfType == ColumnFamilyType.Super)
+            {
+                CompositeType type = (CompositeType)metadata.comparator;
+                comparator = sc == null ? type.types.get(0) : type.types.get(1);
+            }
+            else
+            {
+                comparator = metadata.comparator;
+            }
+
+            IDiskAtomFilter filter = NamesQueryFilter.serializer.deserialize(dis, version, comparator);
+
+            if (metadata.cfType == ColumnFamilyType.Super)
+                filter = SuperColumns.fromSCFilter((CompositeType)metadata.comparator, sc, filter);
+
+            // Due to SC compat, it's possible we get back a slice filter at this point
+            if (filter instanceof NamesQueryFilter)
+                command = new SliceByNamesReadCommand(table, key, cfName, (NamesQueryFilter)filter);
+            else
+                command = new SliceFromReadCommand(table, key, cfName, (SliceQueryFilter)filter);
+        }
+        else
+        {
+            NamesQueryFilter filter = NamesQueryFilter.serializer.deserialize(dis, version, metadata.comparator);
+            command = new SliceByNamesReadCommand(table, key, cfName, filter);
+        }
+
         command.setDigestQuery(isDigest);
         return command;
     }
 
     public long serializedSize(ReadCommand cmd, int version)
     {
+        return serializedSize(cmd, null, version);
+    }
+
+    public long serializedSize(ReadCommand cmd, ByteBuffer superColumn, int version)
+    {
+        TypeSizes sizes = TypeSizes.NATIVE;
         SliceByNamesReadCommand command = (SliceByNamesReadCommand) cmd;
-        int size = DBConstants.boolSize;
-        size += DBConstants.shortSize + FBUtilities.encodedUTF8Length(command.table);
-        size += DBConstants.shortSize + command.key.remaining();
-        size += command.queryPath.serializedSize();
-        size += DBConstants.intSize;
-        if (!command.columnNames.isEmpty())
+        int size = sizes.sizeof(command.isDigestQuery());
+        int keySize = command.key.remaining();
+
+        size += sizes.sizeof(command.table);
+        size += sizes.sizeof((short)keySize) + keySize;
+
+        if (version < MessagingService.VERSION_20)
         {
-            for (ByteBuffer cName : command.columnNames)
-                size += DBConstants.shortSize + cName.remaining();
+            size += new QueryPath(command.cfName, superColumn).serializedSize(sizes);
         }
+        else
+        {
+            size += sizes.sizeof(command.cfName);
+        }
+
+        size += NamesQueryFilter.serializer.serializedSize(command.filter, version);
         return size;
     }
 }

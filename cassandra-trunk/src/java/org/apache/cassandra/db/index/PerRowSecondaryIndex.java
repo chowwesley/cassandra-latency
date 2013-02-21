@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,16 +17,12 @@
  */
 package org.apache.cassandra.db.index;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.util.List;
-import java.util.SortedSet;
 
+import org.apache.cassandra.db.Column;
 import org.apache.cassandra.db.ColumnFamily;
 import org.apache.cassandra.db.DecoratedKey;
-import org.apache.cassandra.db.IColumn;
-import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.utils.ByteBufferUtil;
 
 /**
@@ -35,29 +31,26 @@ import org.apache.cassandra.utils.ByteBufferUtil;
 public abstract class PerRowSecondaryIndex extends SecondaryIndex
 {
     /**
-     * Removes obsolete index entries and creates new ones for the given row key
-     * and mutated columns.
+     * Index the given row for new index creation.  @param cf will represent the entire row.
      *
      * @param rowKey the row key
      * @param cf the current rows data
-     * @param mutatedIndexedColumns the set of columns that were changed or added
-     * @param oldIndexedColumns the columns which were deleted
-     * @throws IOException
      */
-    public abstract void applyIndexUpdates(ByteBuffer rowKey,
-                                           ColumnFamily cf,
-                                           SortedSet<ByteBuffer> mutatedIndexedColumns,
-                                           ColumnFamily oldIndexedColumns) throws IOException;
+    public abstract void index(ByteBuffer rowKey, ColumnFamily cf);
 
+    /**
+     * Index the given row
+     *
+     * @param rowKey the row key
+     */
+    public abstract void index(ByteBuffer rowKey);
 
     /**
      * cleans up deleted columns from cassandra cleanup compaction
      *
      * @param key
-     * @param indexedColumnsInRow
      */
-    public abstract void deleteFromIndex(DecoratedKey<?> key, List<IColumn> indexedColumnsInRow);
-
+    public abstract void delete(DecoratedKey key);
 
     @Override
     public String getNameForSystemTable(ByteBuffer columnName)
@@ -71,7 +64,7 @@ public abstract class PerRowSecondaryIndex extends SecondaryIndex
             throw new RuntimeException(e);
         }
     }
-    
+
     @Override
     public boolean validate(Column column)
     {

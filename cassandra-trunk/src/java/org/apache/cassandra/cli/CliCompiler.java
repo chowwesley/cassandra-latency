@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.cli;
 
 import java.util.List;
@@ -94,12 +93,12 @@ public class CliCompiler
      * NODE_COLUMN_ACCESS related functions.
      */
 
-    public static String getColumnFamily(Tree astNode, List<CfDef> cfDefs)
+    public static String getColumnFamily(Tree astNode, Iterable<CfDef> cfDefs)
     {
         return getColumnFamily(CliUtils.unescapeSQLString(astNode.getChild(0).getText()), cfDefs);
     }
 
-    public static String getColumnFamily(String cfName, List<CfDef> cfDefs)
+    public static String getColumnFamily(String cfName, Iterable<CfDef> cfDefs)
     {
         int matches = 0;
         String lastMatchedName = "";

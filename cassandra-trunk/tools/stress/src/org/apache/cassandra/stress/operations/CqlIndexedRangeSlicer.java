@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
 
+import com.yammer.metrics.core.TimerContext;
 import org.apache.cassandra.db.ColumnFamilyType;
 import org.apache.cassandra.stress.Session;
 import org.apache.cassandra.stress.util.CassandraClient;
@@ -56,8 +57,12 @@ public class CqlIndexedRangeSlicer extends Operation
         if (cqlQuery == null)
         {
             StringBuilder query = new StringBuilder("SELECT FIRST ").append(session.getColumnsPerKey())
-                 .append(" ''..'' FROM Standard1 USING CONSISTENCY ").append(session.getConsistencyLevel())
-                 .append(" WHERE C1=").append(getUnQuotedCqlBlob(values.get(1).array()))
+                 .append(" ''..'' FROM Standard1");
+
+            if (session.cqlVersion.startsWith("2"))
+                query.append(" USING CONSISTENCY ").append(session.getConsistencyLevel());
+
+            query.append(" WHERE C1=").append(getUnQuotedCqlBlob(values.get(1).array(), session.cqlVersion.startsWith("3")))
                  .append(" AND KEY > ? LIMIT ").append(session.getKeysPerCall());
 
             cqlQuery = query.toString();
@@ -70,13 +75,13 @@ public class CqlIndexedRangeSlicer extends Operation
 
         while (received < expectedPerValue)
         {
-            long start = System.currentTimeMillis();
+            TimerContext context = session.latency.time();
 
             boolean success = false;
             String exceptionMessage = null;
             CqlResult results = null;
             String formattedQuery = null;
-            List<String> queryParms = Collections.singletonList(getUnQuotedCqlBlob(startOffset));
+            List<String> queryParms = Collections.singletonList(getUnQuotedCqlBlob(startOffset, session.cqlVersion.startsWith("3")));
 
             for (int t = 0; t < session.getRetryTimes(); t++)
             {
@@ -88,13 +93,19 @@ public class CqlIndexedRangeSlicer extends Operation
                     if (session.usePreparedStatements())
                     {
                         Integer stmntId = getPreparedStatement(client, cqlQuery);
-                        results = client.execute_prepared_cql_query(stmntId, queryParamsAsByteBuffer(queryParms));
+                        if (session.cqlVersion.startsWith("3"))
+                            results = client.execute_prepared_cql3_query(stmntId, queryParamsAsByteBuffer(queryParms), session.getConsistencyLevel());
+                        else
+                            results = client.execute_prepared_cql_query(stmntId, queryParamsAsByteBuffer(queryParms));
                     }
                     else
                     {
                         if (formattedQuery ==  null)
                             formattedQuery = formatCqlQuery(cqlQuery, queryParms);
-                        results = client.execute_cql_query(ByteBuffer.wrap(formattedQuery.getBytes()), Compression.NONE);
+                        if (session.cqlVersion.startsWith("3"))
+                            results = client.execute_cql3_query(ByteBuffer.wrap(formattedQuery.getBytes()), Compression.NONE, session.getConsistencyLevel());
+                        else
+                            results = client.execute_cql_query(ByteBuffer.wrap(formattedQuery.getBytes()), Compression.NONE);
                     }
 
                     success = (results.rows.size() != 0);
@@ -122,7 +133,7 @@ public class CqlIndexedRangeSlicer extends Operation
 
             session.operations.getAndIncrement();
             session.keys.getAndAdd(results.rows.size());
-            session.latency.getAndAdd(System.currentTimeMillis() - start);
+            context.stop();
         }
     }
 

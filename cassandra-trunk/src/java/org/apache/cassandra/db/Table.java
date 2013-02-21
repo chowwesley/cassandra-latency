@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,55 +15,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
-import java.io.IOError;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.cassandra.config.*;
-import org.apache.cassandra.db.commitlog.CommitLog;
-import org.apache.cassandra.db.filter.QueryFilter;
-import org.apache.cassandra.db.filter.QueryPath;
-import org.apache.cassandra.io.sstable.SSTableReader;
-import org.apache.cassandra.locator.AbstractReplicationStrategy;
-import org.apache.cassandra.service.StorageService;
-import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.FBUtilities;
-import org.apache.cassandra.utils.NodeId;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import org.apache.cassandra.config.*;
+import org.apache.cassandra.db.commitlog.CommitLog;
+import org.apache.cassandra.db.filter.ColumnSlice;
+import org.apache.cassandra.db.filter.QueryFilter;
+import org.apache.cassandra.db.index.SecondaryIndex;
+import org.apache.cassandra.db.index.SecondaryIndexManager;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.io.sstable.SSTableReader;
+import org.apache.cassandra.locator.AbstractReplicationStrategy;
+import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.tracing.Tracing;
 
 /**
  * It represents a Keyspace.
  */
 public class Table
 {
-    public static final String SYSTEM_TABLE = "system";
+    public static final String SYSTEM_KS = "system";
 
     private static final Logger logger = LoggerFactory.getLogger(Table.class);
 
     /**
      * accesses to CFS.memtable should acquire this for thread safety.
      * CFS.maybeSwitchMemtable should aquire the writeLock; see that method for the full explanation.
-     *
+     * <p/>
      * (Enabling fairness in the RRWL is observed to decrease throughput, so we leave it off.)
      */
     public static final ReentrantReadWriteLock switchLock = new ReentrantReadWriteLock();
@@ -73,24 +66,22 @@ public class Table
     static
     {
         if (!StorageService.instance.isClientMode())
-        {
-            try
-            {
-                DatabaseDescriptor.createAllDirectories();
-            }
-            catch (IOException ex)
-            {
-                throw new IOError(ex);
-            }
-        }
+            DatabaseDescriptor.createAllDirectories();
     }
 
-    /* Table name. */
-    public final String name;
+    public final KSMetaData metadata;
+
     /* ColumnFamilyStore per column family */
-    private final Map<Integer, ColumnFamilyStore> columnFamilyStores = new ConcurrentHashMap<Integer, ColumnFamilyStore>();
+    private final ConcurrentMap<UUID, ColumnFamilyStore> columnFamilyStores = new ConcurrentHashMap<UUID, ColumnFamilyStore>();
     private final Object[] indexLocks;
     private volatile AbstractReplicationStrategy replicationStrategy;
+    public static final Function<String,Table> tableTransformer = new Function<String, Table>()
+    {
+        public Table apply(String tableName)
+        {
+            return Table.open(tableName);
+        }
+    };
 
     public static Table open(String table)
     {
@@ -147,6 +138,22 @@ public class Table
         }
     }
 
+    /**
+     * Removes every SSTable in the directory from the appropriate DataTracker's view.
+     * @param directory the unreadable directory, possibly with SSTables in it, but not necessarily.
+     */
+    public static void removeUnreadableSSTables(File directory)
+    {
+        for (Table table : Table.all())
+        {
+            for (ColumnFamilyStore baseCfs : table.getColumnFamilyStores())
+            {
+                for (ColumnFamilyStore cfs : baseCfs.concatWithIndexes())
+                    cfs.maybeRemoveUnreadableSSTables(directory);
+            }
+        }
+    }
+
     public Collection<ColumnFamilyStore> getColumnFamilyStores()
     {
         return Collections.unmodifiableCollection(columnFamilyStores.values());
@@ -154,13 +161,13 @@ public class Table
 
     public ColumnFamilyStore getColumnFamilyStore(String cfName)
     {
-        Integer id = Schema.instance.getId(name, cfName);
+        UUID id = Schema.instance.getId(getName(), cfName);
         if (id == null)
-            throw new IllegalArgumentException(String.format("Unknown table/cf pair (%s.%s)", name, cfName));
+            throw new IllegalArgumentException(String.format("Unknown table/cf pair (%s.%s)", getName(), cfName));
         return getColumnFamilyStore(id);
     }
 
-    public ColumnFamilyStore getColumnFamilyStore(Integer id)
+    public ColumnFamilyStore getColumnFamilyStore(UUID id)
     {
         ColumnFamilyStore cfs = columnFamilyStores.get(id);
         if (cfs == null)
@@ -169,42 +176,11 @@ public class Table
     }
 
     /**
-     * Do a cleanup of keys that do not belong locally.
-     */
-    public void forceCleanup(NodeId.OneShotRenewer renewer) throws IOException, ExecutionException, InterruptedException
-    {
-        if (name.equals(SYSTEM_TABLE))
-            throw new UnsupportedOperationException("Cleanup of the system table is neither necessary nor wise");
-
-        // Sort the column families in order of SSTable size, so cleanup of smaller CFs
-        // can free up space for larger ones
-        List<ColumnFamilyStore> sortedColumnFamilies = new ArrayList<ColumnFamilyStore>(columnFamilyStores.values());
-        Collections.sort(sortedColumnFamilies, new Comparator<ColumnFamilyStore>()
-        {
-            // Compare first on size and, if equal, sort by name (arbitrary & deterministic).
-            public int compare(ColumnFamilyStore cf1, ColumnFamilyStore cf2)
-            {
-                long diff = (cf1.getTotalDiskSpaceUsed() - cf2.getTotalDiskSpaceUsed());
-                if (diff > 0)
-                    return 1;
-                if (diff < 0)
-                    return -1;
-                return cf1.columnFamily.compareTo(cf2.columnFamily);
-            }
-        });
-
-        // Cleanup in sorted order to free up space for the larger ones
-        for (ColumnFamilyStore cfs : sortedColumnFamilies)
-            cfs.forceCleanup(renewer);
-    }
-
-    /**
      * Take a snapshot of the specific column family, or the entire set of column families
      * if columnFamily is null with a given timestamp
      *
-     * @param snapshotName the tag associated with the name of the snapshot.  This value may not be null
+     * @param snapshotName     the tag associated with the name of the snapshot.  This value may not be null
      * @param columnFamilyName the column family to snapshot or all on null
-     *
      * @throws IOException if the column family doesn't exist
      */
     public void snapshot(String snapshotName, String columnFamilyName) throws IOException
@@ -213,7 +189,7 @@ public class Table
         boolean tookSnapShot = false;
         for (ColumnFamilyStore cfStore : columnFamilyStores.values())
         {
-            if (columnFamilyName == null || cfStore.columnFamily.equals(columnFamilyName))
+            if (columnFamilyName == null || cfStore.name.equals(columnFamilyName))
             {
                 tookSnapShot = true;
                 cfStore.snapshot(snapshotName);
@@ -259,9 +235,9 @@ public class Table
      * Clear all the snapshots for a given table.
      *
      * @param snapshotName the user supplied snapshot name. It empty or null,
-     * all the snapshots will be cleaned
+     *                     all the snapshots will be cleaned
      */
-    public void clearSnapshot(String snapshotName) throws IOException
+    public void clearSnapshot(String snapshotName)
     {
         for (ColumnFamilyStore cfStore : columnFamilyStores.values())
         {
@@ -282,12 +258,11 @@ public class Table
 
     private Table(String table, boolean loadSSTables)
     {
-        name = table;
-        KSMetaData ksm = Schema.instance.getKSMetaData(table);
-        assert ksm != null : "Unknown keyspace " + table;
+        metadata = Schema.instance.getKSMetaData(table);
+        assert metadata != null : "Unknown keyspace " + table;
         try
         {
-            createReplicationStrategy(ksm);
+            createReplicationStrategy(metadata);
         }
         catch (ConfigurationException e)
         {
@@ -298,9 +273,9 @@ public class Table
         for (int i = 0; i < indexLocks.length; i++)
             indexLocks[i] = new Object();
 
-        for (CFMetaData cfm : new ArrayList<CFMetaData>(Schema.instance.getTableDefinition(table).cfMetaData().values()))
+        for (CFMetaData cfm : new ArrayList<CFMetaData>(metadata.cfMetaData().values()))
         {
-            logger.debug("Initializing {}.{}", name, cfm.cfName);
+            logger.debug("Initializing {}.{}", getName(), cfm.cfName);
             initCf(cfm.cfId, cfm.cfName, loadSSTables);
         }
     }
@@ -318,7 +293,7 @@ public class Table
     }
 
     // best invoked on the compaction mananger.
-    public void dropCf(Integer cfId) throws IOException
+    public void dropCf(UUID cfId) throws IOException
     {
         assert columnFamilyStores.containsKey(cfId);
         ColumnFamilyStore cfs = columnFamilyStores.remove(cfId);
@@ -346,62 +321,69 @@ public class Table
         cfs.invalidate();
     }
 
-    /** adds a cf to internal structures, ends up creating disk files). */
-    public void initCf(Integer cfId, String cfName, boolean loadSSTables)
+    /**
+     * adds a cf to internal structures, ends up creating disk files).
+     */
+    public void initCf(UUID cfId, String cfName, boolean loadSSTables)
     {
-        if (columnFamilyStores.containsKey(cfId))
-        {
-            // this is the case when you reset local schema
-            // just reload metadata
-            ColumnFamilyStore cfs = columnFamilyStores.get(cfId);
-            assert cfs.getColumnFamilyName().equals(cfName);
+        ColumnFamilyStore cfs = columnFamilyStores.get(cfId);
 
-            try
-            {
-                cfs.metadata.reload();
-                cfs.reload();
-            }
-            catch (IOException e)
-            {
-                throw FBUtilities.unchecked(e);
-            }
+        if (cfs == null)
+        {
+            // CFS being created for the first time, either on server startup or new CF being added.
+            // We don't worry about races here; startup is safe, and adding multiple idential CFs
+            // simultaneously is a "don't do that" scenario.
+            ColumnFamilyStore oldCfs = columnFamilyStores.putIfAbsent(cfId, ColumnFamilyStore.createColumnFamilyStore(this, cfName, loadSSTables));
+            // CFS mbean instantiation will error out before we hit this, but in case that changes...
+            if (oldCfs != null)
+                throw new IllegalStateException("added multiple mappings for cf id " + cfId);
         }
         else
         {
-            columnFamilyStores.put(cfId, ColumnFamilyStore.createColumnFamilyStore(this, cfName, loadSSTables));
+            // re-initializing an existing CF.  This will happen if you cleared the schema
+            // on this node and it's getting repopulated from the rest of the cluster.
+            assert cfs.name.equals(cfName);
+            cfs.metadata.reload();
+            cfs.reload();
         }
     }
 
-    public Row getRow(QueryFilter filter) throws IOException
+    public Row getRow(QueryFilter filter)
     {
         ColumnFamilyStore cfStore = getColumnFamilyStore(filter.getColumnFamilyName());
-        ColumnFamily columnFamily = cfStore.getColumnFamily(filter, ArrayBackedSortedColumns.factory());
+        ColumnFamily columnFamily = cfStore.getColumnFamily(filter);
         return new Row(filter.key, columnFamily);
     }
 
-    public void apply(RowMutation mutation, boolean writeCommitLog) throws IOException
+    public void apply(RowMutation mutation, boolean writeCommitLog)
     {
         apply(mutation, writeCommitLog, true);
     }
 
     /**
-     * This method adds the row to the Commit Log associated with this table.
-     * Once this happens the data associated with the individual column families
-     * is also written to the column family store's memtable.
-    */
-    public void apply(RowMutation mutation, boolean writeCommitLog, boolean updateIndexes) throws IOException
+     * This method appends a row to the global CommitLog, then updates memtables and indexes.
+     *
+     * @param mutation       the row to write.  Must not be modified after calling apply, since commitlog append
+     *                       may happen concurrently, depending on the CL Executor type.
+     * @param writeCommitLog false to disable commitlog append entirely
+     * @param updateIndexes  false to disable index updates (used by CollationController "defragmenting")
+     */
+    public void apply(RowMutation mutation, boolean writeCommitLog, boolean updateIndexes)
     {
-        if (logger.isDebugEnabled())
-            logger.debug("applying mutation of row {}", ByteBufferUtil.bytesToHex(mutation.key()));
+        if (!mutation.getTable().equals(Tracing.TRACE_KS))
+            Tracing.trace("Acquiring switchLock read lock");
 
         // write the mutation to the commitlog and memtables
         switchLock.readLock().lock();
         try
         {
             if (writeCommitLog)
+            {
+                Tracing.trace("Appending to commitlog");
                 CommitLog.instance.add(mutation);
+            }
 
-            DecoratedKey<?> key = StorageService.getPartitioner().decorateKey(mutation.key());
+            DecoratedKey key = StorageService.getPartitioner().decorateKey(mutation.key());
             for (ColumnFamily cf : mutation.getColumnFamilies())
             {
                 ColumnFamilyStore cfs = columnFamilyStores.get(cf.id());
@@ -411,107 +393,14 @@ public class Table
                     continue;
                 }
 
-                SortedSet<ByteBuffer> mutatedIndexedColumns = null;
-                if (updateIndexes)
-                {
-                    for (ByteBuffer column : cfs.indexManager.getIndexedColumns())
-                    {
-                        if (cf.getColumnNames().contains(column) || cf.isMarkedForDelete())
-                        {
-                            if (mutatedIndexedColumns == null)
-                                mutatedIndexedColumns = new TreeSet<ByteBuffer>(cf.getComparator());
-                            mutatedIndexedColumns.add(column);
-                            if (logger.isDebugEnabled())
-                            {
-                                // can't actually use validator to print value here, because we overload value
-                                // for deletion timestamp as well (which may not be a well-formed value for the column type)
-                                ByteBuffer value = cf.getColumn(column) == null ? null : cf.getColumn(column).value(); // may be null on row-level deletion
-                                logger.debug(String.format("mutating indexed column %s value %s",
-                                                           cf.getComparator().getString(column),
-                                                           value == null ? "null" : ByteBufferUtil.bytesToHex(value)));
-                            }
-                        }
-                    }
-                }
-
-                // Sharding the lock is insufficient to avoid contention when there is a "hot" row, e.g., for
-                // hint writes when a node is down (keyed by target IP).  So it is worth special-casing the
-                // no-index case to avoid the synchronization.
-                if (mutatedIndexedColumns == null)
-                {
-                    cfs.apply(key, cf);
-                    continue;
-                }
-                // else mutatedIndexedColumns != null
-                synchronized (indexLockFor(mutation.key()))
-                {
-                    // with the raw data CF, we can just apply every update in any order and let
-                    // read-time resolution throw out obsolete versions, thus avoiding read-before-write.
-                    // but for indexed data we need to make sure that we're not creating index entries
-                    // for obsolete writes.
-                    ColumnFamily oldIndexedColumns = readCurrentIndexedColumns(key, cfs, mutatedIndexedColumns);
-                    logger.debug("Pre-mutation index row is {}", oldIndexedColumns);
-                    ignoreObsoleteMutations(cf, mutatedIndexedColumns, oldIndexedColumns);
-
-                    cfs.apply(key, cf);
-
-                    // ignore full index memtables -- we flush those when the "master" one is full
-                    cfs.indexManager.applyIndexUpdates(mutation.key(), cf, mutatedIndexedColumns, oldIndexedColumns);
-                }
+                Tracing.trace("Adding to {} memtable", cf.metadata().cfName);
+                cfs.apply(key, cf, updateIndexes ? cfs.indexManager.updaterFor(key, true) : SecondaryIndexManager.nullUpdater);
             }
         }
         finally
         {
             switchLock.readLock().unlock();
         }
-    }
-
-    private static void ignoreObsoleteMutations(ColumnFamily cf, SortedSet<ByteBuffer> mutatedIndexedColumns, ColumnFamily oldIndexedColumns)
-    {
-        // DO NOT modify the cf object here, it can race w/ the CL write (see https://issues.apache.org/jira/browse/CASSANDRA-2604)
-
-        if (oldIndexedColumns == null)
-            return;
-
-        for (Iterator<ByteBuffer> iter = mutatedIndexedColumns.iterator(); iter.hasNext(); )
-        {
-            ByteBuffer name = iter.next();
-            IColumn newColumn = cf.getColumn(name); // null == row delete or it wouldn't be marked Mutated
-            if (newColumn != null && cf.isMarkedForDelete())
-            {
-                // row is marked for delete, but column was also updated.  if column is timestamped less than
-                // the row tombstone, treat it as if it didn't exist.  Otherwise we don't care about row
-                // tombstone for the purpose of the index update and we can proceed as usual.
-                if (newColumn.timestamp() <= cf.getMarkedForDeleteAt())
-                {
-                    // don't remove from the cf object; that can race w/ CommitLog write.  Leaving it is harmless.
-                    newColumn = null;
-                }
-            }
-            IColumn oldColumn = oldIndexedColumns.getColumn(name);
-
-            // deletions are irrelevant to the index unless we're changing state from live -> deleted, i.e.,
-            // just updating w/ a newer tombstone doesn't matter
-            boolean bothDeleted = (newColumn == null || newColumn.isMarkedForDelete())
-                                  && (oldColumn == null || oldColumn.isMarkedForDelete());
-            // obsolete means either the row or the column timestamp we're applying is older than existing data
-            boolean obsoleteRowTombstone = newColumn == null && oldColumn != null && cf.getMarkedForDeleteAt() < oldColumn.timestamp();
-            boolean obsoleteColumn = newColumn != null && (newColumn.timestamp() <= oldIndexedColumns.getMarkedForDeleteAt()
-                                                           || (oldColumn != null && oldColumn.reconcile(newColumn) == oldColumn));
-            if (bothDeleted || obsoleteRowTombstone || obsoleteColumn)
-            {
-                if (logger.isDebugEnabled())
-                    logger.debug("skipping index update for obsolete mutation of " + cf.getComparator().getString(name));
-                iter.remove();
-                oldIndexedColumns.remove(name);
-            }
-        }
-    }
-
-    private static ColumnFamily readCurrentIndexedColumns(DecoratedKey<?> key, ColumnFamilyStore cfs, SortedSet<ByteBuffer> mutatedIndexedColumns)
-    {
-        QueryFilter filter = QueryFilter.getNamesFilter(key, new QueryPath(cfs.getColumnFamilyName()), mutatedIndexedColumns);
-        return cfs.getColumnFamily(filter);
     }
 
     public AbstractReplicationStrategy getReplicationStrategy()
@@ -522,28 +411,34 @@ public class Table
     /**
      * @param key row to index
      * @param cfs ColumnFamily to index row in
-     * @param indexedColumns columns to index, in comparator order
+     * @param idxNames columns to index, in comparator order
      */
-    public static void indexRow(DecoratedKey<?> key, ColumnFamilyStore cfs, SortedSet<ByteBuffer> indexedColumns)
+    public static void indexRow(DecoratedKey key, ColumnFamilyStore cfs, Set<String> idxNames)
     {
         if (logger.isDebugEnabled())
             logger.debug("Indexing row {} ", cfs.metadata.getKeyValidator().getString(key.key));
 
+        Collection<SecondaryIndex> indexes = cfs.indexManager.getIndexesByNames(idxNames);
+
         switchLock.readLock().lock();
         try
         {
-            synchronized (cfs.table.indexLockFor(key.key))
+            // Our index lock is per-row, but we don't want to hold writes for too long, so for large rows
+            // we release the lock between pages
+            SliceQueryPager pager = new SliceQueryPager(cfs, key, ColumnSlice.ALL_COLUMNS_ARRAY);
+            while (pager.hasNext())
             {
-                ColumnFamily cf = readCurrentIndexedColumns(key, cfs, indexedColumns);
-                if (cf != null)
-                    try
+                synchronized (cfs.table.indexLockFor(key.key))
+                {
+                    ColumnFamily cf = pager.next();
+                    ColumnFamily cf2 = cf.cloneMeShallow();
+                    for (Column column : cf)
                     {
-                        cfs.indexManager.applyIndexUpdates(key.key, cf, cf.getColumnNames(), null);
+                        if (cfs.indexManager.indexes(column.name(), indexes))
+                            cf2.addColumn(column);
                     }
-                    catch (IOException e)
-                    {
-                        throw new IOError(e);
-                    }
+                    cfs.indexManager.indexRow(key.key, cf2);
+                }
             }
         }
         finally
@@ -557,33 +452,37 @@ public class Table
         return indexLocks[Math.abs(key.hashCode() % indexLocks.length)];
     }
 
-    public List<Future<?>> flush() throws IOException
+    public List<Future<?>> flush()
     {
         List<Future<?>> futures = new ArrayList<Future<?>>();
-        for (Integer cfId : columnFamilyStores.keySet())
-        {
-            Future<?> future = columnFamilyStores.get(cfId).forceFlush();
-            if (future != null)
-                futures.add(future);
-        }
+        for (UUID cfId : columnFamilyStores.keySet())
+            futures.add(columnFamilyStores.get(cfId).forceFlush());
         return futures;
     }
 
     public static Iterable<Table> all()
     {
-        Function<String, Table> transformer = new Function<String, Table>()
-        {
-            public Table apply(String tableName)
-            {
-                return Table.open(tableName);
-            }
-        };
-        return Iterables.transform(Schema.instance.getTables(), transformer);
+        return Iterables.transform(Schema.instance.getTables(), tableTransformer);
+    }
+
+    public static Iterable<Table> nonSystem()
+    {
+        return Iterables.transform(Schema.instance.getNonSystemTables(), tableTransformer);
+    }
+
+    public static Iterable<Table> system()
+    {
+        return Iterables.transform(Schema.systemKeyspaceNames, tableTransformer);
     }
 
     @Override
     public String toString()
     {
-        return getClass().getSimpleName() + "(name='" + name + "')";
+        return getClass().getSimpleName() + "(name='" + getName() + "')";
+    }
+
+    public String getName()
+    {
+        return metadata.name;
     }
 }

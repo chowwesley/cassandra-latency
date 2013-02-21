@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,14 +7,13 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.io.sstable;
 
@@ -29,8 +28,9 @@ import org.apache.cassandra.config.CFMetaData;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.context.CounterContext;
+import org.apache.cassandra.db.marshal.CompositeType;
 import org.apache.cassandra.dht.IPartitioner;
-import org.apache.cassandra.utils.NodeId;
+import org.apache.cassandra.utils.CounterId;
 import org.apache.cassandra.utils.Pair;
 
 public abstract class AbstractSSTableSimpleWriter
@@ -39,8 +39,8 @@ public abstract class AbstractSSTableSimpleWriter
     protected final CFMetaData metadata;
     protected DecoratedKey currentKey;
     protected ColumnFamily columnFamily;
-    protected SuperColumn currentSuperColumn;
-    protected final NodeId nodeid = NodeId.generate();
+    protected ByteBuffer currentSuperColumn;
+    protected final CounterId counterid = CounterId.generate();
 
     public AbstractSSTableSimpleWriter(File directory, CFMetaData metadata, IPartitioner partitioner)
     {
@@ -49,7 +49,7 @@ public abstract class AbstractSSTableSimpleWriter
         DatabaseDescriptor.setPartitioner(partitioner);
     }
 
-    protected SSTableWriter getWriter() throws IOException
+    protected SSTableWriter getWriter()
     {
         return new SSTableWriter(
             makeFilename(directory, metadata.ksName, metadata.cfName),
@@ -60,7 +60,7 @@ public abstract class AbstractSSTableSimpleWriter
     }
 
     // find available generation and pick up filename from that
-    private static String makeFilename(File directory, final String keyspace, final String columnFamily)
+    protected static String makeFilename(File directory, final String keyspace, final String columnFamily)
     {
         final Set<Descriptor> existing = new HashSet<Descriptor>();
         directory.list(new FilenameFilter()
@@ -103,20 +103,22 @@ public abstract class AbstractSSTableSimpleWriter
      */
     public void newSuperColumn(ByteBuffer name)
     {
-        if (!columnFamily.isSuper())
+        if (!columnFamily.metadata().isSuper())
             throw new IllegalStateException("Cannot add a super column to a standard column family");
 
-        currentSuperColumn = new SuperColumn(name, metadata.subcolumnComparator);
-        columnFamily.addColumn(currentSuperColumn);
+        currentSuperColumn = name;
     }
 
-    private void addColumn(IColumn column)
+    private void addColumn(Column column)
     {
-        if (columnFamily.isSuper() && currentSuperColumn == null)
-            throw new IllegalStateException("Trying to add a column to a super column family, but no super column has been started.");
+        if (columnFamily.metadata().isSuper())
+        {
+            if (currentSuperColumn == null)
+                throw new IllegalStateException("Trying to add a column to a super column family, but no super column has been started.");
 
-        IColumnContainer container = columnFamily.isSuper() ? currentSuperColumn : columnFamily;
-        container.addColumn(column);
+            column = column.withUpdatedName(CompositeType.build(currentSuperColumn, column.name()));
+        }
+        columnFamily.addColumn(column);
     }
 
     /**
@@ -152,7 +154,7 @@ public abstract class AbstractSSTableSimpleWriter
      */
     public void addCounterColumn(ByteBuffer name, long value)
     {
-        addColumn(new CounterColumn(name, CounterContext.instance().create(nodeid, 1L, value, false), System.currentTimeMillis()));
+        addColumn(new CounterColumn(name, CounterContext.instance().create(counterid, 1L, value, false), System.currentTimeMillis()));
     }
 
     /**

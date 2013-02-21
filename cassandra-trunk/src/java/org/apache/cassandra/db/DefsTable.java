@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
 
 import java.io.IOException;
@@ -38,13 +37,12 @@ import org.apache.avro.specific.SpecificRecord;
 import org.apache.cassandra.config.*;
 import org.apache.cassandra.db.compaction.CompactionManager;
 import org.apache.cassandra.db.filter.QueryFilter;
-import org.apache.cassandra.db.filter.QueryPath;
 import org.apache.cassandra.db.marshal.AsciiType;
 import org.apache.cassandra.db.marshal.UTF8Type;
 import org.apache.cassandra.db.migration.avro.KsDef;
-import org.apache.cassandra.net.MessagingService;
-import org.apache.cassandra.service.MigrationManager;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.service.MigrationManager;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.utils.FBUtilities;
 
@@ -129,8 +127,8 @@ public class DefsTable
     public static final String OLD_MIGRATIONS_CF = "Migrations";
     public static final String OLD_SCHEMA_CF = "Schema";
 
-    /* dumps current keyspace definitions to storage */
-    public static synchronized void dumpToStorage(Collection<KSMetaData> keyspaces) throws IOException
+    /* saves keyspace definitions to system schema columnfamilies */
+    public static synchronized void save(Collection<KSMetaData> keyspaces)
     {
         long timestamp = System.currentTimeMillis();
 
@@ -142,10 +140,8 @@ public class DefsTable
      * Load keyspace definitions for the system keyspace (system.SCHEMA_KEYSPACES_CF)
      *
      * @return Collection of found keyspace definitions
-     *
-     * @throws IOException if failed to read SCHEMA_KEYSPACES_CF
      */
-    public static Collection<KSMetaData> loadFromTable() throws IOException
+    public static Collection<KSMetaData> loadFromTable()
     {
         List<Row> serializedSchema = SystemTable.serializedSchema(SystemTable.SCHEMA_KEYSPACES_CF);
 
@@ -153,7 +149,7 @@ public class DefsTable
 
         for (Row row : serializedSchema)
         {
-            if (invalidSchemaRow(row))
+            if (Schema.invalidSchemaRow(row) || Schema.ignoredSchemaRow(row))
                 continue;
 
             keyspaces.add(KSMetaData.fromSchema(row, serializedColumnFamilies(row.key)));
@@ -162,35 +158,48 @@ public class DefsTable
         return keyspaces;
     }
 
-    public static void fixSchemaNanoTimestamps() throws IOException
+    public static void fixSchemaNanoTimestamps()
     {
         fixSchemaNanoTimestamp(SystemTable.SCHEMA_KEYSPACES_CF);
         fixSchemaNanoTimestamp(SystemTable.SCHEMA_COLUMNFAMILIES_CF);
         fixSchemaNanoTimestamp(SystemTable.SCHEMA_COLUMNS_CF);
     }
 
-    private static void fixSchemaNanoTimestamp(String columnFamily) throws IOException
+    private static void fixSchemaNanoTimestamp(String columnFamily)
     {
-        ColumnFamilyStore cfs = Table.open(Table.SYSTEM_TABLE).getColumnFamilyStore(columnFamily);
+        ColumnFamilyStore cfs = Table.open(Table.SYSTEM_KS).getColumnFamilyStore(columnFamily);
 
         boolean needsCleanup = false;
-        long timestamp = FBUtilities.timestampMicros();
+        Date now = new Date();
 
         List<Row> rows = SystemTable.serializedSchema(columnFamily);
 
         row_check_loop:
         for (Row row : rows)
         {
-            if (invalidSchemaRow(row))
+            if (Schema.invalidSchemaRow(row))
                 continue;
 
-            for (IColumn column : row.cf.columns)
+            for (Column column : row.cf.columns)
             {
-                if (column.timestamp() > timestamp)
+                Date columnDate = new Date(column.timestamp());
+
+                if (columnDate.after(now))
+                {
+                    Date micros = new Date(column.timestamp() / 1000); // assume that it was in micros
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(micros);
+
+                    if ((micros.before(now) && calendar.get(Calendar.YEAR) == 1970) || micros.after(now))
+                    {
+                        needsCleanup = true;
+                        break row_check_loop;
+                    }
+                }
+                else // millis and we have to fix it to micros
                 {
                     needsCleanup = true;
-                    // exit the loop on first found timestamp mismatch as we know that it
-                    // wouldn't be only one column/row that we would have to fix anyway
                     break row_check_loop;
                 }
             }
@@ -214,26 +223,36 @@ public class DefsTable
             throw new AssertionError(e);
         }
 
+        long microTimestamp = now.getTime() * 1000;
+
         for (Row row : rows)
         {
-            if (invalidSchemaRow(row))
+            if (Schema.invalidSchemaRow(row))
                 continue;
 
-            RowMutation mutation = new RowMutation(Table.SYSTEM_TABLE, row.key.key);
+            RowMutation mutation = new RowMutation(Table.SYSTEM_KS, row.key.key);
 
-            for (IColumn column : row.cf.columns)
+            for (Column column : row.cf.columns)
             {
                 if (column.isLive())
-                    mutation.add(new QueryPath(columnFamily, null, column.name()), column.value(), timestamp);
+                    mutation.add(columnFamily, column.name(), column.value(), microTimestamp);
             }
 
             mutation.apply();
         }
-    }
-
-    private static boolean invalidSchemaRow(Row row)
-    {
-        return row.cf == null || (row.cf.isMarkedForDelete() && row.cf.isEmpty());
+        // flush immediately because we read schema before replaying the commitlog
+        try
+        {
+            cfs.forceBlockingFlush();
+        }
+        catch (ExecutionException e)
+        {
+            throw new RuntimeException("Could not flush after fixing schema timestamps", e);
+        }
+        catch (InterruptedException e)
+        {
+            throw new AssertionError(e);
+        }
     }
 
     public static ByteBuffer searchComposite(String name, boolean start)
@@ -252,7 +271,7 @@ public class DefsTable
     private static Row serializedColumnFamilies(DecoratedKey ksNameKey)
     {
         ColumnFamilyStore cfsStore = SystemTable.schemaCFS(SystemTable.SCHEMA_COLUMNFAMILIES_CF);
-        return new Row(ksNameKey, cfsStore.getColumnFamily(QueryFilter.getIdentityFilter(ksNameKey, new QueryPath(SystemTable.SCHEMA_COLUMNFAMILIES_CF))));
+        return new Row(ksNameKey, cfsStore.getColumnFamily(QueryFilter.getIdentityFilter(ksNameKey, SystemTable.SCHEMA_COLUMNFAMILIES_CF)));
     }
 
     /**
@@ -268,10 +287,10 @@ public class DefsTable
     public static synchronized Collection<KSMetaData> loadFromStorage(UUID version) throws IOException
     {
         DecoratedKey vkey = StorageService.getPartitioner().decorateKey(toUTF8Bytes(version));
-        Table defs = Table.open(Table.SYSTEM_TABLE);
+        Table defs = Table.open(Table.SYSTEM_KS);
         ColumnFamilyStore cfStore = defs.getColumnFamilyStore(OLD_SCHEMA_CF);
-        ColumnFamily cf = cfStore.getColumnFamily(QueryFilter.getIdentityFilter(vkey, new QueryPath(OLD_SCHEMA_CF)));
-        IColumn avroschema = cf.getColumn(DEFINITION_SCHEMA_COLUMN_NAME);
+        ColumnFamily cf = cfStore.getColumnFamily(QueryFilter.getIdentityFilter(vkey, OLD_SCHEMA_CF));
+        Column avroschema = cf.getColumn(DEFINITION_SCHEMA_COLUMN_NAME);
 
         Collection<KSMetaData> keyspaces = Collections.emptyList();
 
@@ -281,10 +300,10 @@ public class DefsTable
             org.apache.avro.Schema schema = org.apache.avro.Schema.parse(ByteBufferUtil.string(value));
 
             // deserialize keyspaces using schema
-            Collection<IColumn> columns = cf.getSortedColumns();
+            Collection<Column> columns = cf.getSortedColumns();
             keyspaces = new ArrayList<KSMetaData>(columns.size());
 
-            for (IColumn column : columns)
+            for (Column column : columns)
             {
                 if (column.name().equals(DEFINITION_SCHEMA_COLUMN_NAME))
                     continue;
@@ -293,11 +312,11 @@ public class DefsTable
             }
 
             // store deserialized keyspaces into new place
-            dumpToStorage(keyspaces);
+            save(keyspaces);
 
             logger.info("Truncating deprecated system column families (migrations, schema)...");
-            dropColumnFamily(Table.SYSTEM_TABLE, OLD_MIGRATIONS_CF);
-            dropColumnFamily(Table.SYSTEM_TABLE, OLD_SCHEMA_CF);
+            dropColumnFamily(Table.SYSTEM_KS, OLD_MIGRATIONS_CF);
+            dropColumnFamily(Table.SYSTEM_KS, OLD_SCHEMA_CF);
         }
 
         return keyspaces;
@@ -307,23 +326,11 @@ public class DefsTable
      * Merge remote schema in form of row mutations with local and mutate ks/cf metadata objects
      * (which also involves fs operations on add/drop ks/cf)
      *
-     * @param data The data of the message from remote node with schema information
-     * @param version The version of the message
+     * @param mutations the schema changes to apply
      *
      * @throws ConfigurationException If one of metadata attributes has invalid value
      * @throws IOException If data was corrupted during transportation or failed to apply fs operations
      */
-    public static void mergeRemoteSchema(byte[] data, int version) throws ConfigurationException, IOException
-    {
-        if (version < MessagingService.VERSION_11)
-        {
-            logger.error("Can't accept schema migrations from Cassandra versions previous to 1.1, please update first.");
-            return;
-        }
-
-        mergeSchema(MigrationManager.deserializeMigrationMessage(data, version));
-    }
-
     public static synchronized void mergeSchema(Collection<RowMutation> mutations) throws ConfigurationException, IOException
     {
         // current state of the schema
@@ -352,7 +359,6 @@ public class DefsTable
     }
 
     private static Set<String> mergeKeyspaces(Map<DecoratedKey, ColumnFamily> old, Map<DecoratedKey, ColumnFamily> updated)
-            throws ConfigurationException, IOException
     {
         // calculate the difference between old and new states (note that entriesOnlyLeft() will be always empty)
         MapDifference<DecoratedKey, ColumnFamily> diff = Maps.difference(old, updated);
@@ -490,13 +496,16 @@ public class DefsTable
         Schema.instance.load(ksm);
 
         if (!StorageService.instance.isClientMode())
+        {
             Table.open(ksm.name);
+            MigrationManager.instance.notifyCreateKeyspace(ksm);
+        }
     }
 
-    private static void addColumnFamily(CFMetaData cfm) throws IOException
+    private static void addColumnFamily(CFMetaData cfm)
     {
         assert Schema.instance.getCFMetaData(cfm.ksName, cfm.cfName) == null;
-        KSMetaData ksm = Schema.instance.getTableDefinition(cfm.ksName);
+        KSMetaData ksm = Schema.instance.getKSMetaData(cfm.ksName);
         ksm = KSMetaData.cloneWith(ksm, Iterables.concat(ksm.cfMetaData().values(), Collections.singleton(cfm)));
 
         Schema.instance.load(cfm);
@@ -508,10 +517,13 @@ public class DefsTable
         Schema.instance.setTableDefinition(ksm);
 
         if (!StorageService.instance.isClientMode())
+        {
             Table.open(ksm.name).initCf(cfm.cfId, cfm.cfName, true);
+            MigrationManager.instance.notifyCreateColumnFamily(cfm);
+        }
     }
 
-    private static void updateKeyspace(KSMetaData newState) throws IOException
+    private static void updateKeyspace(KSMetaData newState)
     {
         KSMetaData oldKsm = Schema.instance.getKSMetaData(newState.name);
         assert oldKsm != null;
@@ -522,7 +534,10 @@ public class DefsTable
         try
         {
             if (!StorageService.instance.isClientMode())
+            {
                 Table.open(newState.name).createReplicationStrategy(newKsm);
+                MigrationManager.instance.notifyUpdateKeyspace(newKsm);
+            }
         }
         catch (ConfigurationException e)
         {
@@ -531,7 +546,7 @@ public class DefsTable
         }
     }
 
-    private static void updateColumnFamily(CFMetaData newState) throws IOException
+    private static void updateColumnFamily(CFMetaData newState)
     {
         CFMetaData cfm = Schema.instance.getCFMetaData(newState.ksName, newState.cfName);
         assert cfm != null;
@@ -541,12 +556,13 @@ public class DefsTable
         {
             Table table = Table.open(cfm.ksName);
             table.getColumnFamilyStore(cfm.cfName).reload();
+            MigrationManager.instance.notifyUpdateColumnFamily(cfm);
         }
     }
 
     private static void dropKeyspace(String ksName) throws IOException
     {
-        KSMetaData ksm = Schema.instance.getTableDefinition(ksName);
+        KSMetaData ksm = Schema.instance.getKSMetaData(ksName);
         String snapshotName = Table.getTimestampedSnapshotName(ksName);
 
         CompactionManager.instance.stopCompactionFor(ksm.cfMetaData().values());
@@ -569,11 +585,15 @@ public class DefsTable
         // remove the table from the static instances.
         Table.clear(ksm.name);
         Schema.instance.clearTableDefinition(ksm);
+        if (!StorageService.instance.isClientMode())
+        {
+            MigrationManager.instance.notifyDropKeyspace(ksm);
+        }
     }
 
     private static void dropColumnFamily(String ksName, String cfName) throws IOException
     {
-        KSMetaData ksm = Schema.instance.getTableDefinition(ksName);
+        KSMetaData ksm = Schema.instance.getKSMetaData(ksName);
         assert ksm != null;
         ColumnFamilyStore cfs = Table.open(ksName).getColumnFamilyStore(cfName);
         assert cfs != null;
@@ -589,8 +609,9 @@ public class DefsTable
         if (!StorageService.instance.isClientMode())
         {
             if (DatabaseDescriptor.isAutoSnapshot())
-                cfs.snapshot(Table.getTimestampedSnapshotName(cfs.columnFamily));
+                cfs.snapshot(Table.getTimestampedSnapshotName(cfs.name));
             Table.open(ksm.name).dropCf(cfm.cfId);
+            MigrationManager.instance.notifyDropColumnFamily(cfm);
         }
     }
 
@@ -612,10 +633,7 @@ public class DefsTable
 
     private static void flushSchemaCF(String cfName)
     {
-        Future<?> flush = SystemTable.schemaCFS(cfName).forceFlush();
-
-        if (flush != null)
-            FBUtilities.waitOnFuture(flush);
+        FBUtilities.waitOnFuture(SystemTable.schemaCFS(cfName).forceFlush());
     }
 
     private static ByteBuffer toUTF8Bytes(UUID version)

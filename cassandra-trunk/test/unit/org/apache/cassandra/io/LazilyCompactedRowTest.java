@@ -1,6 +1,4 @@
-package org.apache.cassandra.io;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,9 +15,8 @@ package org.apache.cassandra.io;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
+package org.apache.cassandra.io;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,8 +35,7 @@ import org.apache.cassandra.SchemaLoader;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.compaction.*;
-import org.apache.cassandra.db.filter.QueryPath;
-import org.apache.cassandra.io.sstable.IndexHelper;
+import org.apache.cassandra.io.sstable.Descriptor;
 import org.apache.cassandra.io.sstable.SSTableIdentityIterator;
 import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.io.util.DataOutputBuffer;
@@ -75,7 +71,7 @@ public class LazilyCompactedRowTest extends SchemaLoader
                                        new PreCompactingController(cfs, sstables, gcBefore, false));
         AbstractCompactionIterable parallel = new ParallelCompactionIterable(OperationType.UNKNOWN,
                                                                              strategy.getScanners(sstables),
-                                                                             new CompactionController(cfs, sstables, gcBefore, false),
+                                                                             new CompactionController(cfs, sstables, gcBefore),
                                                                              0);
         assertBytes(cfs, sstables, eager, parallel);
     }
@@ -109,8 +105,8 @@ public class LazilyCompactedRowTest extends SchemaLoader
             new FileOutputStream(tmpFile1).write(out1.getData()); // writing data from row1
             new FileOutputStream(tmpFile2).write(out2.getData()); // writing data from row2
 
-            MappedFileDataInput in1 = new MappedFileDataInput(new FileInputStream(tmpFile1), tmpFile1.getAbsolutePath(), 0);
-            MappedFileDataInput in2 = new MappedFileDataInput(new FileInputStream(tmpFile2), tmpFile2.getAbsolutePath(), 0);
+            MappedFileDataInput in1 = new MappedFileDataInput(new FileInputStream(tmpFile1), tmpFile1.getAbsolutePath(), 0, 0);
+            MappedFileDataInput in2 = new MappedFileDataInput(new FileInputStream(tmpFile2), tmpFile2.getAbsolutePath(), 0, 0);
 
             // key isn't part of what CompactedRow writes, that's done by SSTW.append
 
@@ -119,33 +115,20 @@ public class LazilyCompactedRowTest extends SchemaLoader
             long rowSize2 = SSTableReader.readRowSize(in2, sstables.iterator().next().descriptor);
             assertEquals(rowSize1 + 8, out1.getLength());
             assertEquals(rowSize2 + 8, out2.getLength());
-            // bloom filter
-            IndexHelper.defreezeBloomFilter(in1, rowSize1, false);
-            IndexHelper.defreezeBloomFilter(in2, rowSize2, false);
-            // index
-            int indexSize1 = in1.readInt();
-            int indexSize2 = in2.readInt();
-            assertEquals(indexSize1, indexSize2);
-
-            ByteBuffer bytes1 = in1.readBytes(indexSize1);
-            ByteBuffer bytes2 = in2.readBytes(indexSize2);
-
-            assert bytes1.equals(bytes2);
 
             // cf metadata
             ColumnFamily cf1 = ColumnFamily.create(cfs.metadata);
             ColumnFamily cf2 = ColumnFamily.create(cfs.metadata);
-            ColumnFamily.serializer().deserializeFromSSTableNoColumns(cf1, in1);
-            ColumnFamily.serializer().deserializeFromSSTableNoColumns(cf2, in2);
-            assert cf1.getLocalDeletionTime() == cf2.getLocalDeletionTime();
-            assert cf1.getMarkedForDeleteAt() == cf2.getMarkedForDeleteAt();
+            cf1.delete(DeletionInfo.serializer().deserializeFromSSTable(in1, Descriptor.Version.CURRENT));
+            cf2.delete(DeletionInfo.serializer().deserializeFromSSTable(in2, Descriptor.Version.CURRENT));
+            assert cf1.deletionInfo().equals(cf2.deletionInfo());
             // columns
             int columns = in1.readInt();
             assert columns == in2.readInt();
             for (int i = 0; i < columns; i++)
             {
-                IColumn c1 = cf1.getColumnSerializer().deserialize(in1);
-                IColumn c2 = cf2.getColumnSerializer().deserialize(in2);
+                Column c1 = (Column)Column.onDiskSerializer().deserializeFromSSTable(in1, Descriptor.Version.CURRENT);
+                Column c2 = (Column)Column.onDiskSerializer().deserializeFromSSTable(in2, Descriptor.Version.CURRENT);
                 assert c1.equals(c2) : c1.getString(cfs.metadata.comparator) + " != " + c2.getString(cfs.metadata.comparator);
             }
             // that should be everything
@@ -193,7 +176,7 @@ public class LazilyCompactedRowTest extends SchemaLoader
 
         ByteBuffer key = ByteBufferUtil.bytes("k");
         RowMutation rm = new RowMutation("Keyspace1", key);
-        rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes("c")), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+        rm.add("Standard1", ByteBufferUtil.bytes("c"), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
         rm.apply();
         cfs.forceBlockingFlush();
 
@@ -211,8 +194,8 @@ public class LazilyCompactedRowTest extends SchemaLoader
 
         ByteBuffer key = ByteBufferUtil.bytes("k");
         RowMutation rm = new RowMutation("Keyspace1", key);
-        rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes("c")), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
-        rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes("d")), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+        rm.add("Standard1", ByteBufferUtil.bytes("c"), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+        rm.add("Standard1", ByteBufferUtil.bytes("d"), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
         rm.apply();
         cfs.forceBlockingFlush();
 
@@ -231,10 +214,10 @@ public class LazilyCompactedRowTest extends SchemaLoader
         ByteBuffer key = ByteBuffer.wrap("k".getBytes());
         RowMutation rm = new RowMutation("Keyspace1", key);
         for (int i = 0; i < 1000; i++)
-            rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes(i)), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+            rm.add("Standard1", ByteBufferUtil.bytes(i), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
         rm.apply();
         DataOutputBuffer out = new DataOutputBuffer();
-        RowMutation.serializer().serialize(rm, out, MessagingService.version_);
+        RowMutation.serializer.serialize(rm, out, MessagingService.current_version);
         assert out.getLength() > DatabaseDescriptor.getColumnIndexSize();
         cfs.forceBlockingFlush();
 
@@ -252,7 +235,7 @@ public class LazilyCompactedRowTest extends SchemaLoader
 
         ByteBuffer key = ByteBufferUtil.bytes("k");
         RowMutation rm = new RowMutation("Keyspace1", key);
-        rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes("c")), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+        rm.add("Standard1", ByteBufferUtil.bytes("c"), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
         rm.apply();
         cfs.forceBlockingFlush();
 
@@ -273,8 +256,8 @@ public class LazilyCompactedRowTest extends SchemaLoader
 
         ByteBuffer key = ByteBufferUtil.bytes("k");
         RowMutation rm = new RowMutation("Keyspace1", key);
-        rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes("c")), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
-        rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes("d")), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+        rm.add("Standard1", ByteBufferUtil.bytes("c"), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+        rm.add("Standard1", ByteBufferUtil.bytes("d"), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
         rm.apply();
         cfs.forceBlockingFlush();
 
@@ -294,11 +277,13 @@ public class LazilyCompactedRowTest extends SchemaLoader
         ColumnFamilyStore cfs = table.getColumnFamilyStore("Standard1");
 
         final int ROWS_PER_SSTABLE = 10;
-        for (int j = 0; j < (DatabaseDescriptor.getIndexInterval() * 3) / ROWS_PER_SSTABLE; j++) {
-            for (int i = 0; i < ROWS_PER_SSTABLE; i++) {
+        for (int j = 0; j < (cfs.metadata.getIndexInterval() * 3) / ROWS_PER_SSTABLE; j++)
+        {
+            for (int i = 0; i < ROWS_PER_SSTABLE; i++)
+            {
                 ByteBuffer key = ByteBufferUtil.bytes(String.valueOf(i % 2));
                 RowMutation rm = new RowMutation("Keyspace1", key);
-                rm.add(new QueryPath("Standard1", null, ByteBufferUtil.bytes(String.valueOf(i / 2))), ByteBufferUtil.EMPTY_BYTE_BUFFER, j * ROWS_PER_SSTABLE + i);
+                rm.add("Standard1", ByteBufferUtil.bytes(String.valueOf(i / 2)), ByteBufferUtil.EMPTY_BYTE_BUFFER, j * ROWS_PER_SSTABLE + i);
                 rm.apply();
             }
             cfs.forceBlockingFlush();
@@ -308,33 +293,11 @@ public class LazilyCompactedRowTest extends SchemaLoader
         assertDigest(cfs, Integer.MAX_VALUE);
     }
 
-    @Test
-    public void testTwoRowSuperColumn() throws IOException, ExecutionException, InterruptedException
-    {
-        CompactionManager.instance.disableAutoCompaction();
-
-        Table table = Table.open("Keyspace4");
-        ColumnFamilyStore cfs = table.getColumnFamilyStore("Super5");
-
-        ByteBuffer key = ByteBufferUtil.bytes("k");
-        RowMutation rm = new RowMutation("Keyspace4", key);
-        ByteBuffer scKey = ByteBuffer.wrap(UUIDGen.decompose(UUIDGen.makeType1UUIDFromHost(FBUtilities.getBroadcastAddress())));
-        rm.add(new QueryPath("Super5", scKey , ByteBufferUtil.bytes("c")), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
-        rm.apply();
-        cfs.forceBlockingFlush();
-
-        rm.apply();
-        cfs.forceBlockingFlush();
-
-        assertBytes(cfs, Integer.MAX_VALUE);
-    }
-
-
     private static class LazilyCompactingController extends CompactionController
     {
         public LazilyCompactingController(ColumnFamilyStore cfs, Collection<SSTableReader> sstables, int gcBefore, boolean forceDeserialize)
         {
-            super(cfs, sstables, gcBefore, forceDeserialize);
+            super(cfs, sstables, gcBefore);
         }
 
         @Override
@@ -348,7 +311,7 @@ public class LazilyCompactedRowTest extends SchemaLoader
     {
         public PreCompactingController(ColumnFamilyStore cfs, Collection<SSTableReader> sstables, int gcBefore, boolean forceDeserialize)
         {
-            super(cfs, sstables, gcBefore, forceDeserialize);
+            super(cfs, sstables, gcBefore);
         }
 
         @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,27 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.config;
 
-import java.io.IOException;
 import java.util.*;
 
-import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.cassandra.cql3.QueryProcessor;
 import org.apache.cassandra.cql3.UntypedResultSet;
 import org.apache.cassandra.db.*;
-import org.apache.cassandra.db.filter.QueryPath;
-import org.apache.cassandra.db.marshal.AbstractType;
-import org.apache.cassandra.db.marshal.AsciiType;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.locator.*;
 import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.thrift.CfDef;
 import org.apache.cassandra.thrift.KsDef;
-import org.apache.cassandra.thrift.ColumnDef;
+import org.apache.cassandra.tracing.Tracing;
 
 import static org.apache.cassandra.utils.FBUtilities.*;
 
@@ -81,17 +77,29 @@ public final class KSMetaData
 
     public static KSMetaData systemKeyspace()
     {
-        List<CFMetaData> cfDefs = Arrays.asList(CFMetaData.StatusCf,
+        List<CFMetaData> cfDefs = Arrays.asList(CFMetaData.BatchlogCF,
+                                                CFMetaData.RangeXfersCf,
+                                                CFMetaData.LocalCf,
+                                                CFMetaData.PeersCf,
+                                                CFMetaData.PeerEventsCf,
                                                 CFMetaData.HintsCf,
-                                                CFMetaData.MigrationsCf,
-                                                CFMetaData.SchemaCf,
                                                 CFMetaData.IndexCf,
-                                                CFMetaData.NodeIdCf,
-                                                CFMetaData.VersionCf,
+                                                CFMetaData.CounterIdCf,
                                                 CFMetaData.SchemaKeyspacesCf,
                                                 CFMetaData.SchemaColumnFamiliesCf,
-                                                CFMetaData.SchemaColumnsCf);
-        return new KSMetaData(Table.SYSTEM_TABLE, LocalStrategy.class, Collections.<String, String>emptyMap(), true, cfDefs);
+                                                CFMetaData.SchemaColumnsCf,
+                                                CFMetaData.CompactionLogCF,
+                                                CFMetaData.OldStatusCf,
+                                                CFMetaData.OldHintsCf,
+                                                CFMetaData.OldMigrationsCf,
+                                                CFMetaData.OldSchemaCf);
+        return new KSMetaData(Table.SYSTEM_KS, LocalStrategy.class, Collections.<String, String>emptyMap(), true, cfDefs);
+    }
+
+    public static KSMetaData traceKeyspace()
+    {
+        List<CFMetaData> cfDefs = Arrays.asList(CFMetaData.TraceSessionsCf, CFMetaData.TraceEventsCf);
+        return new KSMetaData(Tracing.TRACE_KS, SimpleStrategy.class, ImmutableMap.of("replication_factor", "1"), true, cfDefs);
     }
 
     public static KSMetaData testMetadata(String name, Class<? extends AbstractReplicationStrategy> strategyClass, Map<String, String> strategyOptions, CFMetaData... cfDefs)
@@ -173,7 +181,11 @@ public final class KSMetaData
     {
         List<CfDef> cfDefs = new ArrayList<CfDef>(cfMetaData.size());
         for (CFMetaData cfm : cfMetaData().values())
-            cfDefs.add(cfm.toThrift());
+        {
+            // Don't expose CF that cannot be correctly handle by thrift; see CASSANDRA-4377 for further details
+            if (!cfm.isThriftIncompatible())
+                cfDefs.add(cfm.toThrift());
+        }
         KsDef ksdef = new KsDef(name, strategyClass.getName(), cfDefs);
         ksdef.setStrategy_options(strategyOptions);
         ksdef.setDurable_writes(durableWrites);
@@ -203,32 +215,31 @@ public final class KSMetaData
     }
 
 
-    public KSMetaData reloadAttributes() throws IOException
+    public KSMetaData reloadAttributes()
     {
         Row ksDefRow = SystemTable.readSchemaRow(name);
 
         if (ksDefRow.cf == null)
-            throw new IOException(String.format("%s not found in the schema definitions table (%s).", name, SystemTable.SCHEMA_KEYSPACES_CF));
+            throw new RuntimeException(String.format("%s not found in the schema definitions table (%s).", name, SystemTable.SCHEMA_KEYSPACES_CF));
 
         return fromSchema(ksDefRow, Collections.<CFMetaData>emptyList());
     }
 
     public RowMutation dropFromSchema(long timestamp)
     {
-        RowMutation rm = new RowMutation(Table.SYSTEM_TABLE, SystemTable.getSchemaKSKey(name));
-        rm.delete(new QueryPath(SystemTable.SCHEMA_KEYSPACES_CF), timestamp);
-        rm.delete(new QueryPath(SystemTable.SCHEMA_COLUMNFAMILIES_CF), timestamp);
-        rm.delete(new QueryPath(SystemTable.SCHEMA_COLUMNS_CF), timestamp);
+        RowMutation rm = new RowMutation(Table.SYSTEM_KS, SystemTable.getSchemaKSKey(name));
+        rm.delete(SystemTable.SCHEMA_KEYSPACES_CF, timestamp);
+        rm.delete(SystemTable.SCHEMA_COLUMNFAMILIES_CF, timestamp);
+        rm.delete(SystemTable.SCHEMA_COLUMNS_CF, timestamp);
 
         return rm;
     }
 
     public RowMutation toSchema(long timestamp)
     {
-        RowMutation rm = new RowMutation(Table.SYSTEM_TABLE, SystemTable.getSchemaKSKey(name));
+        RowMutation rm = new RowMutation(Table.SYSTEM_KS, SystemTable.getSchemaKSKey(name));
         ColumnFamily cf = rm.addOrGet(SystemTable.SCHEMA_KEYSPACES_CF);
 
-        cf.addColumn(Column.create(name, timestamp, "name"));
         cf.addColumn(Column.create(durableWrites, timestamp, "durable_writes"));
         cf.addColumn(Column.create(strategyClass.getName(), timestamp, "strategy_class"));
         cf.addColumn(Column.create(json(strategyOptions), timestamp, "strategy_options"));
@@ -245,15 +256,13 @@ public final class KSMetaData
      * @param row Keyspace attributes in serialized form
      *
      * @return deserialized keyspace without cf_defs
-     *
-     * @throws IOException if deserialization failed
      */
-    public static KSMetaData fromSchema(Row row, Iterable<CFMetaData> cfms) throws IOException
+    public static KSMetaData fromSchema(Row row, Iterable<CFMetaData> cfms)
     {
         UntypedResultSet.Row result = QueryProcessor.resultify("SELECT * FROM system.schema_keyspaces", row).one();
         try
         {
-            return new KSMetaData(result.getString("name"),
+            return new KSMetaData(result.getString("keyspace_name"),
                                   AbstractReplicationStrategy.getClass(result.getString("strategy_class")),
                                   fromJsonMap(result.getString("strategy_options")),
                                   result.getBoolean("durable_writes"),
@@ -272,10 +281,8 @@ public final class KSMetaData
      * @param serializedCFs Collection of the serialized ColumnFamilies
      *
      * @return deserialized keyspace with cf_defs
-     *
-     * @throws IOException if deserialization failed
      */
-    public static KSMetaData fromSchema(Row serializedKs, Row serializedCFs) throws IOException
+    public static KSMetaData fromSchema(Row serializedKs, Row serializedCFs)
     {
         Map<String, CFMetaData> cfs = deserializeColumnFamilies(serializedCFs);
         return fromSchema(serializedKs, cfs.values());

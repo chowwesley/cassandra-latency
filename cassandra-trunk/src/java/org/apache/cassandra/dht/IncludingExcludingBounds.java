@@ -7,14 +7,13 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.dht;
 
@@ -53,7 +52,7 @@ public class IncludingExcludingBounds<T extends RingPosition> extends AbstractBo
         assert contains(position);
         AbstractBounds<T> lb = new Bounds<T>(left, position, partitioner);
         AbstractBounds<T> rb = new ExcludingBounds<T>(position, right, partitioner);
-        return new Pair<AbstractBounds<T>, AbstractBounds<T>>(lb, rb);
+        return Pair.create(lb, rb);
     }
 
     public List<? extends AbstractBounds<T>> unwrap()
@@ -74,7 +73,17 @@ public class IncludingExcludingBounds<T extends RingPosition> extends AbstractBo
     @Override
     public String toString()
     {
-        return "(" + left + "," + right + ")";
+        return "[" + left + "," + right + ")";
+    }
+
+    protected String getOpeningString()
+    {
+        return "[";
+    }
+
+    protected String getClosingString()
+    {
+        return ")";
     }
 
     /**
@@ -93,5 +102,10 @@ public class IncludingExcludingBounds<T extends RingPosition> extends AbstractBo
     public AbstractBounds<Token> toTokenBounds()
     {
         return (left instanceof RowPosition) ? new IncludingExcludingBounds<Token>(((RowPosition)left).getToken(), ((RowPosition)right).getToken(), partitioner) : (IncludingExcludingBounds<Token>)this;
+    }
+
+    public AbstractBounds<T> withNewRight(T newRight)
+    {
+        return new IncludingExcludingBounds<T>(left, newRight);
     }
 }

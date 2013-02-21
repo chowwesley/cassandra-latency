@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.locator;
 
 import java.net.InetAddress;
@@ -59,4 +58,10 @@ public interface IEndpointSnitch
      * called after Gossiper instance exists immediately before it starts gossiping
      */
     public void gossiperStarting();
+
+    /**
+     * Returns whether for a range query doing a query against merged is likely
+     * to be faster than 2 sequential queries, one against l1 followed by one against l2.
+     */
+    public boolean isWorthMergingForRangeQuery(List<InetAddress> merged, List<InetAddress> l1, List<InetAddress> l2);
 }

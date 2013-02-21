@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,28 +7,33 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.db.marshal;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.cassandra.config.ConfigurationException;
+import com.google.common.collect.ImmutableList;
+
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.exceptions.InvalidRequestException;
+import org.apache.cassandra.exceptions.SyntaxException;
 import org.apache.cassandra.cql3.ColumnNameBuilder;
 import org.apache.cassandra.cql3.Relation;
 import org.apache.cassandra.cql3.Term;
 import org.apache.cassandra.io.util.DataOutputBuffer;
-import org.apache.cassandra.thrift.InvalidRequestException;
 import org.apache.cassandra.utils.ByteBufferUtil;
 
 /*
@@ -58,9 +63,14 @@ public class CompositeType extends AbstractCompositeType
     // interning instances
     private static final Map<List<AbstractType<?>>, CompositeType> instances = new HashMap<List<AbstractType<?>>, CompositeType>();
 
-    public static CompositeType getInstance(TypeParser parser) throws ConfigurationException
+    public static CompositeType getInstance(TypeParser parser) throws ConfigurationException, SyntaxException
     {
         return getInstance(parser.getTypeParameters());
+    }
+
+    public static CompositeType getInstance(AbstractType... types)
+    {
+        return getInstance(Arrays.<AbstractType<?>>asList(types));
     }
 
     public static synchronized CompositeType getInstance(List<AbstractType<?>> types)
@@ -78,34 +88,64 @@ public class CompositeType extends AbstractCompositeType
 
     private CompositeType(List<AbstractType<?>> types)
     {
-        this.types = types;
+        this.types = ImmutableList.copyOf(types);
     }
 
-    protected AbstractType<?> getNextComparator(int i, ByteBuffer bb)
+    protected AbstractType<?> getComparator(int i, ByteBuffer bb)
     {
         return types.get(i);
     }
 
-    protected AbstractType<?> getNextComparator(int i, ByteBuffer bb1, ByteBuffer bb2)
+    protected AbstractType<?> getComparator(int i, ByteBuffer bb1, ByteBuffer bb2)
     {
         return types.get(i);
     }
 
-    protected AbstractType<?> getAndAppendNextComparator(int i, ByteBuffer bb, StringBuilder sb)
+    protected AbstractType<?> getAndAppendComparator(int i, ByteBuffer bb, StringBuilder sb)
     {
         return types.get(i);
     }
 
-    protected ParsedComparator parseNextComparator(int i, String part)
+    protected ParsedComparator parseComparator(int i, String part)
     {
         return new StaticParsedComparator(types.get(i), part);
     }
 
-    protected AbstractType<?> validateNextComparator(int i, ByteBuffer bb) throws MarshalException
+    protected AbstractType<?> validateComparator(int i, ByteBuffer bb) throws MarshalException
     {
         if (i >= types.size())
             throw new MarshalException("Too many bytes for comparator");
         return types.get(i);
+    }
+
+    public ByteBuffer decompose(Object... objects)
+    {
+        assert objects.length == types.size();
+
+        ByteBuffer[] serialized = new ByteBuffer[objects.length];
+        for (int i = 0; i < objects.length; i++)
+        {
+            ByteBuffer buffer = ((AbstractType) types.get(i)).decompose(objects[i]);
+            serialized[i] = buffer;
+        }
+        return build(serialized);
+    }
+
+    // Extract component idx from bb. Return null if there is not enough component.
+    public static ByteBuffer extractComponent(ByteBuffer bb, int idx)
+    {
+        bb = bb.duplicate();
+        int i = 0;
+        while (bb.remaining() > 0)
+        {
+            ByteBuffer c = getWithShortLength(bb);
+            if (i == idx)
+                return c;
+
+            bb.get(); // skip end-of-component
+            ++i;
+        }
+        return null;
     }
 
     @Override
@@ -167,33 +207,63 @@ public class CompositeType extends AbstractCompositeType
         return getClass().getName() + TypeParser.stringifyTypeParameters(types);
     }
 
+    public Builder builder()
+    {
+        return new Builder(this);
+    }
+
+    public static ByteBuffer build(ByteBuffer... buffers)
+    {
+        int totalLength = 0;
+        for (ByteBuffer bb : buffers)
+            totalLength += 2 + bb.remaining() + 1;
+
+        ByteBuffer out = ByteBuffer.allocate(totalLength);
+        for (ByteBuffer bb : buffers)
+        {
+            putShortLength(out, bb.remaining());
+            out.put(bb.duplicate());
+            out.put((byte) 0);
+        }
+        out.flip();
+        return out;
+    }
+
     public static class Builder implements ColumnNameBuilder
     {
         private final CompositeType composite;
-        private int current;
 
-        private final DataOutputBuffer out = new DataOutputBuffer();
+        private final List<ByteBuffer> components;
+        private final byte[] endOfComponents;
+        private int serializedSize;
 
         public Builder(CompositeType composite)
         {
+            this(composite, new ArrayList<ByteBuffer>(composite.types.size()), new byte[composite.types.size()]);
+        }
+
+        public Builder(CompositeType composite, List<ByteBuffer> components, byte[] endOfComponents)
+        {
+            assert endOfComponents.length == composite.types.size();
+
             this.composite = composite;
+            this.components = components;
+            this.endOfComponents = endOfComponents;
         }
 
         private Builder(Builder b)
         {
-            this(b.composite);
-            this.current = b.current;
-            out.write(b.out.getData(), 0, b.out.getLength());
+            this(b.composite, new ArrayList<ByteBuffer>(b.components), Arrays.copyOf(b.endOfComponents, b.endOfComponents.length));
+            this.serializedSize = b.serializedSize;
         }
 
-        public Builder add(Term t, Relation.Type op, List<ByteBuffer> variables) throws InvalidRequestException
+        public Builder add(ByteBuffer buffer, Relation.Type op)
         {
-            if (current >= composite.types.size())
+            if (components.size() >= composite.types.size())
                 throw new IllegalStateException("Composite column is already fully constructed");
 
-            AbstractType currentType = composite.types.get(current++);
-            ByteBuffer buffer = t.getByteBuffer(currentType, variables);
-            ByteBufferUtil.writeWithShortLength(buffer, out);
+            int current = components.size();
+            components.add(buffer);
 
             /*
              * Given the rules for eoc (end-of-component, see AbstractCompositeType.compare()),
@@ -207,14 +277,14 @@ public class CompositeType extends AbstractCompositeType
             switch (op)
             {
                 case LT:
-                    out.write((byte) -1);
+                    endOfComponents[current] = (byte) -1;
                     break;
                 case GT:
                 case LTE:
-                    out.write((byte) 1);
+                    endOfComponents[current] = (byte) 1;
                     break;
                 default:
-                    out.write((byte) 0);
+                    endOfComponents[current] = (byte) 0;
                     break;
             }
             return this;
@@ -222,31 +292,40 @@ public class CompositeType extends AbstractCompositeType
 
         public Builder add(ByteBuffer bb)
         {
-            if (current >= composite.types.size())
-                throw new IllegalStateException("Composite column is already fully constructed");
-
-            ByteBufferUtil.writeWithShortLength(bb, out);
-            out.write((byte) 0);
-            return this;
+            return add(bb, Relation.Type.EQ);
         }
 
         public int componentCount()
         {
-            return current;
+            return components.size();
+        }
+
+        public int remainingCount()
+        {
+            return composite.types.size() - components.size();
         }
 
         public ByteBuffer build()
         {
-            // potentially slightly space-wasteful in favor of avoiding a copy
+            DataOutputBuffer out = new DataOutputBuffer(serializedSize);
+            for (int i = 0; i < components.size(); i++)
+            {
+                try
+                {
+                    ByteBufferUtil.writeWithShortLength(components.get(i), out);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                out.write(endOfComponents[i]);
+            }
             return ByteBuffer.wrap(out.getData(), 0, out.getLength());
         }
 
         public ByteBuffer buildAsEndOfRange()
         {
-            if (current >= composite.types.size())
-                throw new IllegalStateException("Composite column is already fully constructed");
-
-            if (current == 0)
+            if (components.isEmpty())
                 return ByteBufferUtil.EMPTY_BYTE_BUFFER;
 
             ByteBuffer bb = build();

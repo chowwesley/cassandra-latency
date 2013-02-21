@@ -1,6 +1,4 @@
-package org.apache.cassandra.utils;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,12 +15,12 @@ package org.apache.cassandra.utils;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
+package org.apache.cassandra.utils;
 
 import org.apache.cassandra.AbstractSerializationsTester;
 import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.utils.FilterFactory.Type;
 import org.junit.Test;
 
 import java.io.DataInputStream;
@@ -33,24 +31,35 @@ import java.nio.ByteBuffer;
 public class SerializationsTest extends AbstractSerializationsTester
 {
 
-    private void testBloomFilterWrite() throws IOException
+    private void testBloomFilterWrite(Type murmur, boolean offheap) throws IOException
     {
-        BloomFilter bf = BloomFilter.getFilter(1000000, 0.0001);
+        IFilter bf = FilterFactory.getFilter(1000000, 0.0001, murmur, offheap);
         for (int i = 0; i < 100; i++)
             bf.add(StorageService.getPartitioner().getTokenFactory().toByteArray(StorageService.getPartitioner().getRandomToken()));
         DataOutputStream out = getOutput("utils.BloomFilter.bin");
-        BloomFilter.serializer().serialize(bf, out);
+        FilterFactory.serialize(bf, out, murmur);
         out.close();
     }
 
     @Test
-    public void testBloomFilterRead() throws IOException
+    public void testBloomFilterReadMURMUR2() throws IOException
     {
         if (EXECUTE_WRITES)
-            testBloomFilterWrite();
+            testBloomFilterWrite(FilterFactory.Type.MURMUR2, false);
 
         DataInputStream in = getInput("utils.BloomFilter.bin");
-        assert BloomFilter.serializer().deserialize(in) != null;
+        assert FilterFactory.deserialize(in, FilterFactory.Type.MURMUR2, false) != null;
+        in.close();
+    }
+
+    @Test
+    public void testBloomFilterReadMURMUR3() throws IOException
+    {
+        if (EXECUTE_WRITES)
+            testBloomFilterWrite(FilterFactory.Type.MURMUR3, true);
+
+        DataInputStream in = getInput("utils.BloomFilter.bin");
+        assert FilterFactory.deserialize(in, FilterFactory.Type.MURMUR3, true) != null;
         in.close();
     }
 
@@ -65,8 +74,8 @@ public class SerializationsTest extends AbstractSerializationsTester
             b.add(key);
         }
         DataOutputStream out = getOutput("utils.LegacyBloomFilter.bin");
-        LegacyBloomFilter.serializer().serialize(a, out);
-        LegacyBloomFilter.serializer().serialize(b, out);
+        FilterFactory.serialize(a, out, FilterFactory.Type.SHA);
+        FilterFactory.serialize(b, out, FilterFactory.Type.SHA);
         out.close();
     }
 
@@ -78,7 +87,7 @@ public class SerializationsTest extends AbstractSerializationsTester
         //      testLegacyBloomFilterWrite();
         
         DataInputStream in = getInput("utils.LegacyBloomFilter.bin");
-        assert LegacyBloomFilter.serializer().deserialize(in) != null;
+        assert FilterFactory.deserialize(in, FilterFactory.Type.SHA, false) != null;
         in.close();
     }
 

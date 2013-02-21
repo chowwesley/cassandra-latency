@@ -1,24 +1,21 @@
-package org.apache.cassandra.db.compaction;
 /*
-*
-* Licensed to the Apache Software Foundation (ASF) under one
-* or more contributor license agreements.  See the NOTICE file
-* distributed with this work for additional information
-* regarding copyright ownership.  The ASF licenses this file
-* to you under the Apache License, Version 2.0 (the
-* "License"); you may not use this file except in compliance
-* with the License.  You may obtain a copy of the License at
-*
-*   http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.cassandra.db.compaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +25,8 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 
+import com.google.common.base.Functions;
 import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +35,8 @@ import org.apache.cassandra.concurrent.NamedThreadFactory;
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.columniterator.ICountableColumnIterator;
+import org.apache.cassandra.db.index.SecondaryIndexManager;
 import org.apache.cassandra.io.sstable.SSTableIdentityIterator;
-import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.utils.*;
 
 /**
@@ -56,11 +53,11 @@ import org.apache.cassandra.utils.*;
  */
 public class ParallelCompactionIterable extends AbstractCompactionIterable
 {
-    private static Logger logger = LoggerFactory.getLogger(ParallelCompactionIterable.class);
+    private static final Logger logger = LoggerFactory.getLogger(ParallelCompactionIterable.class);
 
     private final int maxInMemorySize;
 
-    public ParallelCompactionIterable(OperationType type, List<ICompactionScanner> scanners, CompactionController controller) throws IOException
+    public ParallelCompactionIterable(OperationType type, List<ICompactionScanner> scanners, CompactionController controller)
     {
         this(type, scanners, controller, DatabaseDescriptor.getInMemoryCompactionLimit() / scanners.size());
     }
@@ -112,19 +109,7 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
                 throw new RuntimeException(e);
             }
 
-            if (compactedRow.isEmpty())
-            {
-                controller.invalidateCachedRow(compactedRow.key);
-                return null;
-            }
-            else
-            {
-                // If the raw is cached, we call removeDeleted on it to have/ coherent query returns. However it would look
-                // like some deleted columns lived longer than gc_grace + compaction. This can also free up big amount of
-                // memory on long running instances
-                controller.invalidateCachedRow(compactedRow.key);
-                return compactedRow;
-            }
+            return compactedRow;
         }
 
         public void close() throws IOException
@@ -138,7 +123,7 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
         private final List<RowContainer> rows = new ArrayList<RowContainer>();
         private int row = 0;
 
-        private final ThreadPoolExecutor executor = new DebuggableThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
+        private final ThreadPoolExecutor executor = new DebuggableThreadPoolExecutor(FBUtilities.getAvailableProcessors(),
                                                                                      Integer.MAX_VALUE,
                                                                                      TimeUnit.MILLISECONDS,
                                                                                      new SynchronousQueue<Runnable>(),
@@ -153,6 +138,7 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
         {
             assert rows.size() > 0;
 
+            ParallelCompactionIterable.this.updateCounterFor(rows.size());
             CompactedRowContainer compacted = getCompactedRow(rows);
             rows.clear();
             if ((row++ % 1000) == 0)
@@ -179,7 +165,13 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
             }
 
             if (inMemory)
-                return new CompactedRowContainer(rows.get(0).getKey(), executor.submit(new MergeTask(new ArrayList<RowContainer>(rows))));
+            {
+                // caller will re-use rows List, so make ourselves a copy
+                List<Row> rawRows = new ArrayList<Row>(rows.size());
+                for (RowContainer rowContainer : rows)
+                    rawRows.add(rowContainer.row);
+                return new CompactedRowContainer(rows.get(0).getKey(), executor.submit(new MergeTask(rawRows)));
+            }
 
             List<ICountableColumnIterator> iterators = new ArrayList<ICountableColumnIterator>(rows.size());
             for (RowContainer container : rows)
@@ -194,9 +186,9 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
 
         private class MergeTask implements Callable<ColumnFamily>
         {
-            private final List<RowContainer> rows;
+            private final List<Row> rows;
 
-            public MergeTask(List<RowContainer> rows)
+            public MergeTask(List<Row> rows)
             {
                 this.rows = rows;
             }
@@ -204,9 +196,9 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
             public ColumnFamily call() throws Exception
             {
                 ColumnFamily cf = null;
-                for (RowContainer container : rows)
+                for (Row row : rows)
                 {
-                    ColumnFamily thisCF = container.row.cf;
+                    ColumnFamily thisCF = row.cf;
                     if (cf == null)
                     {
                         cf = thisCF;
@@ -214,18 +206,19 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
                     else
                     {
                         // addAll is ok even if cf is an ArrayBackedSortedColumns
-                        cf.addAll(thisCF, HeapAllocator.instance);
+                        SecondaryIndexManager.Updater indexer = controller.cfs.indexManager.updaterFor(row.key, false);
+                        cf.addAllWithSizeDelta(thisCF, HeapAllocator.instance, Functions.<Column>identity(), indexer);
                     }
                 }
 
-                return PrecompactedRow.removeDeletedAndOldShards(rows.get(0).getKey(), controller, cf);
+                return PrecompactedRow.removeDeletedAndOldShards(rows.get(0).key, controller, cf);
             }
         }
 
         private class DeserializedColumnIterator implements ICountableColumnIterator
         {
             private final Row row;
-            private Iterator<IColumn> iter;
+            private Iterator<Column> iter;
 
             public DeserializedColumnIterator(Row row)
             {
@@ -260,7 +253,7 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
                 return iter.hasNext();
             }
 
-            public IColumn next()
+            public OnDiskAtom next()
             {
                 return iter.next();
             }
@@ -307,7 +300,7 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
                         else
                         {
                             logger.debug("parallel eager deserialize from " + iter.getPath());
-                            queue.put(new RowContainer(new Row(iter.getKey(), iter.getColumnFamilyWithColumns())));
+                            queue.put(new RowContainer(new Row(iter.getKey(), iter.getColumnFamilyWithColumns(TreeMapBackedSortedColumns.factory()))));
                         }
                     }
                 }
@@ -380,7 +373,7 @@ public class ParallelCompactionIterable extends AbstractCompactionIterable
             return wrapped.hasNext();
         }
 
-        public IColumn next()
+        public OnDiskAtom next()
         {
             return wrapped.next();
         }

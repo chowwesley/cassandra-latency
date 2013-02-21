@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.streaming;
 
 import java.io.DataOutputStream;
@@ -24,82 +23,62 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.cassandra.config.DatabaseDescriptor;
-import org.apache.cassandra.net.MessagingService;
 import org.cliffc.high_scale_lib.NonBlockingHashMap;
 import org.cliffc.high_scale_lib.NonBlockingHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.ColumnFamilyStore;
 import org.apache.cassandra.db.Table;
-import org.apache.cassandra.gms.*;
+import org.apache.cassandra.gms.FailureDetector;
 import org.apache.cassandra.io.sstable.SSTableReader;
-import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessageOut;
+import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.net.OutboundTcpConnection;
-import org.apache.cassandra.utils.Pair;
+import org.apache.cassandra.utils.UUIDGen;
 
 /** each context gets its own StreamInSession. So there may be >1 Session per host */
 public class StreamInSession extends AbstractStreamSession
 {
     private static final Logger logger = LoggerFactory.getLogger(StreamInSession.class);
 
-    private static ConcurrentMap<Pair<InetAddress, Long>, StreamInSession> sessions = new NonBlockingHashMap<Pair<InetAddress, Long>, StreamInSession>();
+    private static final ConcurrentMap<UUID, StreamInSession> sessions = new NonBlockingHashMap<UUID, StreamInSession>();
 
     private final Set<PendingFile> files = new NonBlockingHashSet<PendingFile>();
     private final List<SSTableReader> readers = new ArrayList<SSTableReader>();
     private PendingFile current;
     private Socket socket;
     private volatile int retries;
-    private final static AtomicInteger sessionIdCounter = new AtomicInteger(0);
 
-    /**
-     * The next session id is a combination of a local integer counter and a flag used to avoid collisions
-     * between session id's generated on different machines. Nodes can may have StreamOutSessions with the
-     * following contexts:
-     *
-     * <1.1.1.1, (stream_in_flag, 6)>
-     * <1.1.1.1, (stream_out_flag, 6)>
-     *
-     * The first is an out stream created in response to a request from node 1.1.1.1. The  id (6) was created by
-     * the requesting node. The second is an out stream created by this node to push to 1.1.1.1. The  id (6) was
-     * created by this node.
-     *
-     * Note: The StreamInSession results in a StreamOutSession on the target that uses the StreamInSession sessionId.
-     *
-     * @return next StreamInSession sessionId
-     */
-    private static long nextSessionId()
+    private StreamInSession(InetAddress host, UUID sessionId, IStreamCallback callback)
     {
-        return (((long)StreamHeader.STREAM_IN_SOURCE_FLAG << 32) + sessionIdCounter.incrementAndGet());
-    }
-
-    private StreamInSession(Pair<InetAddress, Long> context, IStreamCallback callback)
-    {
-        super(null, context, callback);
+        super(null, host, sessionId, callback);
     }
 
     public static StreamInSession create(InetAddress host, IStreamCallback callback)
     {
-        Pair<InetAddress, Long> context = new Pair<InetAddress, Long>(host, nextSessionId());
-        StreamInSession session = new StreamInSession(context, callback);
-        sessions.put(context, session);
+        StreamInSession session = new StreamInSession(host, UUIDGen.getTimeUUID(), callback);
+        sessions.put(session.getSessionId(), session);
         return session;
     }
 
-    public static StreamInSession get(InetAddress host, long sessionId)
+    public static StreamInSession get(InetAddress host, UUID sessionId)
     {
-        Pair<InetAddress, Long> context = new Pair<InetAddress, Long>(host, sessionId);
-        StreamInSession session = sessions.get(context);
+        StreamInSession session = sessions.get(sessionId);
         if (session == null)
         {
-            StreamInSession possibleNew = new StreamInSession(context, null);
-            if ((session = sessions.putIfAbsent(context, possibleNew)) == null)
+            StreamInSession possibleNew = new StreamInSession(host, sessionId, null);
+            if ((session = sessions.putIfAbsent(sessionId, possibleNew)) == null)
                 session = possibleNew;
         }
         return session;
+    }
+
+    public static boolean hasSession(UUID sessionId)
+    {
+        return sessions.get(sessionId) != null;
     }
 
     public void setCurrentFile(PendingFile file)
@@ -139,16 +118,16 @@ public class StreamInSession extends AbstractStreamSession
             current = null;
         StreamReply reply = new StreamReply(remoteFile.getFilename(), getSessionId(), StreamReply.Status.FILE_FINISHED);
         // send a StreamStatus message telling the source node it can delete this file
-        sendMessage(reply.getMessage(Gossiper.instance.getVersion(getHost())));
+        sendMessage(reply.createMessage());
         logger.debug("ack {} sent for {}", reply, remoteFile);
     }
 
-    public void retry(PendingFile remoteFile) throws IOException
+    public void retry(PendingFile remoteFile)
     {
         retries++;
         if (retries > DatabaseDescriptor.getMaxStreamingRetries())
         {
-            logger.error(String.format("Failed streaming session %d from %s while receiving %s", getSessionId(), getHost().toString(), current),
+            logger.error(String.format("Failed streaming session %s from %s while receiving %s", getSessionId(), getHost().toString(), current),
                          new IllegalStateException("Too many retries for " + remoteFile));
             close(false);
             return;
@@ -157,7 +136,7 @@ public class StreamInSession extends AbstractStreamSession
         logger.info("Streaming of file {} for {} failed: requesting a retry.", remoteFile, this);
         try
         {
-            sendMessage(reply.getMessage(Gossiper.instance.getVersion(getHost())));
+            sendMessage(reply.createMessage());
         }
         catch (IOException e)
         {
@@ -166,9 +145,15 @@ public class StreamInSession extends AbstractStreamSession
         }
     }
 
-    public void sendMessage(Message message) throws IOException
+    public void sendMessage(MessageOut<StreamReply> message) throws IOException
     {
-        OutboundTcpConnection.write(message, String.valueOf(getSessionId()), new DataOutputStream(socket.getOutputStream()));
+        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+        OutboundTcpConnection.write(message,
+                                    String.valueOf(getSessionId()),
+                                    System.currentTimeMillis(),
+                                    out,
+                                    MessagingService.instance().getVersion(getHost()));
+        out.flush();
     }
 
     public void closeIfFinished() throws IOException
@@ -199,7 +184,7 @@ public class StreamInSession extends AbstractStreamSession
                     if (entry.getKey() != null)
                     {
                         entry.getKey().addSSTables(entry.getValue());
-                        entry.getKey().indexManager.maybeBuildSecondaryIndexes(entry.getValue(), entry.getKey().indexManager.getIndexedColumns());
+                        entry.getKey().indexManager.maybeBuildSecondaryIndexes(entry.getValue(), entry.getKey().indexManager.allIndexesNames());
                     }
                 }
             }
@@ -215,7 +200,11 @@ public class StreamInSession extends AbstractStreamSession
             try
             {
                 if (socket != null)
-                    OutboundTcpConnection.write(reply.getMessage(Gossiper.instance.getVersion(getHost())), context.right.toString(), new DataOutputStream(socket.getOutputStream()));
+                    OutboundTcpConnection.write(reply.createMessage(),
+                                                sessionId.toString(),
+                                                System.currentTimeMillis(),
+                                                new DataOutputStream(socket.getOutputStream()),
+                                                MessagingService.instance().getVersion(getHost()));
                 else
                     logger.debug("No socket to reply to {} with!", getHost());
             }
@@ -231,18 +220,11 @@ public class StreamInSession extends AbstractStreamSession
 
     protected void closeInternal(boolean success)
     {
-        sessions.remove(context);
+        sessions.remove(sessionId);
         if (!success && FailureDetector.instance.isAlive(getHost()))
         {
-            try
-            {
-                StreamReply reply = new StreamReply("", getSessionId(), StreamReply.Status.SESSION_FAILURE);
-                MessagingService.instance().sendOneWay(reply.getMessage(Gossiper.instance.getVersion(getHost())), getHost());
-            }
-            catch (IOException ex)
-            {
-                logger.error("Error sending streaming session failure notification to " + getHost(), ex);
-            }
+            StreamReply reply = new StreamReply("", getSessionId(), StreamReply.Status.SESSION_FAILURE);
+            MessagingService.instance().sendOneWay(reply.createMessage(), getHost());
         }
     }
 
@@ -261,11 +243,11 @@ public class StreamInSession extends AbstractStreamSession
     public static Set<PendingFile> getIncomingFiles(InetAddress host)
     {
         Set<PendingFile> set = new HashSet<PendingFile>();
-        for (Map.Entry<Pair<InetAddress, Long>, StreamInSession> entry : sessions.entrySet())
+        for (Map.Entry<UUID, StreamInSession> entry : sessions.entrySet())
         {
-            if (entry.getKey().left.equals(host))
+            StreamInSession session = entry.getValue();
+            if (session.getHost().equals(host))
             {
-                StreamInSession session = entry.getValue();
                 if (session.current != null)
                     set.add(session.current);
                 set.addAll(session.files);

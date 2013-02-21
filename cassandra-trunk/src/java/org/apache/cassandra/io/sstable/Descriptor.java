@@ -1,6 +1,4 @@
-package org.apache.cassandra.io.sstable;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,23 +7,22 @@ package org.apache.cassandra.io.sstable;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.io.sstable;
 
 import java.io.File;
 import java.util.StringTokenizer;
 
 import com.google.common.base.Objects;
 
+import org.apache.cassandra.utils.FilterFactory;
 import org.apache.cassandra.utils.Pair;
 
 import static org.apache.cassandra.io.sstable.Component.separator;
@@ -47,51 +44,157 @@ public class Descriptor
     // we always incremented the major version.  In particular, versions g and h are
     // forwards-compatible with version f, so if the above convention had been followed,
     // we would have labeled them fb and fc.
-    public static final String LEGACY_VERSION = "a"; // "pre-history"
-    // b (0.7.0): added version to sstable filenames
-    // c (0.7.0): bloom filter component computes hashes over raw key bytes instead of strings
-    // d (0.7.0): row size in data component becomes a long instead of int
-    // e (0.7.0): stores undecorated keys in data and index components
-    // f (0.7.0): switched bloom filter implementations in data component
-    // g (0.8): tracks flushed-at context in metadata component
-    // h (1.0): tracks max client timestamp in metadata component
-    // hb (1.0.3): records compression ration in metadata component
-    // hc (1.0.4): records partitioner in metadata component
-    // hd (1.0.10): includes row tombstones in maxtimestamp
-    // he (1.1.3): includes ancestors generation in metadata component
-    // hf (1.1.6): marker that replay position corresponds to 1.1.5+ millis-based id (see CASSANDRA-4782)
-    public static final String CURRENT_VERSION = "hf";
+    public static class Version
+    {
+        // This needs to be at the begining for initialization sake
+        private static final String current_version = "ic";
+
+        public static final Version LEGACY = new Version("a"); // "pre-history"
+        // b (0.7.0): added version to sstable filenames
+        // c (0.7.0): bloom filter component computes hashes over raw key bytes instead of strings
+        // d (0.7.0): row size in data component becomes a long instead of int
+        // e (0.7.0): stores undecorated keys in data and index components
+        // f (0.7.0): switched bloom filter implementations in data component
+        // g (0.8): tracks flushed-at context in metadata component
+        // h (1.0): tracks max client timestamp in metadata component
+        // hb (1.0.3): records compression ration in metadata component
+        // hc (1.0.4): records partitioner in metadata component
+        // hd (1.0.10): includes row tombstones in maxtimestamp
+        // he (1.1.3): includes ancestors generation in metadata component
+        // hf (1.1.6): marker that replay position corresponds to 1.1.5+ millis-based id (see CASSANDRA-4782)
+        // ia (1.2.0): column indexes are promoted to the index file
+        //             records estimated histogram of deletion times in tombstones
+        //             bloom filter (keys and columns) upgraded to Murmur3
+        // ib (1.2.1): tracks min client timestamp in metadata component
+        // ja (1.3.0): super columns are serialized as composites
+        //             (note that there is no real format change, this is mostly a marker to know if we should expect super
+        //             columns or not. We do need a major version bump however, because we should not allow streaming of
+        //             super columns into this new format)
+
+        public static final Version CURRENT = new Version(current_version);
+
+        private final String version;
+
+        public final boolean hasStringsInBloomFilter;
+        public final boolean hasIntRowSize;
+        public final boolean hasEncodedKeys;
+        public final boolean isLatestVersion;
+        public final boolean metadataIncludesReplayPosition;
+        public final boolean metadataIncludesModernReplayPosition;
+        public final boolean tracksMaxTimestamp;
+        public final boolean tracksMinTimestamp;
+        public final boolean hasCompressionRatio;
+        public final boolean hasPartitioner;
+        public final boolean tracksTombstones;
+        public final boolean hasPromotedIndexes;
+        public final FilterFactory.Type filterType;
+        public final boolean hasAncestors;
+        public final boolean hasSuperColumns;
+
+        public Version(String version)
+        {
+            this.version = version;
+            hasStringsInBloomFilter = version.compareTo("c") < 0;
+            hasIntRowSize = version.compareTo("d") < 0;
+            hasEncodedKeys = version.compareTo("e") < 0;
+            metadataIncludesReplayPosition = version.compareTo("g") >= 0;
+            hasCompressionRatio = version.compareTo("hb") >= 0;
+            hasPartitioner = version.compareTo("hc") >= 0;
+            tracksMaxTimestamp = version.compareTo("hd") >= 0;
+            tracksMinTimestamp = version.compareTo("ib") >= 0;
+            hasAncestors = version.compareTo("he") >= 0;
+            metadataIncludesModernReplayPosition = version.compareTo("hf") >= 0;
+            tracksTombstones = version.compareTo("ia") >= 0;
+            hasPromotedIndexes = version.compareTo("ia") >= 0;
+            isLatestVersion = version.compareTo(current_version) == 0;
+            if (version.compareTo("f") < 0)
+                filterType = FilterFactory.Type.SHA;
+            else if (version.compareTo("ia") < 0)
+                filterType = FilterFactory.Type.MURMUR2;
+            else
+                filterType = FilterFactory.Type.MURMUR3;
+            hasSuperColumns = version.compareTo("ib") < 0;
+        }
+
+        /**
+         * @param ver SSTable version
+         * @return True if the given version string matches the format.
+         * @see #version
+         */
+        static boolean validate(String ver)
+        {
+            return ver != null && ver.matches("[a-z]+");
+        }
+
+        public boolean isCompatible()
+        {
+            return version.charAt(0) <= CURRENT.version.charAt(0);
+        }
+
+        public boolean isStreamCompatible()
+        {
+            // we could add compatibility for earlier versions with the new single-pass streaming
+            // (see SSTableWriter.appendFromStream) but versions earlier than 0.7.1 don't have the
+            // MessagingService version awareness anyway so there's no point.
+            return isCompatible() && version.charAt(0) >= 'i';
+        }
+
+        /**
+         * Versions [h..hc] contained a timestamp value that was computed incorrectly, ignoring row tombstones.
+         * containsTimestamp returns true if there is a timestamp value in the metadata file; to know if it
+         * actually contains a *correct* timestamp, see tracksMaxTimestamp.
+         */
+        public boolean containsTimestamp()
+        {
+            return version.compareTo("h") >= 0;
+        }
+
+        @Override
+        public String toString()
+        {
+            return version;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (o == this)
+                return true;
+            if (!(o instanceof Version))
+                return false;
+            return version.equals(((Version)o).version);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return version.hashCode();
+        }
+    }
 
     public final File directory;
     /** version has the following format: <code>[a-z]+</code> */
-    public final String version;
+    public final Version version;
     public final String ksname;
     public final String cfname;
     public final int generation;
     public final boolean temporary;
     private final int hashCode;
 
-    public final boolean hasStringsInBloomFilter;
-    public final boolean hasIntRowSize;
-    public final boolean hasEncodedKeys;
-    public final boolean isLatestVersion;
-    public final boolean usesOldBloomFilter;
-    public final boolean metadataIncludesReplayPosition;
-    public final boolean metadataIncludesModernReplayPosition;
-    public final boolean tracksMaxTimestamp;
-    public final boolean hasCompressionRatio;
-    public final boolean hasPartitioner;
-    public final boolean hasAncestors;
-
     /**
      * A descriptor that assumes CURRENT_VERSION.
      */
     public Descriptor(File directory, String ksname, String cfname, int generation, boolean temp)
     {
-        this(CURRENT_VERSION, directory, ksname, cfname, generation, temp);
+        this(Version.CURRENT, directory, ksname, cfname, generation, temp);
     }
 
     public Descriptor(String version, File directory, String ksname, String cfname, int generation, boolean temp)
+    {
+        this(new Version(version), directory, ksname, cfname, generation, temp);
+    }
+
+    public Descriptor(Version version, File directory, String ksname, String cfname, int generation, boolean temp)
     {
         assert version != null && directory != null && ksname != null && cfname != null;
         this.version = version;
@@ -101,18 +204,6 @@ public class Descriptor
         this.generation = generation;
         temporary = temp;
         hashCode = Objects.hashCode(directory, generation, ksname, cfname);
-
-        hasStringsInBloomFilter = version.compareTo("c") < 0;
-        hasIntRowSize = version.compareTo("d") < 0;
-        hasEncodedKeys = version.compareTo("e") < 0;
-        usesOldBloomFilter = version.compareTo("f") < 0;
-        metadataIncludesReplayPosition = version.compareTo("g") >= 0;
-        tracksMaxTimestamp = version.compareTo("hd") >= 0;
-        hasCompressionRatio = version.compareTo("hb") >= 0;
-        hasPartitioner = version.compareTo("hc") >= 0;
-        hasAncestors = version.compareTo("he") >= 0;
-        metadataIncludesModernReplayPosition = version.compareTo("hf") >= 0;
-        isLatestVersion = version.compareTo(CURRENT_VERSION) == 0;
     }
 
     public Descriptor withGeneration(int newGeneration)
@@ -125,7 +216,7 @@ public class Descriptor
         return filenameFor(component.name());
     }
 
-    private String baseFilename()
+    public String baseFilename()
     {
         StringBuilder buff = new StringBuilder();
         buff.append(directory).append(File.separatorChar);
@@ -133,7 +224,7 @@ public class Descriptor
         buff.append(cfname).append(separator);
         if (temporary)
             buff.append(SSTable.TEMPFILE_MARKER).append(separator);
-        if (!LEGACY_VERSION.equals(version))
+        if (!Version.LEGACY.equals(version))
             buff.append(version).append(separator);
         buff.append(generation);
         return buff.toString();
@@ -187,10 +278,10 @@ public class Descriptor
         }
 
         // optional version string
-        String version = LEGACY_VERSION;
-        if (versionValidate(nexttok))
+        Version version = Version.LEGACY;
+        if (Version.validate(nexttok))
         {
-            version = nexttok;
+            version = new Version(nexttok);
             nexttok = st.nextToken();
         }
         int generation = Integer.parseInt(nexttok);
@@ -198,7 +289,7 @@ public class Descriptor
         // component suffix
         String component = st.nextToken();
         directory = directory != null ? directory : new File(".");
-        return new Pair<Descriptor,String>(new Descriptor(version, directory, ksname, cfname, generation, temporary), component);
+        return Pair.create(new Descriptor(version, directory, ksname, cfname, generation, temporary), component);
     }
 
     /**
@@ -211,21 +302,11 @@ public class Descriptor
     }
 
     /**
-     * @param ver SSTable version
-     * @return True if the given version string matches the format.
-     * @see #version
-     */
-    static boolean versionValidate(String ver)
-    {
-        return ver != null && ver.matches("[a-z]+");
-    }
-
-    /**
      * @return true if the current Cassandra version can read the given sstable version
      */
     public boolean isCompatible()
     {
-        return version.charAt(0) <= CURRENT_VERSION.charAt(0);
+        return version.isCompatible();
     }
 
     /**
@@ -236,20 +317,7 @@ public class Descriptor
      */
     public boolean isStreamCompatible()
     {
-        // we could add compatibility for earlier versions with the new single-pass streaming
-        // (see SSTableWriter.appendFromStream) but versions earlier than 0.7.1 don't have the
-        // MessagingService version awareness anyway so there's no point.
-        return isCompatible() && version.charAt(0) >= 'f';
-    }
-
-    /**
-     * Versions [h..hc] contained a timestamp value that was computed incorrectly, ignoring row tombstones.
-     * containsTimestamp returns true if there is a timestamp value in the metadata file; to know if it
-     * actually contains a *correct* timestamp, see tracksMaxTimestamp.
-     */
-    public boolean containsTimestamp()
-    {
-        return version.compareTo("h") >= 0;
+        return version.isStreamCompatible();
     }
 
     @Override

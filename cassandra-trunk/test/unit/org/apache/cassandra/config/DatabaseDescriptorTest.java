@@ -19,10 +19,11 @@
 package org.apache.cassandra.config;
 
 import org.apache.cassandra.SchemaLoader;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.exceptions.InvalidRequestException;
 import org.apache.cassandra.gms.Gossiper;
 import org.apache.cassandra.locator.SimpleStrategy;
 import org.apache.cassandra.service.MigrationManager;
-import org.apache.cassandra.thrift.InvalidRequestException;
 
 import org.junit.Test;
 
@@ -74,19 +75,19 @@ public class DatabaseDescriptorTest
             MigrationManager.announceNewKeyspace(KSMetaData.testMetadata("ks0", SimpleStrategy.class, KSMetaData.optsWithRF(3)));
             MigrationManager.announceNewKeyspace(KSMetaData.testMetadata("ks1", SimpleStrategy.class, KSMetaData.optsWithRF(3)));
 
-            assert Schema.instance.getTableDefinition("ks0") != null;
-            assert Schema.instance.getTableDefinition("ks1") != null;
+            assert Schema.instance.getKSMetaData("ks0") != null;
+            assert Schema.instance.getKSMetaData("ks1") != null;
 
-            Schema.instance.clearTableDefinition(Schema.instance.getTableDefinition("ks0"));
-            Schema.instance.clearTableDefinition(Schema.instance.getTableDefinition("ks1"));
+            Schema.instance.clearTableDefinition(Schema.instance.getKSMetaData("ks0"));
+            Schema.instance.clearTableDefinition(Schema.instance.getKSMetaData("ks1"));
 
-            assert Schema.instance.getTableDefinition("ks0") == null;
-            assert Schema.instance.getTableDefinition("ks1") == null;
+            assert Schema.instance.getKSMetaData("ks0") == null;
+            assert Schema.instance.getKSMetaData("ks1") == null;
 
             DatabaseDescriptor.loadSchemas();
 
-            assert Schema.instance.getTableDefinition("ks0") != null;
-            assert Schema.instance.getTableDefinition("ks1") != null;
+            assert Schema.instance.getKSMetaData("ks0") != null;
+            assert Schema.instance.getKSMetaData("ks1") != null;
         }
         finally
         {

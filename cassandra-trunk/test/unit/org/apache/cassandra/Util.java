@@ -20,14 +20,15 @@ package org.apache.cassandra;
  *
  */
 
-import java.io.EOFException;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -36,24 +37,34 @@ import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.compaction.CompactionManager;
 import org.apache.cassandra.db.compaction.CompactionTask;
 import org.apache.cassandra.db.columniterator.IdentityQueryFilter;
+import org.apache.cassandra.db.filter.IDiskAtomFilter;
 import org.apache.cassandra.db.filter.QueryFilter;
-import org.apache.cassandra.db.filter.QueryPath;
+import org.apache.cassandra.db.filter.SliceQueryFilter;
+import org.apache.cassandra.db.marshal.CompositeType;
 import org.apache.cassandra.dht.*;
 import org.apache.cassandra.gms.ApplicationState;
+import org.apache.cassandra.gms.Gossiper;
 import org.apache.cassandra.gms.VersionedValue;
 import org.apache.cassandra.io.sstable.Descriptor;
 import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.service.StorageService;
 import org.apache.cassandra.utils.ByteBufferUtil;
-import org.apache.cassandra.utils.NodeId;
+import org.apache.cassandra.utils.CounterId;
 
 import static org.junit.Assert.assertTrue;
 
 public class Util
 {
+    private static List<UUID> hostIdPool = new ArrayList<UUID>();
+
     public static DecoratedKey dk(String key)
     {
         return StorageService.getPartitioner().decorateKey(ByteBufferUtil.bytes(key));
+    }
+
+    public static DecoratedKey dk(ByteBuffer key)
+    {
+        return StorageService.getPartitioner().decorateKey(key);
     }
 
     public static RowPosition rp(String key)
@@ -71,12 +82,14 @@ public class Util
         return new Column(ByteBufferUtil.bytes(name), ByteBufferUtil.bytes(value), timestamp);
     }
 
-    public static SuperColumn superColumn(ColumnFamily cf, String name, Column... columns)
+    public static Column expiringColumn(String name, String value, long timestamp, int ttl)
     {
-        SuperColumn sc = new SuperColumn(ByteBufferUtil.bytes(name), cf.metadata().comparator);
-        for (Column c : columns)
-            sc.addColumn(c);
-        return sc;
+        return new ExpiringColumn(ByteBufferUtil.bytes(name), ByteBufferUtil.bytes(value), timestamp, ttl);
+    }
+
+    public static Column counterColumn(String name, long value, long timestamp)
+    {
+        return new CounterUpdateColumn(ByteBufferUtil.bytes(name), value, timestamp);
     }
 
     public static Token token(String key)
@@ -101,7 +114,10 @@ public class Util
 
     public static void addMutation(RowMutation rm, String columnFamilyName, String superColumnName, long columnName, String value, long timestamp)
     {
-        rm.add(new QueryPath(columnFamilyName, ByteBufferUtil.bytes(superColumnName), getBytes(columnName)), ByteBufferUtil.bytes(value), timestamp);
+        ByteBuffer cname = superColumnName == null
+                         ? getBytes(columnName)
+                         : CompositeType.build(ByteBufferUtil.bytes(superColumnName), getBytes(columnName));
+        rm.add(columnFamilyName, cname, ByteBufferUtil.bytes(value), timestamp);
     }
 
     public static ByteBuffer getBytes(long v)
@@ -129,11 +145,14 @@ public class Util
 
     public static List<Row> getRangeSlice(ColumnFamilyStore cfs, ByteBuffer superColumn) throws IOException, ExecutionException, InterruptedException
     {
+        IDiskAtomFilter filter = superColumn == null
+                               ? new IdentityQueryFilter()
+                               : new SliceQueryFilter(SuperColumns.startOf(superColumn), SuperColumns.endOf(superColumn), false, Integer.MAX_VALUE);
+
         Token min = StorageService.getPartitioner().getMinimumToken();
-        return cfs.getRangeSlice(superColumn,
-                                 new Bounds<Token>(min, min).toRowBounds(),
+        return cfs.getRangeSlice(new Bounds<Token>(min, min).toRowBounds(),
                                  10000,
-                                 new IdentityQueryFilter(),
+                                 filter,
                                  null);
     }
 
@@ -147,7 +166,7 @@ public class Util
     {
         IMutation first = rms.get(0);
         String tablename = first.getTable();
-        Integer cfid = first.getColumnFamilyIds().iterator().next();
+        UUID cfid = first.getColumnFamilyIds().iterator().next();
 
         for (IMutation rm : rms)
             rm.apply();
@@ -161,7 +180,7 @@ public class Util
     {
         ColumnFamilyStore cfStore = table.getColumnFamilyStore(cfName);
         assert cfStore != null : "Column family " + cfName + " has not been defined";
-        return cfStore.getColumnFamily(QueryFilter.getIdentityFilter(key, new QueryPath(cfName)));
+        return cfStore.getColumnFamily(QueryFilter.getIdentityFilter(key, cfName));
     }
 
     public static byte[] concatByteArrays(byte[] first, byte[]... remaining)
@@ -185,9 +204,9 @@ public class Util
         return result;
     }
 
-    public static boolean equalsNodeId(NodeId n, ByteBuffer context, int offset)
+    public static boolean equalsCounterId(CounterId n, ByteBuffer context, int offset)
     {
-        return NodeId.wrap(context, context.position() + offset).equals(n);
+        return CounterId.wrap(context, context.position() + offset).equals(n);
     }
 
     public static ColumnFamily cloneAndRemoveDeleted(ColumnFamily cf, int gcBefore)
@@ -199,19 +218,28 @@ public class Util
      * Creates initial set of nodes and tokens. Nodes are added to StorageService as 'normal'
      */
     public static void createInitialRing(StorageService ss, IPartitioner partitioner, List<Token> endpointTokens,
-                                   List<Token> keyTokens, List<InetAddress> hosts, int howMany)
+                                   List<Token> keyTokens, List<InetAddress> hosts, List<UUID> hostIds, int howMany)
         throws UnknownHostException
     {
+        // Expand pool of host IDs as necessary
+        for (int i = hostIdPool.size(); i < howMany; i++)
+            hostIdPool.add(UUID.randomUUID());
+
         for (int i=0; i<howMany; i++)
         {
             endpointTokens.add(new BigIntegerToken(String.valueOf(10 * i)));
             keyTokens.add(new BigIntegerToken(String.valueOf(10 * i + 5)));
+            hostIds.add(hostIdPool.get(i));
         }
 
         for (int i=0; i<endpointTokens.size(); i++)
         {
             InetAddress ep = InetAddress.getByName("127.0.0." + String.valueOf(i + 1));
-            ss.onChange(ep, ApplicationState.STATUS, new VersionedValue.VersionedValueFactory(partitioner).normal(endpointTokens.get(i)));
+            Gossiper.instance.initializeNodeUnsafe(ep, hostIds.get(i), 1);
+            Gossiper.instance.injectApplicationState(ep, ApplicationState.TOKENS, new VersionedValue.VersionedValueFactory(partitioner).tokens(Collections.singleton(endpointTokens.get(i))));
+            ss.onChange(ep,
+                        ApplicationState.STATUS,
+                        new VersionedValue.VersionedValueFactory(partitioner).normal(Collections.singleton(endpointTokens.get(i))));
             hosts.add(ep);
         }
 
@@ -228,10 +256,9 @@ public class Util
         return CompactionManager.instance.submitUserDefined(cfs, descriptors, Integer.MAX_VALUE);
     }
 
-    public static void compact(ColumnFamilyStore cfs, Collection<SSTableReader> sstables, boolean forceDeserialize) throws IOException
+    public static void compact(ColumnFamilyStore cfs, Collection<SSTableReader> sstables)
     {
         CompactionTask task = new CompactionTask(cfs, sstables, (int) (System.currentTimeMillis() / 1000) - cfs.metadata.getGcGraceSeconds());
-        task.isUserDefined(forceDeserialize);
         task.execute(null);
     }
 
@@ -248,12 +275,29 @@ public class Util
         {
             callable.call();
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             assert e.getClass().equals(exception) : e.getClass().getName() + " is not " + exception.getName();
             thrown = true;
         }
 
         assert thrown : exception.getName() + " not received";
+    }
+
+    public static ByteBuffer serializeForSSTable(ColumnFamily cf)
+    {
+        try
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(baos);
+            DeletionInfo.serializer().serializeForSSTable(cf.deletionInfo(), dos);
+            dos.writeInt(cf.getColumnCount());
+            new ColumnIndex.Builder(cf, ByteBufferUtil.EMPTY_BYTE_BUFFER, cf.getColumnCount(), dos).build(cf);
+            return ByteBuffer.wrap(baos.toByteArray());
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,25 +1,23 @@
 /*
-* Licensed to the Apache Software Foundation (ASF) under one
-* or more contributor license agreements.  See the NOTICE file
-* distributed with this work for additional information
-* regarding copyright ownership.  The ASF licenses this file
-* to you under the Apache License, Version 2.0 (the
-* "License"); you may not use this file except in compliance
-* with the License.  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.cassandra.utils;
 
 import java.io.IOException;
-import java.io.IOError;
 import java.util.*;
 
 import com.google.common.collect.AbstractIterator;
@@ -62,7 +60,7 @@ public abstract class MergeIterator<In,Out> extends AbstractIterator<Out> implem
             }
             catch (IOException e)
             {
-                throw new IOError(e);
+                throw new RuntimeException(e);
             }
         }
 
@@ -72,7 +70,6 @@ public abstract class MergeIterator<In,Out> extends AbstractIterator<Out> implem
     /** A MergeIterator that consumes multiple input values per output value. */
     private static final class ManyToOne<In,Out> extends MergeIterator<In,Out>
     {
-        public final Comparator<In> comp;
         // a queue for return: all candidates must be open and have at least one item
         protected final PriorityQueue<Candidate<In>> queue;
         // a stack of the last consumed candidates, so that we can lazily call 'advance()'
@@ -82,7 +79,6 @@ public abstract class MergeIterator<In,Out> extends AbstractIterator<Out> implem
         public ManyToOne(List<? extends CloseableIterator<In>> iters, Comparator<In> comp, Reducer<In,Out> reducer)
         {
             super(iters, reducer);
-            this.comp = comp;
             this.queue = new PriorityQueue<Candidate<In>>(Math.max(1, iters.size()));
             for (CloseableIterator<In> iter : iters)
             {

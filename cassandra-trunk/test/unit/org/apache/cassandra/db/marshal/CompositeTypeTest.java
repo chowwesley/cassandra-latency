@@ -20,19 +20,21 @@ package org.apache.cassandra.db.marshal;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.cassandra.SchemaLoader;
 import org.apache.cassandra.Util;
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.exceptions.SyntaxException;
 import org.apache.cassandra.db.*;
 import org.apache.cassandra.db.filter.QueryFilter;
-import org.apache.cassandra.db.filter.QueryPath;
 import org.apache.cassandra.utils.*;
 
 public class CompositeTypeTest extends SchemaLoader
@@ -46,7 +48,6 @@ public class CompositeTypeTest extends SchemaLoader
         subComparators.add(TimeUUIDType.instance);
         subComparators.add(IntegerType.instance);
         comparator = CompositeType.getInstance(subComparators);
-
     }
 
     private static final int UUID_COUNT = 3;
@@ -54,7 +55,7 @@ public class CompositeTypeTest extends SchemaLoader
     static
     {
         for (int i = 0; i < UUID_COUNT; ++i)
-            uuids[i] = UUIDGen.makeType1UUIDFromHost(FBUtilities.getBroadcastAddress());
+            uuids[i] = UUIDGen.getTimeUUID();
     }
 
     @Test
@@ -180,9 +181,9 @@ public class CompositeTypeTest extends SchemaLoader
         addColumn(rm, cname3);
         rm.apply();
 
-        ColumnFamily cf = cfs.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("k"), new QueryPath(cfName, null, null)));
+        ColumnFamily cf = cfs.getColumnFamily(QueryFilter.getIdentityFilter(Util.dk("k"), cfName));
 
-        Iterator<IColumn> iter = cf.getSortedColumns().iterator();
+        Iterator<Column> iter = cf.getSortedColumns().iterator();
 
         assert iter.next().name().equals(cname1);
         assert iter.next().name().equals(cname2);
@@ -200,6 +201,7 @@ public class CompositeTypeTest extends SchemaLoader
             fail("Shouldn't work");
         }
         catch (ConfigurationException e) {}
+        catch (SyntaxException e) {}
 
         try
         {
@@ -207,6 +209,7 @@ public class CompositeTypeTest extends SchemaLoader
             fail("Shouldn't work");
         }
         catch (ConfigurationException e) {}
+        catch (SyntaxException e) {}
     }
 
     @Test
@@ -220,9 +223,41 @@ public class CompositeTypeTest extends SchemaLoader
         assert !TypeParser.parse("CompositeType(IntegerType)").isCompatibleWith(TypeParser.parse("CompositeType(BytesType)"));
     }
 
+    @Test
+    public void testEscapeUnescape()
+    {
+        List<AbstractType<?>> subComparators = new ArrayList<AbstractType<?>>(){{;
+            add(UTF8Type.instance);
+            add(UTF8Type.instance);
+        }};
+        CompositeType comp = CompositeType.getInstance(subComparators);
+
+        String[][] inputs = new String[][]{
+            new String[]{ "foo", "bar" },
+            new String[]{ "", "" },
+            new String[]{ "foo\\", "bar" },
+            new String[]{ "foo\\:", "bar" },
+            new String[]{ "foo:", "bar" },
+            new String[]{ "foo", "b:ar" },
+            new String[]{ "foo!", "b:ar" },
+        };
+
+        for (String[] input : inputs)
+        {
+            CompositeType.Builder builder = new CompositeType.Builder(comp);
+            for (String part : input)
+                builder.add(UTF8Type.instance.fromString(part));
+
+            ByteBuffer value = comp.fromString(comp.getString(builder.build()));
+            ByteBuffer[] splitted = comp.split(value);
+            for (int i = 0; i < splitted.length; i++)
+                assertEquals(input[i], UTF8Type.instance.getString(splitted[i]));
+        }
+    }
+
     private void addColumn(RowMutation rm, ByteBuffer cname)
     {
-        rm.add(new QueryPath(cfName, null , cname), ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
+        rm.add(cfName, cname, ByteBufferUtil.EMPTY_BYTE_BUFFER, 0);
     }
 
     private ByteBuffer createCompositeKey(String s, UUID uuid, int i, boolean lastIsOne)

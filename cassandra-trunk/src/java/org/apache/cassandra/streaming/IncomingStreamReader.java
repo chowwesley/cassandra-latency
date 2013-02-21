@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.streaming;
 
 import java.io.*;
@@ -24,26 +23,29 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Collections;
 
+import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.ColumnFamily;
 import org.apache.cassandra.db.ColumnFamilyStore;
+import org.apache.cassandra.db.ColumnSerializer;
 import org.apache.cassandra.db.DecoratedKey;
 import org.apache.cassandra.db.Table;
 import org.apache.cassandra.db.compaction.CompactionController;
 import org.apache.cassandra.db.compaction.PrecompactedRow;
-import org.apache.cassandra.io.IColumnSerializer;
 import org.apache.cassandra.io.sstable.*;
 import org.apache.cassandra.io.util.FileUtils;
+import org.apache.cassandra.metrics.StreamingMetrics;
+import org.apache.cassandra.net.MessagingService;
+import org.apache.cassandra.net.OutboundTcpConnection;
 import org.apache.cassandra.service.StorageService;
+import org.apache.cassandra.streaming.compress.CompressedInputStream;
 import org.apache.cassandra.utils.ByteBufferUtil;
 import org.apache.cassandra.utils.BytesReadTracker;
-import org.apache.cassandra.utils.FBUtilities;
 import org.apache.cassandra.utils.Pair;
-
 import com.ning.compress.lzf.LZFInputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IncomingStreamReader
 {
@@ -52,14 +54,27 @@ public class IncomingStreamReader
     protected final PendingFile localFile;
     protected final PendingFile remoteFile;
     protected final StreamInSession session;
-    private final Socket socket;
+    private final InputStream underliningStream;
+    private final StreamingMetrics metrics;
 
     public IncomingStreamReader(StreamHeader header, Socket socket) throws IOException
     {
         socket.setSoTimeout(DatabaseDescriptor.getStreamingSocketTimeout());
-        this.socket = socket;
-        InetAddress host = header.broadcastAddress != null ? header.broadcastAddress
-                           : ((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress();
+        InetAddress host = ((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress();
+        if (header.pendingFiles.isEmpty() && header.file != null)
+        {
+            // StreamInSession should be created already when receiving 2nd and after files
+            if (!StreamInSession.hasSession(header.sessionId))
+            {
+                StreamReply reply = new StreamReply("", header.sessionId, StreamReply.Status.SESSION_FAILURE);
+                OutboundTcpConnection.write(reply.createMessage(),
+                                            header.sessionId.toString(),
+                                            System.currentTimeMillis(),
+                                            new DataOutputStream(socket.getOutputStream()),
+                                            MessagingService.instance().getVersion(host));
+                throw new IOException("Session " + header.sessionId + " already closed.");
+            }
+        }
         session = StreamInSession.get(host, header.sessionId);
         session.setSocket(socket);
 
@@ -70,8 +85,24 @@ public class IncomingStreamReader
         // pendingFile gets the new context for the local node.
         remoteFile = header.file;
         localFile = remoteFile != null ? StreamIn.getContextMapping(remoteFile) : null;
+
+        if (remoteFile != null)
+        {
+            if (remoteFile.compressionInfo == null)
+                underliningStream = new LZFInputStream(socket.getInputStream());
+            else
+                underliningStream = new CompressedInputStream(socket.getInputStream(), remoteFile.compressionInfo);
+        }
+        else
+        {
+            underliningStream = null;
+        }
+        metrics = StreamingMetrics.get(host);
     }
 
+    /**
+     * @throws IOException if reading the remote sstable fails. Will throw an RTE if local write fails.
+     */
     public void read() throws IOException
     {
         if (remoteFile != null)
@@ -85,12 +116,10 @@ public class IncomingStreamReader
             }
 
             assert remoteFile.estimatedKeys > 0;
-            SSTableReader reader = null;
-            logger.debug("Estimated keys {}", remoteFile.estimatedKeys);
-            DataInputStream dis = new DataInputStream(new LZFInputStream(socket.getInputStream()));
+            DataInput dis = new DataInputStream(underliningStream);
             try
             {
-                reader = streamIn(dis, localFile, remoteFile);
+                SSTableReader reader = streamIn(dis, localFile, remoteFile);
                 session.finished(remoteFile, reader);
             }
             catch (IOException ex)
@@ -103,20 +132,27 @@ public class IncomingStreamReader
         session.closeIfFinished();
     }
 
+    /**
+     * @throws IOException if reading the remote sstable fails. Will throw an RTE if local write fails.
+     */
     private SSTableReader streamIn(DataInput input, PendingFile localFile, PendingFile remoteFile) throws IOException
     {
         ColumnFamilyStore cfs = Table.open(localFile.desc.ksname).getColumnFamilyStore(localFile.desc.cfname);
         DecoratedKey key;
         SSTableWriter writer = new SSTableWriter(localFile.getFilename(), remoteFile.estimatedKeys);
-        CompactionController controller = new CompactionController(cfs, Collections.<SSTableReader>emptyList(), Integer.MIN_VALUE, true);
+        CompactionController controller = new CompactionController(cfs, Collections.<SSTableReader>emptyList(), Integer.MIN_VALUE);
 
         try
         {
             BytesReadTracker in = new BytesReadTracker(input);
+            long totalBytesRead = 0;
 
             for (Pair<Long, Long> section : localFile.sections)
             {
                 long length = section.right - section.left;
+                // skip to beginning of section inside chunk
+                if (remoteFile.compressionInfo != null)
+                    ((CompressedInputStream) underliningStream).position(section.left);
                 long bytesRead = 0;
                 while (bytesRead < length)
                 {
@@ -128,17 +164,15 @@ public class IncomingStreamReader
                     {
                         // need to update row cache
                         // Note: Because we won't just echo the columns, there is no need to use the PRESERVE_SIZE flag, contrarily to what appendFromStream does below
-                        SSTableIdentityIterator iter = new SSTableIdentityIterator(cfs.metadata, in, key, 0, dataSize, IColumnSerializer.Flag.FROM_REMOTE);
+                        SSTableIdentityIterator iter = new SSTableIdentityIterator(cfs.metadata, in, localFile.getFilename(), key, 0, dataSize, ColumnSerializer.Flag.FROM_REMOTE);
                         PrecompactedRow row = new PrecompactedRow(controller, Collections.singletonList(iter));
                         // We don't expire anything so the row shouldn't be empty
                         assert !row.isEmpty();
                         writer.append(row);
-                        // row append does not update the max timestamp on its own
-                        writer.updateMaxTimestamp(row.maxTimestamp());
 
                         // update cache
                         ColumnFamily cf = row.getFullColumnFamily();
-                        cfs.updateRowCache(key, cf);
+                        cfs.maybeUpdateRowCache(key, cf);
                     }
                     else
                     {
@@ -147,22 +181,33 @@ public class IncomingStreamReader
                     }
 
                     bytesRead += in.getBytesRead();
-                    remoteFile.progress += in.getBytesRead();
+                    // when compressed, report total bytes of compressed chunks read since remoteFile.size is the sum of chunks transferred
+                    if (remoteFile.compressionInfo != null)
+                        remoteFile.progress = ((CompressedInputStream) underliningStream).getTotalCompressedBytesRead();
+                    else
+                        remoteFile.progress += in.getBytesRead();
+                    totalBytesRead += in.getBytesRead();
                 }
             }
+            StreamingMetrics.totalIncomingBytes.inc(totalBytesRead);
+            metrics.incomingBytes.inc(totalBytesRead);
             return writer.closeAndOpenReader();
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             writer.abort();
             if (e instanceof IOException)
                 throw (IOException) e;
             else
-                throw FBUtilities.unchecked(e);
+                throw Throwables.propagate(e);
+        }
+        finally
+        {
+            controller.close();
         }
     }
 
-    private void retry() throws IOException
+    private void retry()
     {
         /* Ask the source node to re-stream this file. */
         session.retry(remoteFile);

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,14 +7,13 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.db.marshal;
 
@@ -23,11 +22,9 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
+import org.apache.cassandra.exceptions.SyntaxException;
 import org.apache.cassandra.utils.ByteBufferUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /*
  * The encoding of a DynamicCompositeType column name should be:
@@ -50,14 +47,12 @@ import org.slf4j.LoggerFactory;
  */
 public class DynamicCompositeType extends AbstractCompositeType
 {
-    private static final Logger logger = LoggerFactory.getLogger(DynamicCompositeType.class);
-
     private final Map<Byte, AbstractType<?>> aliases;
 
     // interning instances
     private static final Map<Map<Byte, AbstractType<?>>, DynamicCompositeType> instances = new HashMap<Map<Byte, AbstractType<?>>, DynamicCompositeType>();
 
-    public static synchronized DynamicCompositeType getInstance(TypeParser parser) throws ConfigurationException
+    public static synchronized DynamicCompositeType getInstance(TypeParser parser) throws ConfigurationException, SyntaxException
     {
         return getInstance(parser.getAliasParameters());
     }
@@ -101,14 +96,18 @@ public class DynamicCompositeType extends AbstractCompositeType
         {
             throw new RuntimeException(e);
         }
+        catch (SyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected AbstractType<?> getNextComparator(int i, ByteBuffer bb)
+    protected AbstractType<?> getComparator(int i, ByteBuffer bb)
     {
         return getComparator(bb);
     }
 
-    protected AbstractType<?> getNextComparator(int i, ByteBuffer bb1, ByteBuffer bb2)
+    protected AbstractType<?> getComparator(int i, ByteBuffer bb1, ByteBuffer bb2)
     {
         AbstractType<?> comp1 = getComparator(bb1);
         AbstractType<?> comp2 = getComparator(bb2);
@@ -120,15 +119,15 @@ public class DynamicCompositeType extends AbstractCompositeType
              * We compare component of different types by comparing the
              * comparator class names. We start with the simple classname
              * first because that will be faster in almost all cases, but
-             * allback on the full name if necessary
-            */
+             * fallback on the full name if necessary
+             */
             int cmp = comp1.getClass().getSimpleName().compareTo(comp2.getClass().getSimpleName());
             if (cmp != 0)
-                return cmp < 0 ? FixedValueComparator.instance : ReversedType.getInstance(FixedValueComparator.instance);
+                return cmp < 0 ? FixedValueComparator.alwaysLesserThan : FixedValueComparator.alwaysGreaterThan;
 
             cmp = comp1.getClass().getName().compareTo(comp2.getClass().getName());
             if (cmp != 0)
-                return cmp < 0 ? FixedValueComparator.instance : ReversedType.getInstance(FixedValueComparator.instance);
+                return cmp < 0 ? FixedValueComparator.alwaysLesserThan : FixedValueComparator.alwaysGreaterThan;
 
             // if cmp == 0, we're actually having the same type, but one that
             // did not have a singleton instance. It's ok (though inefficient).
@@ -136,7 +135,7 @@ public class DynamicCompositeType extends AbstractCompositeType
         return comp1;
     }
 
-    protected AbstractType<?> getAndAppendNextComparator(int i, ByteBuffer bb, StringBuilder sb)
+    protected AbstractType<?> getAndAppendComparator(int i, ByteBuffer bb, StringBuilder sb)
     {
         try
         {
@@ -161,14 +160,18 @@ public class DynamicCompositeType extends AbstractCompositeType
         {
             throw new RuntimeException(e);
         }
+        catch (SyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected ParsedComparator parseNextComparator(int i, String part)
+    protected ParsedComparator parseComparator(int i, String part)
     {
         return new DynamicParsedComparator(part);
     }
 
-    protected AbstractType<?> validateNextComparator(int i, ByteBuffer bb) throws MarshalException
+    protected AbstractType<?> validateComparator(int i, ByteBuffer bb) throws MarshalException
     {
         AbstractType<?> comparator = null;
         if (bb.remaining() < 2)
@@ -198,6 +201,11 @@ public class DynamicCompositeType extends AbstractCompositeType
             throw new MarshalException("Cannot find comparator for component " + i);
         else
             return comparator;
+    }
+
+    public ByteBuffer decompose(Object... objects)
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -260,6 +268,10 @@ public class DynamicCompositeType extends AbstractCompositeType
                 }
                 type = t;
             }
+            catch (SyntaxException e)
+            {
+                throw new IllegalArgumentException(e);
+            }
             catch (ConfigurationException e)
             {
                 throw new IllegalArgumentException(e);
@@ -307,11 +319,19 @@ public class DynamicCompositeType extends AbstractCompositeType
      */
     private static class FixedValueComparator extends AbstractType<Void>
     {
-        public static final FixedValueComparator instance = new FixedValueComparator();
+        public static final FixedValueComparator alwaysLesserThan = new FixedValueComparator(-1);
+        public static final FixedValueComparator alwaysGreaterThan = new FixedValueComparator(1);
+
+        private final int cmp;
+
+        public FixedValueComparator(int cmp)
+        {
+            this.cmp = cmp;
+        }
 
         public int compare(ByteBuffer v1, ByteBuffer v2)
         {
-            return -1;
+            return cmp;
         }
 
         public Void compose(ByteBuffer bytes)

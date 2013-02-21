@@ -20,14 +20,14 @@ package org.apache.cassandra.cql3;
 import java.util.*;
 
 import org.apache.cassandra.config.KSMetaData;
-import org.apache.cassandra.config.ConfigurationException;
-import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.exceptions.*;
 
 public class KSPropDefs extends PropertyDefinitions
 {
     public static final String KW_DURABLE_WRITES = "durable_writes";
+    public static final String KW_REPLICATION = "replication";
 
-    public static final String KW_REPLICATION_STRATEGY = "strategy_class";
+    public static final String REPLICATION_STRATEGY_CLASS_KEY = "class";
 
     public static final Set<String> keywords = new HashSet<String>();
     public static final Set<String> obsoleteKeywords = new HashSet<String>();
@@ -35,29 +35,31 @@ public class KSPropDefs extends PropertyDefinitions
     static
     {
         keywords.add(KW_DURABLE_WRITES);
-        keywords.add(KW_REPLICATION_STRATEGY);
+        keywords.add(KW_REPLICATION);
+
+        obsoleteKeywords.add("strategy_class");
     }
 
     private String strategyClass;
-    private final Map<String, String> strategyOptions = new HashMap<String, String>();
 
-    public void validate() throws ConfigurationException, InvalidRequestException
+    public void validate() throws ConfigurationException, SyntaxException
     {
         validate(keywords, obsoleteKeywords);
 
-        if (!properties.containsKey("strategy_class"))
-            throw new InvalidRequestException("missing required argument \"strategy_class\"");
-        strategyClass = properties.get("strategy_class");
+        Map<String, String> replicationOptions = getReplicationOptions();
+        if (!replicationOptions.isEmpty())
+        {
+            strategyClass = replicationOptions.get(REPLICATION_STRATEGY_CLASS_KEY);
+            replicationOptions.remove(REPLICATION_STRATEGY_CLASS_KEY);
+        }
     }
 
-    @Override
-    public void addProperty(String name, String value) throws InvalidRequestException
+    public Map<String, String> getReplicationOptions() throws SyntaxException
     {
-        // optional
-        if (name.contains(":") && name.startsWith("strategy_options"))
-            strategyOptions.put(name.split(":")[1], value);
-        else
-            super.addProperty(name, value);
+        Map<String, String> replicationOptions = getMap(KW_REPLICATION);
+        if (replicationOptions == null)
+            return Collections.<String, String>emptyMap();
+        return replicationOptions;
     }
 
     public String getReplicationStrategyClass()
@@ -65,17 +67,12 @@ public class KSPropDefs extends PropertyDefinitions
         return strategyClass;
     }
 
-    public Map<String, String> getReplicationOptions()
-    {
-        return strategyOptions;
-    }
-
-    public KSMetaData asKSMetadata(String ksName) throws InvalidRequestException, ConfigurationException
+    public KSMetaData asKSMetadata(String ksName) throws RequestValidationException
     {
         return KSMetaData.newKeyspace(ksName, getReplicationStrategyClass(), getReplicationOptions(), getBoolean(KW_DURABLE_WRITES, true));
     }
 
-    public KSMetaData asKSMetadataUpdate(KSMetaData old) throws InvalidRequestException, ConfigurationException
+    public KSMetaData asKSMetadataUpdate(KSMetaData old) throws RequestValidationException
     {
         String sClass = strategyClass;
         Map<String, String> sOptions = getReplicationOptions();

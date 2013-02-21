@@ -1,7 +1,4 @@
-package org.apache.cassandra.hadoop;
-
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -10,16 +7,16 @@ package org.apache.cassandra.hadoop;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.hadoop;
+
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -27,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +33,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 
 import javax.security.auth.login.LoginException;
 
@@ -64,10 +61,10 @@ import javax.security.auth.login.LoginException;
 public class ColumnFamilyOutputFormat extends OutputFormat<ByteBuffer,List<Mutation>>
     implements org.apache.hadoop.mapred.OutputFormat<ByteBuffer,List<Mutation>>
 {
-    private static final Logger logger = LoggerFactory.getLogger(ColumnFamilyOutputFormat.class);
-
     public static final String BATCH_THRESHOLD = "mapreduce.output.columnfamilyoutputformat.batch.threshold";
     public static final String QUEUE_SIZE = "mapreduce.output.columnfamilyoutputformat.queue.size";
+    private static final Logger logger = LoggerFactory.getLogger(ColumnFamilyOutputFormat.class);
+
 
     /**
      * Check for validity of the output-specification for the job.
@@ -85,10 +82,8 @@ public class ColumnFamilyOutputFormat extends OutputFormat<ByteBuffer,List<Mutat
 
     private void checkOutputSpecs(Configuration conf)
     {
-        if (ConfigHelper.getOutputKeyspace(conf) == null || ConfigHelper.getOutputColumnFamily(conf) == null)
-        {
-            throw new UnsupportedOperationException("you must set the keyspace and columnfamily with setColumnFamily()");
-        }
+        if (ConfigHelper.getOutputKeyspace(conf) == null)
+            throw new UnsupportedOperationException("You must set the keyspace with setOutputKeyspace()");
         if (ConfigHelper.getOutputPartitioner(conf) == null)
             throw new UnsupportedOperationException("You must set the output partitioner to the one used by your Cassandra cluster");
         if (ConfigHelper.getOutputInitialAddress(conf) == null)
@@ -154,8 +149,8 @@ public class ColumnFamilyOutputFormat extends OutputFormat<ByteBuffer,List<Mutat
             throws InvalidRequestException, TException, AuthenticationException, AuthorizationException, LoginException
     {
         logger.debug("Creating authenticated client for CF output format");
-        TTransport transport = ConfigHelper.getOutputTransportFactory(conf).openTransport(socket);
-        TBinaryProtocol binaryProtocol = new TBinaryProtocol(transport);
+        TTransport transport = ConfigHelper.getOutputTransportFactory(conf).openTransport(socket, conf);
+        TBinaryProtocol binaryProtocol = new TBinaryProtocol(transport, ConfigHelper.getThriftMaxMessageLength(conf));
         Cassandra.Client client = new Cassandra.Client(binaryProtocol);
         client.set_keyspace(ConfigHelper.getOutputKeyspace(conf));
         if (ConfigHelper.getOutputKeyspaceUserName(conf) != null)

@@ -20,30 +20,29 @@ package org.apache.cassandra.thrift;
  *
  */
 
-
 import org.junit.Test;
 
+import java.util.Collections;
+
 import org.apache.cassandra.SchemaLoader;
-import org.apache.cassandra.config.CFMetaData;
-import org.apache.cassandra.config.ConfigurationException;
-import org.apache.cassandra.config.ColumnDefinition;
-import org.apache.cassandra.config.KSMetaData;
-import org.apache.cassandra.config.Schema;
+import org.apache.cassandra.config.*;
 import org.apache.cassandra.db.marshal.AsciiType;
 import org.apache.cassandra.db.marshal.UTF8Type;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.locator.LocalStrategy;
 import org.apache.cassandra.locator.NetworkTopologyStrategy;
+import org.apache.cassandra.utils.ByteBufferUtil;
 
 public class ThriftValidationTest extends SchemaLoader
 {
-    @Test(expected=InvalidRequestException.class)
-    public void testValidateCommutativeWithStandard() throws InvalidRequestException
+    @Test(expected=org.apache.cassandra.exceptions.InvalidRequestException.class)
+    public void testValidateCommutativeWithStandard() throws org.apache.cassandra.exceptions.InvalidRequestException
     {
         ThriftValidation.validateColumnFamily("Keyspace1", "Standard1", true);
     }
 
     @Test
-    public void testValidateCommutativeWithCounter() throws InvalidRequestException
+    public void testValidateCommutativeWithCounter() throws org.apache.cassandra.exceptions.InvalidRequestException
     {
         ThriftValidation.validateColumnFamily("Keyspace1", "Counter1", true);
     }
@@ -57,7 +56,7 @@ public class ThriftValidationTest extends SchemaLoader
         boolean gotException = false;
 
         // add a key_alias = "id"
-        newMetadata.keyAlias(AsciiType.instance.decompose("id"));
+        newMetadata.keyAliases(Collections.singletonList(AsciiType.instance.decompose("id")));
 
         // should not throw IRE here
         try
@@ -72,7 +71,7 @@ public class ThriftValidationTest extends SchemaLoader
         assert !gotException : "got unexpected ConfigurationException";
 
         // add a column with name = "id"
-        newMetadata.addColumnDefinition(ColumnDefinition.utf8("id", null));
+        newMetadata.addColumnDefinition(new ColumnDefinition(ByteBufferUtil.bytes("id"), UTF8Type.instance, null, null, null, null));
 
         gotException = false;
 

@@ -130,7 +130,7 @@ commands:
         describe; - Describes current authenticated keyspace
         describe <keyspace>; - Describe this keyspace
         describe <column_family>; - Describe the colum family in the current authenticated keyspace
-    - name:
+    - name: NODE_DESCRIBE_CLUSTER
       help: |
         describe cluster;
 
@@ -394,6 +394,11 @@ commands:
         - bloom_filter_fp_chance: Desired false positive probability for
           sstable row bloom filters.  Default is 0.000744.
 
+        - index_interval: controls the sampling of entries from the primrary
+          row index in terms of space versus time.  The larger the interval,
+          the smaller and less effective the sampling will be. All the sampled
+          entries must fit in memory.  Default value is 128.
+
         - column_type: Type of columns this column family holds, valid values are
           Standard and Super. Default is Standard.
 
@@ -539,6 +544,9 @@ commands:
         - replicate_on_write: Replicate every counter update from the leader to the
         follower replicas. Accepts the values true and false.
 
+        - populate_io_cache_on_flush: Populates the page cache on memtable flush
+        and compaction. Accepts the values true and false.
+
         - compression_options: Options related to compression.
           Options have the form {key:value}.
           The main recognized options are:
@@ -574,6 +582,9 @@ commands:
                 column_name : 'other name',
                 validation_class : LongType
             }];
+        create column family UseComposites
+           with comparator = 'CompositeType(UTF8Type, Int32Type)'
+           and caching='ALL';
     - name: NODE_UPDATE_COLUMN_FAMILY
       help: |
         update column family <name>;
@@ -784,6 +795,27 @@ commands:
             - ROWS_ONLY
             - NONE;
 
+        - speculative_retry: Speculative retry is used to speculate a read failure.
+
+          Speculative retry will execute additional read on a different nodes when
+          the read request doesn't complete within the x milliseconds.
+
+          Xpercentile will execute additional read requests to a different replicas
+          when read request was not completed within X percentile of the
+          normal/earlier recorded latencies.
+
+          Xms will execute additional read request to a diffrent replica when read
+          request was not completed in X milliseconds.
+
+          ALWAYS will execute data read request to 2 (If available) of the replicas
+          expecting a node to fail read.
+
+          Supported values are:
+            - ALWAYS
+            - Xpercentile
+            - Xms
+            - NONE;
+
         - max_compaction_threshold: The maximum number of SSTables allowed before a
         minor compaction is forced. Default is 32, setting to 0 disables minor
         compactions.
@@ -804,6 +836,9 @@ commands:
 
         - replicate_on_write: Replicate every counter update from the leader to the
         follower replicas. Accepts the values true and false.
+
+        - populate_io_cache_on_flush: Populates the page cache on memtable flush
+        and compaction. Accepts the values true and false.
 
         - compression_options: Options related to compression.
           Options have the form {key:value}.
@@ -1005,6 +1040,7 @@ commands:
         set Standard1[testkey][testcol] = utf8('this is utf8 string.');
         set Standard1[testkey][timeuuid()] = utf8('hello world');
         set Standard1[testkey][timeuuid()] = utf8('hello world') with ttl = 30;
+        set UseComposites[utf8('testkey')]['CompositeType(utf8(first),int(4))'] = utf8('inserts this string into a column with name first:4');
     - name: NODE_THRIFT_DEL
       help: |
         del <cf>['<key>'];
@@ -1034,6 +1070,7 @@ commands:
             - integer
             - lexicaluuid: if used without arguments generates a new random uuid
             - long
+            - double
             - timeuuid: if used without arguments generates a new time uuid
             - utf8
 

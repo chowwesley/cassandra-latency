@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,12 +17,11 @@
  */
 package org.apache.cassandra.db;
 
-import java.io.Closeable;
 import java.util.*;
 
-import com.google.common.collect.AbstractIterator;
-
-import org.apache.cassandra.db.columniterator.IColumnIterator;
+import org.apache.cassandra.db.columniterator.IColumnIteratorFactory;
+import org.apache.cassandra.db.columniterator.LazyColumnIterator;
+import org.apache.cassandra.db.columniterator.OnDiskAtomIterator;
 import org.apache.cassandra.db.filter.QueryFilter;
 import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.io.sstable.SSTableScanner;
@@ -32,9 +31,9 @@ import org.apache.cassandra.utils.MergeIterator;
 public class RowIteratorFactory
 {
 
-    private static final Comparator<IColumnIterator> COMPARE_BY_KEY = new Comparator<IColumnIterator>()
+    private static final Comparator<OnDiskAtomIterator> COMPARE_BY_KEY = new Comparator<OnDiskAtomIterator>()
     {
-        public int compare(IColumnIterator o1, IColumnIterator o2)
+        public int compare(OnDiskAtomIterator o1, OnDiskAtomIterator o2)
         {
             return DecoratedKey.comparator.compare(o1.getKey(), o2.getKey());
         }
@@ -60,7 +59,7 @@ public class RowIteratorFactory
                                           final ColumnFamilyStore cfs)
     {
         // fetch data from current memtable, historical memtables, and SSTables in the correct order.
-        final List<CloseableIterator<IColumnIterator>> iterators = new ArrayList<CloseableIterator<IColumnIterator>>();
+        final List<CloseableIterator<OnDiskAtomIterator>> iterators = new ArrayList<CloseableIterator<OnDiskAtomIterator>>();
 
         // memtables
         for (Memtable memtable : memtables)
@@ -76,10 +75,10 @@ public class RowIteratorFactory
         }
 
         // reduce rows from all sources into a single row
-        return MergeIterator.get(iterators, COMPARE_BY_KEY, new MergeIterator.Reducer<IColumnIterator, Row>()
+        return MergeIterator.get(iterators, COMPARE_BY_KEY, new MergeIterator.Reducer<OnDiskAtomIterator, Row>()
         {
             private final int gcBefore = (int) (System.currentTimeMillis() / 1000) - cfs.metadata.getGcGraceSeconds();
-            private final List<IColumnIterator> colIters = new ArrayList<IColumnIterator>();
+            private final List<OnDiskAtomIterator> colIters = new ArrayList<OnDiskAtomIterator>();
             private DecoratedKey key;
             private ColumnFamily returnCF;
 
@@ -89,7 +88,7 @@ public class RowIteratorFactory
                 this.returnCF = ColumnFamily.create(cfs.metadata);
             }
 
-            public void reduce(IColumnIterator current)
+            public void reduce(OnDiskAtomIterator current)
             {
                 this.colIters.add(current);
                 this.key = current.getKey();
@@ -104,11 +103,11 @@ public class RowIteratorFactory
                 if (cached == null)
                 {
                     // not cached: collate
-                    filter.collateColumns(returnCF, colIters, gcBefore);
+                    filter.collateOnDiskAtom(returnCF, colIters, gcBefore);
                 }
                 else
                 {
-                    QueryFilter keyFilter = new QueryFilter(key, filter.path, filter.filter);
+                    QueryFilter keyFilter = new QueryFilter(key, filter.cfName, filter.filter);
                     returnCF = cfs.filterColumnFamily(cached, keyFilter, gcBefore);
                 }
 
@@ -123,7 +122,7 @@ public class RowIteratorFactory
     /**
      * Get a ColumnIterator for a specific key in the memtable.
      */
-    private static class ConvertToColumnIterator extends AbstractIterator<IColumnIterator> implements CloseableIterator<IColumnIterator>
+    private static class ConvertToColumnIterator implements CloseableIterator<OnDiskAtomIterator>
     {
         private final QueryFilter filter;
         private final Iterator<Map.Entry<DecoratedKey, ColumnFamily>> iter;
@@ -134,14 +133,33 @@ public class RowIteratorFactory
             this.iter = iter;
         }
 
-        public IColumnIterator computeNext()
+        public boolean hasNext()
         {
-            if (iter.hasNext())
+            return iter.hasNext();
+        }
+
+        /*
+         * Note that when doing get_paged_slice, we reset the start of the queryFilter after we've fetched the
+         * first row. This means that this iterator should not use in any way the filter to fetch a row before
+         * we call next(). Which prevents us for using guava AbstractIterator.
+         * This is obviously rather fragile and we should consider refactoring that code, but such refactor will go
+         * deep into the storage engine code so this will have to do until then.
+         */
+        public OnDiskAtomIterator next()
+        {
+            final Map.Entry<DecoratedKey, ColumnFamily> entry = iter.next();
+            return new LazyColumnIterator(entry.getKey(), new IColumnIteratorFactory()
             {
-                Map.Entry<DecoratedKey, ColumnFamily> entry = iter.next();
-                return filter.getMemtableColumnIterator(entry.getValue(), entry.getKey());
-            }
-            return endOfData();
+                public OnDiskAtomIterator create()
+                {
+                    return filter.getMemtableColumnIterator(entry.getValue(), entry.getKey());
+                }
+            });
+        }
+
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
         }
 
         public void close()

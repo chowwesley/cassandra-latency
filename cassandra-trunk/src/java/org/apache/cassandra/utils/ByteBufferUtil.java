@@ -7,14 +7,13 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.utils;
 
@@ -25,12 +24,12 @@ package org.apache.cassandra.utils;
  */
 
 import java.io.*;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-
-import static com.google.common.base.Charsets.UTF_8;
+import java.util.UUID;
 
 import org.apache.cassandra.io.util.FileDataInput;
 import org.apache.cassandra.io.util.FileUtils;
@@ -75,6 +74,7 @@ import org.apache.cassandra.io.util.FileUtils;
  */
 public class ByteBufferUtil
 {
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
     public static final ByteBuffer EMPTY_BYTE_BUFFER = ByteBuffer.wrap(new byte[0]);
 
     public static int compareUnsigned(ByteBuffer o1, ByteBuffer o2)
@@ -336,20 +336,12 @@ public class ByteBufferUtil
         }
     }
 
-    public static void writeWithShortLength(ByteBuffer buffer, DataOutput out)
+    public static void writeWithShortLength(ByteBuffer buffer, DataOutput out) throws IOException
     {
         int length = buffer.remaining();
         assert 0 <= length && length <= FBUtilities.MAX_UNSIGNED_SHORT : length;
-        try
-        {
-            out.writeByte((length >> 8) & 0xFF);
-            out.writeByte(length & 0xFF);
-            write(buffer, out); // writing data bytes to output source
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        out.writeShort(length);
+        write(buffer, out); // writing data bytes to output source
     }
 
     public static ByteBuffer readWithLength(DataInput in) throws IOException
@@ -366,8 +358,7 @@ public class ByteBufferUtil
     /* @return An unsigned short in an integer. */
     public static int readShortLength(DataInput in) throws IOException
     {
-        int length = (in.readByte() & 0xFF) << 8;
-        return length | (in.readByte() & 0xFF);
+        return in.readUnsignedShort();
     }
 
     /**
@@ -394,6 +385,9 @@ public class ByteBufferUtil
 
     public static ByteBuffer read(DataInput in, int length) throws IOException
     {
+        if (length == 0)
+            return EMPTY_BYTE_BUFFER;
+
         if (in instanceof FileDataInput)
             return ((FileDataInput) in).readBytes(length);
 
@@ -455,7 +449,7 @@ public class ByteBufferUtil
 
         return new InputStream()
         {
-            public int read() throws IOException
+            public int read()
             {
                 if (!copy.hasRemaining())
                     return -1;
@@ -464,7 +458,7 @@ public class ByteBufferUtil
             }
 
             @Override
-            public int read(byte[] bytes, int off, int len) throws IOException
+            public int read(byte[] bytes, int off, int len)
             {
                 if (!copy.hasRemaining())
                     return -1;
@@ -475,7 +469,7 @@ public class ByteBufferUtil
             }
 
             @Override
-            public int available() throws IOException
+            public int available()
             {
                 return copy.remaining();
             }
@@ -513,24 +507,31 @@ public class ByteBufferUtil
      */
     public static int compareSubArrays(ByteBuffer bytes1, int offset1, ByteBuffer bytes2, int offset2, int length)
     {
-        if ( null == bytes1 )
-        {
-            if ( null == bytes2) return 0;
-            else return -1;
-        }
-        if (null == bytes2 ) return 1;
+        if (bytes1 == null)
+            return bytes2 == null ? 0 : -1;
+        if (bytes2 == null) return 1;
 
         assert bytes1.limit() >= offset1 + length : "The first byte array isn't long enough for the specified offset and length.";
         assert bytes2.limit() >= offset2 + length : "The second byte array isn't long enough for the specified offset and length.";
-        for ( int i = 0; i < length; i++ )
+        for (int i = 0; i < length; i++)
         {
             byte byte1 = bytes1.get(offset1 + i);
             byte byte2 = bytes2.get(offset2 + i);
-            if ( byte1 == byte2 )
+            if (byte1 == byte2)
                 continue;
             // compare non-equal bytes as unsigned
             return (byte1 & 0xFF) < (byte2 & 0xFF) ? -1 : 1;
         }
         return 0;
+    }
+
+    public static ByteBuffer bytes(InetAddress address)
+    {
+        return ByteBuffer.wrap(address.getAddress());
+    }
+
+    public static ByteBuffer bytes(UUID uuid)
+    {
+        return ByteBuffer.wrap(UUIDGen.decompose(uuid));
     }
 }

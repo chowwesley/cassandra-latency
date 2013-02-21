@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,62 +15,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.db;
-
-import java.io.DataInputStream;
-import java.io.IOError;
-import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.io.util.FastByteArrayInputStream;
+import org.apache.cassandra.io.FSError;
 import org.apache.cassandra.net.IVerbHandler;
-import org.apache.cassandra.net.Message;
+import org.apache.cassandra.net.MessageIn;
 import org.apache.cassandra.net.MessagingService;
+import org.apache.cassandra.tracing.Tracing;
 
-public class TruncateVerbHandler implements IVerbHandler
+public class TruncateVerbHandler implements IVerbHandler<Truncation>
 {
-    private static Logger logger = LoggerFactory.getLogger(TruncateVerbHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(TruncateVerbHandler.class);
 
-    public void doVerb(Message message, String id)
+    public void doVerb(MessageIn<Truncation> message, String id)
     {
-        byte[] bytes = message.getMessageBody();
-        FastByteArrayInputStream buffer = new FastByteArrayInputStream(bytes);
-
+        Truncation t = message.payload;
+        Tracing.trace("Applying truncation of {}.{}", t.keyspace, t.columnFamily);
         try
         {
-            Truncation t = Truncation.serializer().deserialize(new DataInputStream(buffer), message.getVersion());
-            logger.debug("Applying {}", t);
-
-            try
-            {
-                ColumnFamilyStore cfs = Table.open(t.keyspace).getColumnFamilyStore(t.columnFamily);
-                cfs.truncate().get();
-            }
-            catch (Exception e)
-            {
-                logger.error("Error in truncation", e);
-                respondError(t, message);
-            }
-            logger.debug("Truncate operation succeeded at this host");
-
-            TruncateResponse response = new TruncateResponse(t.keyspace, t.columnFamily, true);
-            Message responseMessage = TruncateResponse.makeTruncateResponseMessage(message, response);
-            logger.debug("{} applied.  Sending response to {}@{} ", new Object[]{ t, id, message.getFrom()});
-            MessagingService.instance().sendReply(responseMessage, id, message.getFrom());
+            ColumnFamilyStore cfs = Table.open(t.keyspace).getColumnFamilyStore(t.columnFamily);
+            cfs.truncate().get();
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            throw new IOError(e);
+            logger.error("Error in truncation", e);
+            respondError(t, message);
+
+            if (FSError.findNested(e) != null)
+                throw FSError.findNested(e);
         }
+        Tracing.trace("Enqueuing response to truncate operation to {}", message.from);
+
+        TruncateResponse response = new TruncateResponse(t.keyspace, t.columnFamily, true);
+        logger.trace("{} applied.  Enqueuing response to {}@{} ", new Object[]{ t, id, message.from });
+        MessagingService.instance().sendReply(response.createMessage(), id, message.from);
     }
 
-    private static void respondError(Truncation t, Message truncateRequestMessage) throws IOException
+    private static void respondError(Truncation t, MessageIn truncateRequestMessage)
     {
         TruncateResponse response = new TruncateResponse(t.keyspace, t.columnFamily, false);
-        Message responseMessage = TruncateResponse.makeTruncateResponseMessage(truncateRequestMessage, response);
-        MessagingService.instance().sendOneWay(responseMessage, truncateRequestMessage.getFrom());
+        MessagingService.instance().sendOneWay(response.createMessage(), truncateRequestMessage.from);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -7,29 +7,24 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.db;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.cassandra.db.columniterator.IColumnIterator;
-import org.apache.cassandra.db.columniterator.ISSTableColumnIterator;
+import org.apache.cassandra.db.columniterator.OnDiskAtomIterator;
 import org.apache.cassandra.db.columniterator.SimpleAbstractColumnIterator;
 import org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy;
 import org.apache.cassandra.db.filter.NamesQueryFilter;
@@ -38,15 +33,17 @@ import org.apache.cassandra.db.marshal.CounterColumnType;
 import org.apache.cassandra.io.sstable.SSTable;
 import org.apache.cassandra.io.sstable.SSTableReader;
 import org.apache.cassandra.io.util.FileUtils;
+import org.apache.cassandra.tracing.Tracing;
 import org.apache.cassandra.utils.CloseableIterator;
+import org.apache.cassandra.utils.HeapAllocator;
 
 public class CollationController
 {
-    private static Logger logger = LoggerFactory.getLogger(CollationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollationController.class);
 
     private final ColumnFamilyStore cfs;
-    private final boolean mutableColumns;
     private final QueryFilter filter;
+    private final ISortedColumns.Factory factory;
     private final int gcBefore;
 
     private int sstablesIterated = 0;
@@ -54,15 +51,17 @@ public class CollationController
     public CollationController(ColumnFamilyStore cfs, boolean mutableColumns, QueryFilter filter, int gcBefore)
     {
         this.cfs = cfs;
-        this.mutableColumns = mutableColumns;
         this.filter = filter;
         this.gcBefore = gcBefore;
+
+        this.factory = mutableColumns
+                     ? AtomicSortedColumns.factory()
+                     : ArrayBackedSortedColumns.factory();
     }
 
     public ColumnFamily getTopLevelColumns()
     {
         return filter.filter instanceof NamesQueryFilter
-               && (cfs.metadata.cfType == ColumnFamilyType.Standard || filter.path.superColumnName != null)
                && cfs.metadata.getDefaultValidator() != CounterColumnType.instance
                ? collectTimeOrderedData()
                : collectAllData();
@@ -75,33 +74,41 @@ public class CollationController
      */
     private ColumnFamily collectTimeOrderedData()
     {
-        logger.debug("collectTimeOrderedData");
-
-        // AtomicSortedColumns doesn't work for super columi ns (see #3821)
-        ISortedColumns.Factory factory = mutableColumns
-                                       ? cfs.metadata.cfType == ColumnFamilyType.Super ? ThreadSafeSortedColumns.factory() : AtomicSortedColumns.factory()
-                                       : TreeMapBackedSortedColumns.factory();
+        logger.trace("collectTimeOrderedData");
         ColumnFamily container = ColumnFamily.create(cfs.metadata, factory, filter.filter.isReversed());
-        List<IColumnIterator> iterators = new ArrayList<IColumnIterator>();
+        List<OnDiskAtomIterator> iterators = new ArrayList<OnDiskAtomIterator>();
+        Tracing.trace("Acquiring sstable references");
         ColumnFamilyStore.ViewFragment view = cfs.markReferenced(filter.key);
+
+        // We use a temporary CF object per memtable or sstable source so we can accomodate this.factory being ABSC,
+        // which requires addAtom to happen in sorted order.  Then we use addAll to merge into the final collection,
+        // which allows a (sorted) set of columns to be merged even if they are not uniformly sorted after the existing
+        // ones.
+        ColumnFamily temp = ColumnFamily.create(cfs.metadata, ArrayBackedSortedColumns.factory(), filter.filter.isReversed());
+
         try
         {
+            Tracing.trace("Merging memtable contents");
             for (Memtable memtable : view.memtables)
             {
-                IColumnIterator iter = filter.getMemtableColumnIterator(memtable);
+                OnDiskAtomIterator iter = filter.getMemtableColumnIterator(memtable);
                 if (iter != null)
                 {
                     iterators.add(iter);
-                    container.delete(iter.getColumnFamily());
+                    temp.delete(iter.getColumnFamily());
                     while (iter.hasNext())
-                        container.addColumn(iter.next());
+                        temp.addAtom(iter.next());
                 }
+
+                container.addAll(temp, HeapAllocator.instance);
+                temp.clear();
             }
 
             // avoid changing the filter columns of the original filter
             // (reduceNameFilter removes columns that are known to be irrelevant)
-            TreeSet<ByteBuffer> filterColumns = new TreeSet<ByteBuffer>(((NamesQueryFilter) filter.filter).columns);
-            QueryFilter reducedFilter = new QueryFilter(filter.key, filter.path, new NamesQueryFilter(filterColumns));
+            NamesQueryFilter namesFilter = (NamesQueryFilter) filter.filter;
+            TreeSet<ByteBuffer> filterColumns = new TreeSet<ByteBuffer>(namesFilter.columns);
+            QueryFilter reducedFilter = new QueryFilter(filter.key, filter.cfName, namesFilter.withUpdatedColumns(filterColumns));
 
             /* add the SSTables on disk */
             Collections.sort(view.sstables, SSTable.maxTimestampComparator);
@@ -110,18 +117,18 @@ public class CollationController
             long mostRecentRowTombstone = Long.MIN_VALUE;
             for (SSTableReader sstable : view.sstables)
             {
-                // if we've already seen a row tombstone with a timestamp greater 
+                // if we've already seen a row tombstone with a timestamp greater
                 // than the most recent update to this sstable, we're done, since the rest of the sstables
                 // will also be older
                 if (sstable.getMaxTimestamp() < mostRecentRowTombstone)
                     break;
-                
+
                 long currentMaxTs = sstable.getMaxTimestamp();
                 reduceNameFilter(reducedFilter, container, currentMaxTs);
                 if (((NamesQueryFilter) reducedFilter.filter).columns.isEmpty())
                     break;
 
-                IColumnIterator iter = reducedFilter.getSSTableColumnIterator(sstable);
+                OnDiskAtomIterator iter = reducedFilter.getSSTableColumnIterator(sstable);
                 iterators.add(iter);
                 if (iter.getColumnFamily() != null)
                 {
@@ -129,14 +136,18 @@ public class CollationController
                     if (cf.isMarkedForDelete())
                     {
                         // track the most recent row level tombstone we encounter
-                        mostRecentRowTombstone = cf.getMarkedForDeleteAt();
+                        mostRecentRowTombstone = cf.deletionInfo().getTopLevelDeletion().markedForDeleteAt;
                     }
-                    
-                    container.delete(cf);
+
+                    temp.delete(cf);
                     sstablesIterated++;
+                    Tracing.trace("Merging data from sstable {}", sstable.descriptor.generation);
                     while (iter.hasNext())
-                        container.addColumn(iter.next());
+                        temp.addAtom(iter.next());
                 }
+
+                container.addAll(temp, HeapAllocator.instance);
+                temp.clear();
             }
 
             // we need to distinguish between "there is no data at all for this row" (BF will let us rebuild that efficiently)
@@ -146,11 +157,11 @@ public class CollationController
 
             // do a final collate.  toCollate is boilerplate required to provide a CloseableIterator
             final ColumnFamily c2 = container;
-            CloseableIterator<IColumn> toCollate = new SimpleAbstractColumnIterator()
+            CloseableIterator<OnDiskAtom> toCollate = new SimpleAbstractColumnIterator()
             {
-                final Iterator<IColumn> iter = c2.iterator();
+                final Iterator<Column> iter = c2.iterator();
 
-                protected IColumn computeNext()
+                protected OnDiskAtom computeNext()
                 {
                     return iter.hasNext() ? iter.next() : endOfData();
                 }
@@ -166,24 +177,18 @@ public class CollationController
                 }
             };
             ColumnFamily returnCF = container.cloneMeShallow();
-            filter.collateColumns(returnCF, Collections.singletonList(toCollate), gcBefore);
+            Tracing.trace("Collating all results");
+            filter.collateOnDiskAtom(returnCF, Collections.singletonList(toCollate), gcBefore);
 
             // "hoist up" the requested data into a more recent sstable
             if (sstablesIterated > cfs.getMinimumCompactionThreshold()
                 && !cfs.isCompactionDisabled()
                 && cfs.getCompactionStrategy() instanceof SizeTieredCompactionStrategy)
             {
-                RowMutation rm = new RowMutation(cfs.table.name, new Row(filter.key, returnCF.cloneMe()));
-                try
-                {
-                    // skipping commitlog and index updates is fine since we're just de-fragmenting existing data
-                    Table.open(rm.getTable()).apply(rm, false, false);
-                }
-                catch (IOException e)
-                {
-                    // log and allow the result to be returned
-                    logger.error("Error re-writing read results", e);
-                }
+                Tracing.trace("Defragmenting requested data");
+                RowMutation rm = new RowMutation(cfs.table.getName(), new Row(filter.key, returnCF.cloneMe()));
+                // skipping commitlog and index updates is fine since we're just de-fragmenting existing data
+                Table.open(rm.getTable()).apply(rm, false, false);
             }
 
             // Caller is responsible for final removeDeletedCF.  This is important for cacheRow to work correctly:
@@ -191,20 +196,17 @@ public class CollationController
         }
         finally
         {
-            for (IColumnIterator iter : iterators)
+            for (OnDiskAtomIterator iter : iterators)
                 FileUtils.closeQuietly(iter);
             SSTableReader.releaseReferences(view.sstables);
         }
     }
 
     /**
-     * remove columns from @param filter where we already have data in @param returnCF newer than @param sstableTimestamp
+     * remove columns from @param filter where we already have data in @param container newer than @param sstableTimestamp
      */
-    private void reduceNameFilter(QueryFilter filter, ColumnFamily returnCF, long sstableTimestamp)
+    private void reduceNameFilter(QueryFilter filter, ColumnFamily container, long sstableTimestamp)
     {
-        AbstractColumnContainer container = filter.path.superColumnName == null
-                                          ? returnCF
-                                          : (SuperColumn) returnCF.getColumn(filter.path.superColumnName);
         // MIN_VALUE means we don't know any information
         if (container == null || sstableTimestamp == Long.MIN_VALUE)
             return;
@@ -212,7 +214,7 @@ public class CollationController
         for (Iterator<ByteBuffer> iterator = ((NamesQueryFilter) filter.filter).columns.iterator(); iterator.hasNext(); )
         {
             ByteBuffer filterColumn = iterator.next();
-            IColumn column = container.getColumn(filterColumn);
+            Column column = container.getColumn(filterColumn);
             if (column != null && column.timestamp() > sstableTimestamp)
                 iterator.remove();
         }
@@ -224,63 +226,57 @@ public class CollationController
      */
     private ColumnFamily collectAllData()
     {
-        logger.debug("collectAllData");
-        // AtomicSortedColumns doesn't work for super columns (see #3821)
-        ISortedColumns.Factory factory = mutableColumns
-                                       ? cfs.metadata.cfType == ColumnFamilyType.Super ? ThreadSafeSortedColumns.factory() : AtomicSortedColumns.factory()
-                                       : ArrayBackedSortedColumns.factory();
+        logger.trace("collectAllData");
+        Tracing.trace("Acquiring sstable references");
         ColumnFamilyStore.ViewFragment view = cfs.markReferenced(filter.key);
-        List<IColumnIterator> iterators = new ArrayList<IColumnIterator>(Iterables.size(view.memtables) + view.sstables.size());
+        List<OnDiskAtomIterator> iterators = new ArrayList<OnDiskAtomIterator>(Iterables.size(view.memtables) + view.sstables.size());
         ColumnFamily returnCF = ColumnFamily.create(cfs.metadata, factory, filter.filter.isReversed());
 
         try
         {
+            Tracing.trace("Merging memtable contents");
             for (Memtable memtable : view.memtables)
             {
-                IColumnIterator iter = filter.getMemtableColumnIterator(memtable);
+                OnDiskAtomIterator iter = filter.getMemtableColumnIterator(memtable);
                 if (iter != null)
                 {
                     returnCF.delete(iter.getColumnFamily());
                     iterators.add(iter);
                 }
             }
-            
+
+            /*
+             * We can't eliminate full sstables based on the timestamp of what we've already read like
+             * in collectTimeOrderedData, but we still want to eliminate sstable whose maxTimestamp < mostRecentTombstone
+             * we've read. We still rely on the sstable ordering by maxTimestamp since if
+             *   maxTimestamp_s1 > maxTimestamp_s0,
+             * we're guaranteed that s1 cannot have a row tombstone such that
+             *   timestamp(tombstone) > maxTimestamp_s0
+             * since we necessarily have
+             *   timestamp(tombstone) <= maxTimestamp_s1
+             * In othere words, iterating in maxTimestamp order allow to do our mostRecentTombstone elimination
+             * in one pass, and minimize the number of sstables for which we read a rowTombstone.
+             */
+            Collections.sort(view.sstables, SSTable.maxTimestampComparator);
+
             long mostRecentRowTombstone = Long.MIN_VALUE;
             for (SSTableReader sstable : view.sstables)
             {
-                // if we've already seen a row tombstone with a timestamp greater 
+                // if we've already seen a row tombstone with a timestamp greater
                 // than the most recent update to this sstable, we can skip it
                 if (sstable.getMaxTimestamp() < mostRecentRowTombstone)
-                    continue;
+                    break;
 
-                IColumnIterator iter = filter.getSSTableColumnIterator(sstable);
+                OnDiskAtomIterator iter = filter.getSSTableColumnIterator(sstable);
                 iterators.add(iter);
                 if (iter.getColumnFamily() != null)
                 {
                     ColumnFamily cf = iter.getColumnFamily();
                     if (cf.isMarkedForDelete())
-                        mostRecentRowTombstone = cf.getMarkedForDeleteAt();
+                        mostRecentRowTombstone = cf.deletionInfo().getTopLevelDeletion().markedForDeleteAt;
 
                     returnCF.delete(cf);
                     sstablesIterated++;
-                }
-            }
-            
-            // If we saw a row tombstone, do a second pass through the iterators we
-            // obtained from the sstables and drop any whose maxTimestamp < that of the
-            // row tombstone
-            if (mostRecentRowTombstone > Long.MIN_VALUE)
-            {
-                Iterator<IColumnIterator> it = iterators.iterator();
-                while (it.hasNext())
-                {
-                    IColumnIterator iter = it.next();
-                    if ((iter instanceof ISSTableColumnIterator)
-                        && ((ISSTableColumnIterator) iter).getSStable().getMaxTimestamp() < mostRecentRowTombstone)
-                    {
-                        FileUtils.closeQuietly(iter);
-                        it.remove();
-                    }
                 }
             }
 
@@ -289,14 +285,15 @@ public class CollationController
             if (iterators.isEmpty())
                 return null;
 
-            filter.collateColumns(returnCF, iterators, gcBefore);
+            Tracing.trace("Merging data from memtables and {} sstables", sstablesIterated);
+            filter.collateOnDiskAtom(returnCF, iterators, gcBefore);
 
             // Caller is responsible for final removeDeletedCF.  This is important for cacheRow to work correctly:
             return returnCF;
         }
         finally
         {
-            for (IColumnIterator iter : iterators)
+            for (OnDiskAtomIterator iter : iterators)
                 FileUtils.closeQuietly(iter);
             SSTableReader.releaseReferences(view.sstables);
         }

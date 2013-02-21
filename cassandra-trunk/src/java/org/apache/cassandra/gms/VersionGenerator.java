@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.gms;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,10 +26,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class VersionGenerator
 {
-    private static AtomicInteger version_ = new AtomicInteger(0);
+    private static final AtomicInteger version = new AtomicInteger(0);
 
     public static int getNextVersion()
     {
-        return version_.incrementAndGet();
+        return version.incrementAndGet();
     }
 }

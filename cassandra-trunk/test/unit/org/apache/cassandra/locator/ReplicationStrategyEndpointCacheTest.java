@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import org.apache.cassandra.SchemaLoader;
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.dht.BigIntegerToken;
 import org.apache.cassandra.dht.Token;
 
@@ -164,7 +164,7 @@ public class ReplicationStrategyEndpointCacheTest extends SchemaLoader
     private AbstractReplicationStrategy getStrategyWithNewTokenMetadata(AbstractReplicationStrategy strategy, TokenMetadata newTmd) throws ConfigurationException
     {
         return AbstractReplicationStrategy.createReplicationStrategy(
-                strategy.table,
+                strategy.tableName,
                 strategy.getClass().getName(),
                 newTmd,
                 strategy.snitch,

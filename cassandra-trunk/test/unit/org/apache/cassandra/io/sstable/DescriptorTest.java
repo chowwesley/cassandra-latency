@@ -20,8 +20,9 @@ package org.apache.cassandra.io.sstable;
  *
  */
 
-
+import org.apache.cassandra.utils.FilterFactory;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class DescriptorTest
 {
@@ -30,8 +31,8 @@ public class DescriptorTest
     {
         Descriptor descriptor = Descriptor.fromFilename("Keyspace1-userActionUtilsKey-9-Data.db");
 
-        assert descriptor.version.equals(Descriptor.LEGACY_VERSION);
-        assert descriptor.usesOldBloomFilter;
+        assert descriptor.version.equals(Descriptor.Version.LEGACY);
+        assert descriptor.version.filterType == FilterFactory.Type.SHA;
     }
 
     @Test
@@ -39,15 +40,28 @@ public class DescriptorTest
     {
         // letter only
         Descriptor desc = Descriptor.fromFilename("Keyspace1-Standard1-h-1-Data.db");
-        assert "h".equals(desc.version);
+        assert "h".equals(desc.version.toString());
 
         // multiple letters
         desc = Descriptor.fromFilename("Keyspace1-Standard1-ha-1-Data.db");
-        assert "ha".equals(desc.version);
+        assert "ha".equals(desc.version.toString());
 
         // hypothetical two-letter g version
         desc = Descriptor.fromFilename("Keyspace1-Standard1-gz-1-Data.db");
-        assert "gz".equals(desc.version);
-        assert !desc.tracksMaxTimestamp;
+        assert "gz".equals(desc.version.toString());
+        assert !desc.version.tracksMaxTimestamp;
+        assert !desc.version.tracksMinTimestamp;
+    }
+
+    @Test
+    public void testMurmurBloomFilter()
+    {
+        Descriptor desc = Descriptor.fromFilename("Keyspace1-Standard1-hz-1-Data.db");
+        assertEquals("hz", desc.version.toString());
+        assertEquals(desc.version.filterType, FilterFactory.Type.MURMUR2);
+
+        desc = Descriptor.fromFilename("Keyspace1-Standard1-ia-1-Data.db");
+        assertEquals("ia", desc.version.toString());
+        assertEquals(desc.version.filterType, FilterFactory.Type.MURMUR3);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.cassandra.dht;
 
 import java.io.Serializable;
@@ -225,7 +224,7 @@ public class Range<T extends RingPosition> extends AbstractBounds<T> implements 
 
         AbstractBounds<T> lb = new Range<T>(left, position, partitioner);
         AbstractBounds<T> rb = new Range<T>(position, right, partitioner);
-        return new Pair<AbstractBounds<T>, AbstractBounds<T>>(lb, rb);
+        return Pair.create(lb, rb);
     }
 
     public List<Range<T>> unwrap()
@@ -356,6 +355,16 @@ public class Range<T extends RingPosition> extends AbstractBounds<T> implements 
         return "(" + left + "," + right + "]";
     }
 
+    protected String getOpeningString()
+    {
+        return "(";
+    }
+
+    protected String getClosingString()
+    {
+        return "]";
+    }
+
     public List<String> asList()
     {
         ArrayList<String> ret = new ArrayList<String>(2);
@@ -458,5 +467,10 @@ public class Range<T extends RingPosition> extends AbstractBounds<T> implements 
     public AbstractBounds<Token> toTokenBounds()
     {
         return (left instanceof RowPosition) ? new Range<Token>(((RowPosition)left).getToken(), ((RowPosition)right).getToken(), partitioner) : (Range<Token>)this;
+    }
+
+    public AbstractBounds<T> withNewRight(T newRight)
+    {
+        return new Range<T>(left, newRight);
     }
 }

@@ -1,7 +1,4 @@
-package org.apache.cassandra.hadoop;
-
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -10,16 +7,15 @@ package org.apache.cassandra.hadoop;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.hadoop;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +25,9 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.cassandra.auth.IAuthenticator;
 import org.apache.cassandra.config.Config;
@@ -49,9 +48,6 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 final class BulkRecordWriter extends RecordWriter<ByteBuffer,List<Mutation>>
 implements org.apache.hadoop.mapred.RecordWriter<ByteBuffer,List<Mutation>>
@@ -101,11 +97,8 @@ implements org.apache.hadoop.mapred.RecordWriter<ByteBuffer,List<Mutation>>
         Config.setLoadYaml(false);
         Config.setOutboundBindAny(true);
         this.conf = conf;
-        DatabaseDescriptor.setStreamThroughputOutboundMegabitsPerSec(Integer.valueOf(conf.get(STREAM_THROTTLE_MBITS, "0")));
-        maxFailures = Integer.valueOf(conf.get(MAX_FAILED_HOSTS, "0"));
-        String keyspace = ConfigHelper.getOutputKeyspace(conf);
-        outputdir = new File(getOutputLocation() + File.separator + keyspace + File.separator + ConfigHelper.getOutputColumnFamily(conf)); //dir must be named by ks/cf for the loader
-        outputdir.mkdirs();
+        DatabaseDescriptor.setStreamThroughputOutboundMegabitsPerSec(Integer.parseInt(conf.get(STREAM_THROTTLE_MBITS, "0")));
+        maxFailures = Integer.parseInt(conf.get(MAX_FAILED_HOSTS, "0"));
     }
 
     private String getOutputLocation() throws IOException
@@ -133,6 +126,14 @@ implements org.apache.hadoop.mapred.RecordWriter<ByteBuffer,List<Mutation>>
 
     private void prepareWriter() throws IOException
     {
+        if (outputdir == null)
+        {
+            String keyspace = ConfigHelper.getOutputKeyspace(conf);
+            //dir must be named by ks/cf for the loader
+            outputdir = new File(getOutputLocation() + File.separator + keyspace + File.separator + ConfigHelper.getOutputColumnFamily(conf));
+            outputdir.mkdirs();
+        }
+        
         if (writer == null)
         {
             AbstractType<?> subcomparator = null;
@@ -142,7 +143,7 @@ implements org.apache.hadoop.mapred.RecordWriter<ByteBuffer,List<Mutation>>
 
             if (cfType == CFType.SUPER)
                 subcomparator = BytesType.instance;
-            
+
             this.writer = new SSTableSimpleUnsortedWriter(
                     outputdir,
                     ConfigHelper.getOutputPartitioner(conf),
@@ -150,10 +151,10 @@ implements org.apache.hadoop.mapred.RecordWriter<ByteBuffer,List<Mutation>>
                     ConfigHelper.getOutputColumnFamily(conf),
                     BytesType.instance,
                     subcomparator,
-                    Integer.valueOf(conf.get(BUFFER_SIZE_IN_MB, "64")),
+                    Integer.parseInt(conf.get(BUFFER_SIZE_IN_MB, "64")),
                     ConfigHelper.getOutputCompressionParamaters(conf));
 
-            externalClient = new ExternalClient(ConfigHelper.getOutputInitialAddress(conf), 
+            externalClient = new ExternalClient(ConfigHelper.getOutputInitialAddress(conf),
                                                 ConfigHelper.getOutputRpcPort(conf),
                                                 username,
                                                 password);
@@ -192,12 +193,12 @@ implements org.apache.hadoop.mapred.RecordWriter<ByteBuffer,List<Mutation>>
                 if (colType == ColType.COUNTER)
                     writer.addCounterColumn(mut.getColumn_or_supercolumn().counter_column.name, mut.getColumn_or_supercolumn().counter_column.value);
                 else
-	            {
+                {
                     if(mut.getColumn_or_supercolumn().column.ttl == 0)
-	                     writer.addColumn(mut.getColumn_or_supercolumn().column.name, mut.getColumn_or_supercolumn().column.value, mut.getColumn_or_supercolumn().column.timestamp);
+                        writer.addColumn(mut.getColumn_or_supercolumn().column.name, mut.getColumn_or_supercolumn().column.value, mut.getColumn_or_supercolumn().column.timestamp);
                     else
                         writer.addExpiringColumn(mut.getColumn_or_supercolumn().column.name, mut.getColumn_or_supercolumn().column.value, mut.getColumn_or_supercolumn().column.timestamp, mut.getColumn_or_supercolumn().column.ttl, System.currentTimeMillis() + ((long)(mut.getColumn_or_supercolumn().column.ttl) * 1000));
-	            }
+                }
             }
             progress.progress();
         }
@@ -250,8 +251,8 @@ implements org.apache.hadoop.mapred.RecordWriter<ByteBuffer,List<Mutation>>
     static class ExternalClient extends SSTableLoader.Client
     {
         private final Map<String, Set<String>> knownCfs = new HashMap<String, Set<String>>();
-        private String hostlist;
-        private int rpcPort;
+        private final String hostlist;
+        private final int rpcPort;
         private final String username;
         private final String password;
 

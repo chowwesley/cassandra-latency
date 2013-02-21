@@ -1,6 +1,4 @@
-package org.apache.cassandra.cql;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,16 +7,15 @@ package org.apache.cassandra.cql;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+package org.apache.cassandra.cql;
 
 import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
@@ -37,11 +34,11 @@ public class WhereClause
 {
     // all relations (except for `<key> IN (.., .., ..)` which can be directly interpreted) from parser
     // are stored into this array and are filtered to the keys/columns by extractKeysFromColumns(...)
-    private List<Relation> clauseRelations = new ArrayList<Relation>();
-    private List<Relation> columns = new ArrayList<Relation>();
+    private final List<Relation> clauseRelations = new ArrayList<Relation>();
+    private final List<Relation> columns = new ArrayList<Relation>();
 
     // added to either by the parser from an IN clause or by extractKeysFromColumns
-    private Set<Term> keys = new LinkedHashSet<Term>();
+    private final Set<Term> keys = new LinkedHashSet<Term>();
     private Term startKey, finishKey;
     private boolean includeStartKey = false, includeFinishKey = false, multiKey = false;
     // set by extractKeysFromColumns

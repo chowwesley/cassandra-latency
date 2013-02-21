@@ -7,18 +7,19 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.cassandra.cql3.statements;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +27,17 @@ import org.slf4j.LoggerFactory;
 import org.apache.cassandra.auth.Permission;
 import org.apache.cassandra.config.CFMetaData;
 import org.apache.cassandra.config.ColumnDefinition;
-import org.apache.cassandra.config.ConfigurationException;
+import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.cassandra.cql3.*;
+import org.apache.cassandra.db.index.composites.CompositesIndex;
+import org.apache.cassandra.db.marshal.CompositeType;
+import org.apache.cassandra.exceptions.UnauthorizedException;
 import org.apache.cassandra.service.ClientState;
 import org.apache.cassandra.service.MigrationManager;
-import org.apache.cassandra.thrift.CfDef;
-import org.apache.cassandra.thrift.ColumnDef;
 import org.apache.cassandra.thrift.IndexType;
-import org.apache.cassandra.thrift.InvalidRequestException;
+import org.apache.cassandra.exceptions.InvalidRequestException;
 import org.apache.cassandra.thrift.ThriftValidation;
+import org.apache.cassandra.transport.messages.ResultMessage;
 
 /** A <code>CREATE INDEX</code> statement parsed from a CQL query. */
 public class CreateIndexStatement extends SchemaAlteringStatement
@@ -51,7 +54,7 @@ public class CreateIndexStatement extends SchemaAlteringStatement
         this.columnName = columnName;
     }
 
-    public void checkAccess(ClientState state) throws InvalidRequestException
+    public void checkAccess(ClientState state) throws UnauthorizedException, InvalidRequestException
     {
         state.hasColumnFamilyAccess(keyspace(), columnFamily(), Permission.ALTER);
     }
@@ -64,9 +67,6 @@ public class CreateIndexStatement extends SchemaAlteringStatement
         CFMetaData cfm = oldCfm.clone();
         CFDefinition cfDef = oldCfm.getCfDef();
 
-        if (cfDef.isComposite)
-            throw new InvalidRequestException("Secondary indexes are not (yet) supported on tables with composite PRIMARY KEY");
-
         for (ColumnDefinition cd : cfm.getColumn_metadata().values())
         {
             if (cd.name.equals(columnName.key))
@@ -75,7 +75,21 @@ public class CreateIndexStatement extends SchemaAlteringStatement
                     throw new InvalidRequestException("Index already exists");
                 if (logger.isDebugEnabled())
                     logger.debug("Updating column {} definition for index {}", columnName, indexName);
-                cd.setIndexType(IndexType.KEYS, Collections.<String, String>emptyMap());
+
+                if (cd.getValidator().isCollection())
+                    throw new InvalidRequestException("Indexes on collections are no yet supported");
+
+                if (cfDef.isComposite)
+                {
+                    CompositeType composite = (CompositeType)cfm.comparator;
+                    Map<String, String> opts = new HashMap<String, String>();
+                    opts.put(CompositesIndex.PREFIX_SIZE_OPTION, String.valueOf(composite.types.size() - (cfDef.hasCollections ? 2 : 1)));
+                    cd.setIndexType(IndexType.COMPOSITES, opts);
+                }
+                else
+                {
+                    cd.setIndexType(IndexType.KEYS, Collections.<String, String>emptyMap());
+                }
                 cd.setIndexName(indexName);
                 columnExists = true;
                 break;
@@ -100,5 +114,11 @@ public class CreateIndexStatement extends SchemaAlteringStatement
 
         cfm.addDefaultIndexNames();
         MigrationManager.announceColumnFamilyUpdate(cfm);
+    }
+
+    public ResultMessage.SchemaChange.Change changeType()
+    {
+        // Creating an index is akin to updating the CF
+        return ResultMessage.SchemaChange.Change.UPDATED;
     }
 }

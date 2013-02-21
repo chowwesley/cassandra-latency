@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yammer.metrics.core.TimerContext;
 import org.apache.cassandra.db.ColumnFamilyType;
 import org.apache.cassandra.stress.Session;
 import org.apache.cassandra.stress.util.CassandraClient;
@@ -52,7 +53,12 @@ public class CqlReader extends Operation
             StringBuilder query = new StringBuilder("SELECT ");
 
             if (session.columnNames == null)
-                query.append("FIRST ").append(session.getColumnsPerKey()).append(" ''..''");
+            {
+                if (session.cqlVersion.startsWith("2"))
+                    query.append("FIRST ").append(session.getColumnsPerKey()).append(" ''..''");
+                else
+                    query.append("*");
+            }
             else
             {
                 for (int i = 0; i < session.columnNames.size(); i++)
@@ -62,7 +68,10 @@ public class CqlReader extends Operation
                 }
             }
 
-            query.append(" FROM Standard1 USING CONSISTENCY ").append(session.getConsistencyLevel().toString());
+            query.append(" FROM ").append(wrapInQuotesIfRequired("Standard1"));
+
+            if (session.cqlVersion.startsWith("2"))
+                query.append(" USING CONSISTENCY ").append(session.getConsistencyLevel().toString());
             query.append(" WHERE KEY=?");
 
             cqlQuery = query.toString();
@@ -71,14 +80,14 @@ public class CqlReader extends Operation
         List<String> queryParams = new ArrayList<String>();
         if (session.columnNames != null)
             for (int i = 0; i < session.columnNames.size(); i++)
-                queryParams.add(getUnQuotedCqlBlob(session.columnNames.get(i).array()));
+                queryParams.add(getUnQuotedCqlBlob(session.columnNames.get(i).array(), session.cqlVersion.startsWith("3")));
 
         byte[] key = generateKey();
-        queryParams.add(getUnQuotedCqlBlob(key));
+        queryParams.add(getUnQuotedCqlBlob(key, session.cqlVersion.startsWith("3")));
 
         String formattedQuery = null;
 
-        long start = System.currentTimeMillis();
+        TimerContext context = session.latency.time();
 
         boolean success = false;
         String exceptionMessage = null;
@@ -95,20 +104,26 @@ public class CqlReader extends Operation
                 if (session.usePreparedStatements())
                 {
                     Integer stmntId = getPreparedStatement(client, cqlQuery);
-                    result = client.execute_prepared_cql_query(stmntId, queryParamsAsByteBuffer(queryParams));
+                    if (session.cqlVersion.startsWith("3"))
+                        result = client.execute_prepared_cql3_query(stmntId, queryParamsAsByteBuffer(queryParams), session.getConsistencyLevel());
+                    else
+                        result = client.execute_prepared_cql_query(stmntId, queryParamsAsByteBuffer(queryParams));
                 }
                 else
                 {
                     if (formattedQuery == null)
                         formattedQuery = formatCqlQuery(cqlQuery, queryParams);
-                    result = client.execute_cql_query(ByteBuffer.wrap(formattedQuery.getBytes()),
-                                                      Compression.NONE);
+                    if (session.cqlVersion.startsWith("3"))
+                        result = client.execute_cql3_query(ByteBuffer.wrap(formattedQuery.getBytes()), Compression.NONE, session.getConsistencyLevel());
+                    else
+                        result = client.execute_cql_query(ByteBuffer.wrap(formattedQuery.getBytes()), Compression.NONE);
                 }
 
                 success = (result.rows.get(0).columns.size() != 0);
             }
             catch (Exception e)
             {
+
                 exceptionMessage = getExceptionMessage(e);
                 success = false;
             }
@@ -116,15 +131,16 @@ public class CqlReader extends Operation
 
         if (!success)
         {
-            error(String.format("Operation [%d] retried %d times - error reading key %s %s%n",
+            error(String.format("Operation [%d] retried %d times - error reading key %s %s%n with query %s",
                                 index,
                                 session.getRetryTimes(),
                                 new String(key),
-                                (exceptionMessage == null) ? "" : "(" + exceptionMessage + ")"));
+                                (exceptionMessage == null) ? "" : "(" + exceptionMessage + ")",
+                                cqlQuery));
         }
 
         session.operations.getAndIncrement();
         session.keys.getAndIncrement();
-        session.latency.getAndAdd(System.currentTimeMillis() - start);
+        context.stop();
     }
 }

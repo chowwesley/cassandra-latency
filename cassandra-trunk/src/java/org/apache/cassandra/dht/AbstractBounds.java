@@ -1,6 +1,4 @@
-package org.apache.cassandra.dht;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -9,17 +7,15 @@ package org.apache.cassandra.dht;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
+package org.apache.cassandra.dht;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -27,7 +23,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
+import org.apache.cassandra.db.DecoratedKey;
+import org.apache.cassandra.db.TypeSizes;
 import org.apache.cassandra.db.RowPosition;
+import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.io.IVersionedSerializer;
 import org.apache.cassandra.net.MessagingService;
 import org.apache.cassandra.utils.Pair;
@@ -35,12 +34,7 @@ import org.apache.cassandra.utils.Pair;
 public abstract class AbstractBounds<T extends RingPosition> implements Serializable
 {
     private static final long serialVersionUID = 1L;
-    private static AbstractBoundsSerializer serializer = new AbstractBoundsSerializer();
-
-    public static AbstractBoundsSerializer serializer()
-    {
-        return serializer;
-    }
+    public static final AbstractBoundsSerializer serializer = new AbstractBoundsSerializer();
 
     private enum Type
     {
@@ -97,6 +91,26 @@ public abstract class AbstractBounds<T extends RingPosition> implements Serializ
 
     public abstract List<? extends AbstractBounds<T>> unwrap();
 
+    public String getString(AbstractType<?> keyValidator)
+    {
+        return getOpeningString() + format(left, keyValidator) + ", " + format(right, keyValidator) + getClosingString();
+    }
+
+    private String format(T value, AbstractType<?> keyValidator)
+    {
+        if (value instanceof DecoratedKey)
+        {
+            return keyValidator.getString(((DecoratedKey)value).key);
+        }
+        else
+        {
+            return value.toString();
+        }
+    }
+
+    protected abstract String getOpeningString();
+    protected abstract String getClosingString();
+
     /**
      * Transform this abstract bounds to equivalent covering bounds of row positions.
      * If this abstract bounds was already an abstractBounds of row positions, this is a noop.
@@ -108,6 +122,8 @@ public abstract class AbstractBounds<T extends RingPosition> implements Serializ
      * If this abstract bounds was already an abstractBounds of token, this is a noop, otherwise this use the row position tokens.
      */
     public abstract AbstractBounds<Token> toTokenBounds();
+
+    public abstract AbstractBounds<T> withNewRight(T newRight);
 
     public static class AbstractBoundsSerializer implements IVersionedSerializer<AbstractBounds<?>>
     {
@@ -122,21 +138,25 @@ public abstract class AbstractBounds<T extends RingPosition> implements Serializ
              * The first int tells us if it's a range or bounds (depending on the value) _and_ if it's tokens or keys (depending on the
              * sign). We use negative kind for keys so as to preserve the serialization of token from older version.
              */
-            boolean isToken = range.left instanceof Token;
-            int kind = range instanceof Range ? Type.RANGE.ordinal() : Type.BOUNDS.ordinal();
-            if (!isToken)
-                kind = -(kind+1);
-            out.writeInt(kind);
-            if (isToken)
+            out.writeInt(kindInt(range));
+            if (range.left instanceof Token)
             {
-                Token.serializer().serialize((Token)range.left, out);
-                Token.serializer().serialize((Token)range.right, out);
+                Token.serializer.serialize((Token) range.left, out);
+                Token.serializer.serialize((Token) range.right, out);
             }
             else
             {
-                RowPosition.serializer().serialize((RowPosition)range.left, out);
-                RowPosition.serializer().serialize((RowPosition)range.right, out);
+                RowPosition.serializer.serialize((RowPosition) range.left, out);
+                RowPosition.serializer.serialize((RowPosition) range.right, out);
             }
+        }
+
+        private int kindInt(AbstractBounds<?> ab)
+        {
+            int kind = ab instanceof Range ? Type.RANGE.ordinal() : Type.BOUNDS.ordinal();
+            if (!(ab.left instanceof Token))
+                kind = -(kind + 1);
+            return kind;
         }
 
         public AbstractBounds<?> deserialize(DataInput in, int version) throws IOException
@@ -149,13 +169,13 @@ public abstract class AbstractBounds<T extends RingPosition> implements Serializ
             RingPosition left, right;
             if (isToken)
             {
-                left = Token.serializer().deserialize(in);
-                right = Token.serializer().deserialize(in);
+                left = Token.serializer.deserialize(in);
+                right = Token.serializer.deserialize(in);
             }
             else
             {
-                left = RowPosition.serializer().deserialize(in);
-                right = RowPosition.serializer().deserialize(in);
+                left = RowPosition.serializer.deserialize(in);
+                right = RowPosition.serializer.deserialize(in);
             }
 
             if (kind == Type.RANGE.ordinal())
@@ -163,9 +183,20 @@ public abstract class AbstractBounds<T extends RingPosition> implements Serializ
             return new Bounds(left, right);
         }
 
-        public long serializedSize(AbstractBounds<?> abstractBounds, int version)
+        public long serializedSize(AbstractBounds<?> ab, int version)
         {
-            throw new UnsupportedOperationException();
+            int size = TypeSizes.NATIVE.sizeof(kindInt(ab));
+            if (ab.left instanceof Token)
+            {
+                size += Token.serializer.serializedSize((Token) ab.left, TypeSizes.NATIVE);
+                size += Token.serializer.serializedSize((Token) ab.right, TypeSizes.NATIVE);
+            }
+            else
+            {
+                size += RowPosition.serializer.serializedSize((RowPosition) ab.left, TypeSizes.NATIVE);
+                size += RowPosition.serializer.serializedSize((RowPosition) ab.right, TypeSizes.NATIVE);
+            }
+            return size;
         }
     }
 }
